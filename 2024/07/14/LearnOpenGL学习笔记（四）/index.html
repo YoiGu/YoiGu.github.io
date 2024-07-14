@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://learnopengl-cn.github.io/img/01/09/camera_pitch.png">
 <meta property="og:image" content="https://learnopengl-cn.github.io/img/01/09/camera_yaw.png">
 <meta property="article:published_time" content="2024-07-14T08:38:51.000Z">
-<meta property="article:modified_time" content="2024-07-14T08:42:29.029Z">
+<meta property="article:modified_time" content="2024-07-14T08:44:12.808Z">
 <meta property="article:author" content="Yoi">
 <meta property="article:tag" content="图形学">
 <meta property="article:tag" content="OpenGL">
@@ -374,24 +374,23 @@ alt="img" />
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">glm::mat4 <span class="hljs-title">GetViewMatrix</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-comment">// 重新计算摄像机的 Right 和 Up 向量</span><br>    Right = glm::<span class="hljs-built_in">normalize</span>(glm::<span class="hljs-built_in">cross</span>(Front, WorldUp));<br>    Up = glm::<span class="hljs-built_in">normalize</span>(glm::<span class="hljs-built_in">cross</span>(Right, Front));<br><br>    <span class="hljs-comment">// 计算LookAt矩阵</span><br>    <span class="hljs-function">glm::mat4 <span class="hljs-title">rotation</span><span class="hljs-params">(<span class="hljs-number">1.0f</span>)</span></span>;<br>    rotation[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] = Right.x;<br>    rotation[<span class="hljs-number">1</span>][<span class="hljs-number">0</span>] = Right.y;<br>    rotation[<span class="hljs-number">2</span>][<span class="hljs-number">0</span>] = Right.z;<br>    rotation[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>] = Up.x;<br>    rotation[<span class="hljs-number">1</span>][<span class="hljs-number">1</span>] = Up.y;<br>    rotation[<span class="hljs-number">2</span>][<span class="hljs-number">1</span>] = Up.z;<br>    <span class="hljs-comment">//负的是因为，实际上变的是物体而不是摄像机</span><br>    rotation[<span class="hljs-number">0</span>][<span class="hljs-number">2</span>] = -Front.x;<br>    rotation[<span class="hljs-number">1</span>][<span class="hljs-number">2</span>] = -Front.y;<br>    rotation[<span class="hljs-number">2</span>][<span class="hljs-number">2</span>] = -Front.z;<br><br>    <span class="hljs-function">glm::mat4 <span class="hljs-title">translation</span><span class="hljs-params">(<span class="hljs-number">1.0f</span>)</span></span>;<br>    translation[<span class="hljs-number">3</span>][<span class="hljs-number">0</span>] = -Position.x;<br>    translation[<span class="hljs-number">3</span>][<span class="hljs-number">1</span>] = -Position.y;<br>    translation[<span class="hljs-number">3</span>][<span class="hljs-number">2</span>] = -Position.z;<br><br>    <span class="hljs-keyword">return</span> rotation * translation;<br>&#125;<br><br></code></pre></td></tr></table></figure>
 <h2 id="知识点">知识点</h2>
 <ul>
-<li><p>相机空间的施密特正交化：相机位置、方向向量（目标指向相机）、右轴、上轴</p></li>
-<li><p>LookAt矩阵与观察矩阵：<code>view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)</code></p>
+<li>相机空间的施密特正交化：相机位置、方向向量（目标指向相机）、右轴、上轴</li>
+<li>LookAt矩阵与观察矩阵：<code>view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)</code>
 <ul>
 <li>此处<code>cameraFront</code>为相机指向目标的向量</li>
 </ul></li>
-<li><p>Deltatime控制速度</p></li>
-<li><div class="sourceCode" id="cb1"><pre
-class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  direction<span class="op">.</span>x <span class="op">=</span> cos<span class="op">(</span>glm<span class="op">::</span>radians<span class="op">(</span>pitch<span class="op">))</span> <span class="op">*</span> cos<span class="op">(</span>glm<span class="op">::</span>radians<span class="op">(</span>yaw<span class="op">));</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  direction<span class="op">.</span>y <span class="op">=</span> sin<span class="op">(</span>glm<span class="op">::</span>radians<span class="op">(</span>pitch<span class="op">));</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  direction<span class="op">.</span>z <span class="op">=</span> cos<span class="op">(</span>glm<span class="op">::</span>radians<span class="op">(</span>pitch<span class="op">))</span> <span class="op">*</span> sin<span class="op">(</span>glm<span class="op">::</span>radians<span class="op">(</span>yaw<span class="op">));</span></span></code></pre></div></li>
-<li><p>鼠标输入</p>
+<li>Deltatime控制速度</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++">direction.x = <span class="hljs-built_in">cos</span>(glm::<span class="hljs-built_in">radians</span>(pitch)) * <span class="hljs-built_in">cos</span>(glm::<span class="hljs-built_in">radians</span>(yaw));<br>direction.y = <span class="hljs-built_in">sin</span>(glm::<span class="hljs-built_in">radians</span>(pitch));<br>direction.z = <span class="hljs-built_in">cos</span>(glm::<span class="hljs-built_in">radians</span>(pitch)) * <span class="hljs-built_in">sin</span>(glm::<span class="hljs-built_in">radians</span>(yaw));<br></code></pre></td></tr></table></figure>
+<ul>
+<li>鼠标输入
 <ul>
 <li><code>glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED)</code></li>
 <li><code>glfwSetCursorPosCallback(window, mouse_callback)</code></li>
 <li><code>pitch</code>角的限制，注意弧度转换</li>
 <li>初次鼠标进入时的判断</li>
 </ul></li>
-<li><p>滚轮、FOV与投影矩阵</p></li>
+<li>滚轮、FOV与投影矩阵</li>
 </ul>
 <h1 id="复习">复习</h1>
 <ul>
