@@ -18,15 +18,15 @@
   
     <meta name="description" content="逐渐理解一切...">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LearnOpenGL学习笔记（四）">
-<meta property="og:url" content="http://example.com/2024/07/14/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89/index.html">
+<meta property="og:title" content="LearnOpenGL学习笔记（四） - 摄像机与入门知识点总结">
+<meta property="og:url" content="http://example.com/2024/07/14/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89%20-%20%E6%91%84%E5%83%8F%E6%9C%BA%E4%B8%8E%E5%85%A5%E9%97%A8%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="Yoi&#39;s Home">
 <meta property="og:description" content="逐渐理解一切...">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://learnopengl-cn.github.io/img/01/09/camera_pitch.png">
 <meta property="og:image" content="https://learnopengl-cn.github.io/img/01/09/camera_yaw.png">
 <meta property="article:published_time" content="2024-07-14T08:38:51.000Z">
-<meta property="article:modified_time" content="2024-07-14T08:44:12.808Z">
+<meta property="article:modified_time" content="2024-07-15T13:34:43.810Z">
 <meta property="article:author" content="Yoi">
 <meta property="article:tag" content="图形学">
 <meta property="article:tag" content="OpenGL">
@@ -36,7 +36,7 @@
   
   
   
-  <title>LearnOpenGL学习笔记（四） - Yoi&#39;s Home</title>
+  <title>LearnOpenGL学习笔记（四） - 摄像机与入门知识点总结 - Yoi&#39;s Home</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -206,7 +206,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="LearnOpenGL学习笔记（四）"></span>
+            <span id="subtitle" data-typed-text="LearnOpenGL学习笔记（四） - 摄像机与入门知识点总结"></span>
           
         </div>
 
@@ -277,12 +277,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">LearnOpenGL学习笔记（四）</h1>
+            <h1 id="seo-header">LearnOpenGL学习笔记（四） - 摄像机与入门知识点总结</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
-                    本文最后更新于 2024年7月14日 下午
+                    本文最后更新于 2024年7月15日 晚上
                   
                 
               </p>
@@ -525,8 +525,8 @@ Object，EBO)，也叫索引缓冲对象(Index Buffer Object，IBO)</strong>：
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>LearnOpenGL学习笔记（四）</div>
-      <div>http://example.com/2024/07/14/LearnOpenGL学习笔记（四）/</div>
+      <div>LearnOpenGL学习笔记（四） - 摄像机与入门知识点总结</div>
+      <div>http://example.com/2024/07/14/LearnOpenGL学习笔记（四） - 摄像机与入门知识点总结/</div>
     </div>
     <div class="license-meta">
       
@@ -570,12 +570,18 @@ Object，EBO)，也叫索引缓冲对象(Index Buffer Object，IBO)</strong>：
                   <article class="post-prev col-6">
                     
                     
+                      <a href="/2024/07/15/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89-CMake%E3%80%81ImGui%E4%B8%8E%E5%85%89%E7%85%A7/" title="LearnOpenGL学习笔记（五）- CMake、ImGui与光照">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LearnOpenGL学习笔记（五）- CMake、ImGui与光照</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/07/13/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" title="LearnOpenGL学习笔记（三）">
-                        <span class="hidden-mobile">LearnOpenGL学习笔记（三）</span>
+                      <a href="/2024/07/13/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89%20-%20%E5%8F%98%E6%8D%A2%E4%B8%8E%E5%9D%90%E6%A0%87/" title="LearnOpenGL学习笔记（三） - 变换与坐标">
+                        <span class="hidden-mobile">LearnOpenGL学习笔记（三） - 变换与坐标</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
