@@ -1,0 +1,844 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/tagIcon.png">
+  <link rel="icon" href="/img/tagIcon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yoi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="面剔除 每个封闭形状的面都有正反之分。在OpenGL中，通过三角形片段三个顶点的绘制顺序判断该三角形所在面的正反。默认情况下，逆时针顶点所定义的三角形为正向三角形。 背向观察者的面通常不会被渲染。如果能够取消这些面的渲染，程序速度将会提高约50%。 glEnable(GL_CULL_FACE)用于开启面剔除。 glCullFace(GLEnum mode)用于指定剔除的面。  GL_F">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LearnOpenGL学习笔记（九） - 面剔除、帧缓冲、CubeMap与高级数据">
+<meta property="og:url" content="http://example.com/2024/08/06/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B9%9D%EF%BC%89-%E9%9D%A2%E5%89%94%E9%99%A4%E3%80%81%E5%B8%A7%E7%BC%93%E5%86%B2%E3%80%81CubeMap%E4%B8%8E%E9%AB%98%E7%BA%A7%E6%95%B0%E6%8D%AE/index.html">
+<meta property="og:site_name" content="Yoi&#39;s Home">
+<meta property="og:description" content="面剔除 每个封闭形状的面都有正反之分。在OpenGL中，通过三角形片段三个顶点的绘制顺序判断该三角形所在面的正反。默认情况下，逆时针顶点所定义的三角形为正向三角形。 背向观察者的面通常不会被渲染。如果能够取消这些面的渲染，程序速度将会提高约50%。 glEnable(GL_CULL_FACE)用于开启面剔除。 glCullFace(GLEnum mode)用于指定剔除的面。  GL_F">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-08-06T06:30:30.000Z">
+<meta property="article:modified_time" content="2024-08-06T06:32:04.523Z">
+<meta property="article:author" content="Yoi">
+<meta property="article:tag" content="图形学">
+<meta property="article:tag" content="OpenGL">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>LearnOpenGL学习笔记（九） - 面剔除、帧缓冲、CubeMap与高级数据 - Yoi&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>攸一的文书档案</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202401261945400.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LearnOpenGL学习笔记（九） - 面剔除、帧缓冲、CubeMap与高级数据"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-06 14:30" pubdate>
+          2024年8月6日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          25 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LearnOpenGL学习笔记（九） - 面剔除、帧缓冲、CubeMap与高级数据</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年8月6日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="面剔除">面剔除</h2>
+<p>每个封闭形状的面都有正反之分。在OpenGL中，通过三角形片段三个顶点的绘制顺序判断该三角形所在面的正反。默认情况下，逆时针顶点所定义的三角形为正向三角形。</p>
+<p>背向观察者的面通常不会被渲染。如果能够取消这些面的渲染，程序速度将会提高约50%。</p>
+<p><code>glEnable(GL_CULL_FACE)</code>用于开启面剔除。</p>
+<p><code>glCullFace(GLEnum mode)</code>用于指定剔除的面。</p>
+<ul>
+<li>GL_FRONT：剔除正面</li>
+<li>GL_BACK：剔除背面</li>
+<li>GL_FRONT_AND_BACK：正反面都剔除</li>
+</ul>
+<p><code>glFrontFace(GLEnum mode)</code>用于指定正向三角形的定义。</p>
+<ul>
+<li>GL_CCW：逆时针三角形为正</li>
+<li>GL_CW：顺时针三角形为正。</li>
+</ul>
+<p><strong>使用面缓冲时，必须确保顶点数据的定义是”逆时针为正“的顺序。否则会出现渲染错误。</strong></p>
+<h2 id="帧缓冲">帧缓冲</h2>
+<p>帧缓冲（Framebuffer）是所有屏幕缓冲（包括颜色缓冲、深度缓冲、模板缓冲）的集合。在默认情况下，我们的绘制操作都在默认帧缓冲的渲染缓冲上进行，默认帧缓冲由GLFW创建。通过创建帧缓冲，可以获得额外的Render
+Target。</p>
+<p>使用<code>glGenFramebuffers(int count, unsigned int *FBO)</code>生成帧缓冲对象（Framebuffer
+Object）。使用<code>glBindFramebuffer(GL_FRAMEBUFFER, unsigned int FBO)</code>绑定FBO对象。</p>
+<p>完成绑定后，所有读取、写入缓冲的操作都会影响当前绑定的帧缓冲。</p>
+<blockquote>
+<p>可以通过绑定到GL_READ_FRAMEBUFFER或GL_DRAW_FRAMEBUFFER绑定到只读/只写的目标上。</p>
+</blockquote>
+<p>只进行生成、绑定操作的帧缓冲是不完整的。我们可以通过布尔表达式<code>glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE</code>检查帧缓冲是否完整。</p>
+<p>视口中的视觉输出对应的帧缓冲永远是默认帧缓冲（0号）。因此，当完成非默认帧缓冲的渲染（离屏渲染，Off-screen
+Rendering）时，一定要记得重新绑定默认帧缓冲（<code>glBindFramebuffers(GL_FRAMEBUFFER, 0)</code>)，并且把不需要的帧缓冲对象删除（<code>glDeleteFramebuffers(1,&amp;FBO)</code>）。</p>
+<p>为了使帧缓冲完整，我们需要给它绑定颜色附件（Attachment）。</p>
+<blockquote>
+<p>附件是一个内存位置，它能作为帧缓冲的一个缓冲，类似于一个图像。附件分为纹理附件（Texture
+Attachment）和渲染缓冲对象附件（Renderbuffer Object）。</p>
+<p>也可以这么理解：</p>
+</blockquote>
+<h3 id="纹理附件">纹理附件</h3>
+<p>当帧缓冲被附加上纹理附件时，对这个帧缓冲执行的所有指令都会被渲染到这个纹理上（类似于RenderTexture）。</p>
+<p>使用类似创建纹理的方式创建纹理附件，随后将其绑定到帧缓冲。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> texture;<br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>, &amp;texture);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, texture);<br><span class="hljs-comment">//无图片数据，data参数为NULL</span><br><span class="hljs-comment">//若附加深度缓冲纹理，Format和Internalformat参数应当为GL_DEPTH_COMPONENT</span><br><span class="hljs-comment">//若附加模板缓冲纹理，则为GL_STENCIL_INDEX</span><br><span class="hljs-comment">//若同时附加深度和模板缓冲纹理，Format为GL_DEPTH24_STENCIL8，Internalformat为GL_DEPTH_STENCIL，Type为GL_UNSIGNED_INT_24_8</span><br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RGB, <span class="hljs-number">800</span>, <span class="hljs-number">600</span>, <span class="hljs-number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, <span class="hljs-literal">NULL</span>);<br><span class="hljs-comment">//纹理附件的大小总是为屏幕大小，所以不关心环绕方式</span><br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);<br><span class="hljs-built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+<p>其中，<code>glFramebufferTexture2D</code>用于把纹理对象附加到帧缓冲上。具体参数有：</p>
+<ul>
+<li><code>target</code>：帧缓冲的目标（绘制、读取或者两者皆有）</li>
+<li><code>attachment</code>：我们想要附加的附件类型。除了颜色缓冲外，还有<code>GL_DEPTH_ATTACHMENT</code>、<code>GL_STENCIL_ATTACHMENT</code>和<code>GL_DEPTH_STENCIL_ATTACHMENT</code></li>
+<li><code>textarget</code>：附加的纹理类型</li>
+<li><code>texture</code>：附加的纹理本身</li>
+<li><code>level</code>：多级渐远纹理的级别。</li>
+</ul>
+<h3 id="渲染缓冲对象附件">渲染缓冲对象附件</h3>
+<p>渲染缓冲对象（Renderbuffer
+Object，RBO）是真正的缓冲（相对于纹理等通用数据缓冲, General Purpose
+Data Buffer），它相比于纹理缓冲具有更快的读取速度。</p>
+<p>渲染缓冲对象是只写的，但可以通过<code>glReadPixels</code>函数来读取当前绑定的帧缓冲中的特定像素。</p>
+<blockquote>
+<p>如何理解上面这句话？</p>
+<p>视口上呈现的视觉输出始终对应于默认帧缓冲，但无论是纹理附件还是渲染缓冲对象附件，改变的都是我们自己生成的帧缓冲。纹理附件可以以纹理的形式呈现在默认帧缓冲输出中，但渲染缓冲对象附件却不行，因为它不可读。但是，我们依然可以使用<code>glReadPixels</code>函数来访问被其改变后的帧缓冲的像素。</p>
+</blockquote>
+<p>通过<code>glGenRenderbuffers</code>生成渲染缓冲对象，通过<code>glBindRenderbuffer(GL_RENDERBUFFER, unsigned int RBO)</code>绑定渲染缓冲对象。</p>
+<p><strong>当我们不需要从这些缓冲中采样的时候，通常都会选择渲染缓冲对象，因为它会更优化一点。</strong></p>
+<blockquote>
+<p>所谓“采样“指的是从纹理中读取像素数据，用于着色、纹理映射等操作。而测试所需要的数值比较并非采样，因此可以认为测试无需读取，可以使用RBO。</p>
+</blockquote>
+<p>使用<code>glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT)</code>创建深度和模板RBO，随后使用<code>glFramebufferRenderbuffer（GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, unsigned int RBO)</code>附加渲染缓冲对象。</p>
+<blockquote>
+<p>通常的规则是，如果你不需要从一个缓冲中采样数据，那么对这个缓冲使用渲染缓冲对象会是明智的选择。如果你需要从缓冲中采样颜色或深度值等数据，那么你应该选择纹理附件。</p>
+<p>流程：创建帧缓冲-&gt;绑定帧缓冲-&gt;创建附件-&gt;配置附件-&gt;绑定附件-&gt;进行渲染操作-&gt;删除附件-&gt;解绑帧缓冲</p>
+</blockquote>
+<h3 id="渲染到纹理">渲染到纹理</h3>
+<ol type="1">
+<li>首先，创建、绑定帧缓冲对象和纹理对象，并将纹理附加到帧缓冲</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>,&amp;texture);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D,texture);<br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D,<span class="hljs-number">0</span>,GL_RGB,SCR_WIDTH,SCR_HEIGHT,<span class="hljs-number">0</span>,GL_RGB,GL_UNSIGNED_BYTE,<span class="hljs-literal">NULL</span>);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);<br><span class="hljs-built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,texture,<span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>然后，创建、绑定渲染缓冲对象，并附加到帧缓冲，注意帧缓冲对象的解绑</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> RBO;<br><span class="hljs-built_in">glGenRenderbuffers</span>(<span class="hljs-number">1</span>,&amp;RBO);<br><span class="hljs-built_in">glBindRenderbuffer</span>(GL_RENDERBUFFER,RBO);<br><span class="hljs-built_in">glRenderbufferStorage</span>(GL_RENDERBUFFER,GL_DEPTH24_STENCIL8,SCR_WIDTH,SCR_HEIGHT);<br><span class="hljs-built_in">glBindRenderbuffer</span>(GL_RENDERBUFFER,<span class="hljs-number">0</span>);<br><span class="hljs-built_in">glFramebufferRenderbuffer</span>(GL_FRAMEBUFFER,GL_DEPTH_STENCIL_ATTACHMENT,GL_RENDERBUFFER, RBO);<br><span class="hljs-keyword">if</span>(<span class="hljs-built_in">glCheckFramebufferStatus</span>(GL_FRAMEBUFFER)==GL_FRAMEBUFFER_COMPLETE) &#123;<br>    cout&lt;&lt;<span class="hljs-string">&quot;Framebuffer complete!&quot;</span>&lt;&lt;endl;<br>&#125;<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER,<span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>上面两步是渲染循环之前，让帧缓冲对象变完整的过程。</p>
+</blockquote>
+<ol start="3" type="1">
+<li>接着，绑定刚才创建的帧缓冲对象，然后绘制场景。注意绘制完要解绑，回到默认帧缓冲。</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER,framebuffer);<br><span class="hljs-built_in">glClearColor</span>(skyboxColor.x,skyboxColor.y,skyboxColor.z,<span class="hljs-number">1.0f</span>);<br><span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);<br><span class="hljs-built_in">glEnable</span>(GL_DEPTH_TEST);<br><span class="hljs-built_in">DrawScene</span>();<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER,<span class="hljs-number">0</span>);<br><span class="hljs-built_in">glDisable</span>(GL_DEPTH_TEST); <span class="hljs-comment">//绘制面片无需启用深度测试</span><br></code></pre></td></tr></table></figure>
+<ol start="4" type="1">
+<li>然后，在默认帧缓冲绘制面片。</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glClearColor</span>(skyboxColor.x,skyboxColor.y,skyboxColor.z,<span class="hljs-number">1.0f</span>);<br><span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT);<br>quadShader.<span class="hljs-built_in">use</span>();<br><span class="hljs-built_in">glBindVertexArray</span>(quadVAO);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D,texture);<br><span class="hljs-built_in">glDrawArrays</span>(GL_TRIANGLES,<span class="hljs-number">0</span>,<span class="hljs-number">6</span>);<br></code></pre></td></tr></table></figure>
+<h3 id="后处理">后处理</h3>
+<h4 id="简单的后处理">简单的后处理</h4>
+<ul>
+<li>反向：One Minus 采样</li>
+<li>灰度：采样值的r、g、b相加除以3，作为新的r、g、b</li>
+</ul>
+<h4 id="核处理">核处理</h4>
+<p>使用卷积核对图像进行卷积。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-keyword">const</span> <span class="hljs-type">float</span> <span class="hljs-keyword">offset</span> = <span class="hljs-number">1.0</span> / <span class="hljs-number">300.0</span>; <span class="hljs-comment">//常量，可自行配置</span><br><span class="hljs-type">void</span> main()<br>&#123;<br>    <span class="hljs-type">vec2</span> offsets[<span class="hljs-number">9</span>] = <span class="hljs-type">vec2</span>[](<br>        <span class="hljs-type">vec2</span>(-<span class="hljs-keyword">offset</span>,  <span class="hljs-keyword">offset</span>), <span class="hljs-comment">// 左上</span><br>        <span class="hljs-type">vec2</span>( <span class="hljs-number">0.0</span>f,    <span class="hljs-keyword">offset</span>), <span class="hljs-comment">// 正上</span><br>        <span class="hljs-type">vec2</span>( <span class="hljs-keyword">offset</span>,  <span class="hljs-keyword">offset</span>), <span class="hljs-comment">// 右上</span><br>        <span class="hljs-type">vec2</span>(-<span class="hljs-keyword">offset</span>,  <span class="hljs-number">0.0</span>f),   <span class="hljs-comment">// 左</span><br>        <span class="hljs-type">vec2</span>( <span class="hljs-number">0.0</span>f,    <span class="hljs-number">0.0</span>f),   <span class="hljs-comment">// 中</span><br>        <span class="hljs-type">vec2</span>( <span class="hljs-keyword">offset</span>,  <span class="hljs-number">0.0</span>f),   <span class="hljs-comment">// 右</span><br>        <span class="hljs-type">vec2</span>(-<span class="hljs-keyword">offset</span>, -<span class="hljs-keyword">offset</span>), <span class="hljs-comment">// 左下</span><br>        <span class="hljs-type">vec2</span>( <span class="hljs-number">0.0</span>f,   -<span class="hljs-keyword">offset</span>), <span class="hljs-comment">// 正下</span><br>        <span class="hljs-type">vec2</span>( <span class="hljs-keyword">offset</span>, -<span class="hljs-keyword">offset</span>)  <span class="hljs-comment">// 右下</span><br>    );<br>    <span class="hljs-type">float</span> kernel[<span class="hljs-number">9</span>] = <span class="hljs-type">float</span>[](<br>        <span class="hljs-number">-1</span>, <span class="hljs-number">-1</span>, <span class="hljs-number">-1</span>,<br>        <span class="hljs-number">-1</span>,  <span class="hljs-number">15</span>, <span class="hljs-number">-1</span>,<br>        <span class="hljs-number">-1</span>, <span class="hljs-number">-1</span>, <span class="hljs-number">-1</span><br>    );<br>    <span class="hljs-type">vec3</span> sampleTex[<span class="hljs-number">9</span>];<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">9</span>; i++)<br>    &#123;<br>        sampleTex[i] = <span class="hljs-type">vec3</span>(<span class="hljs-built_in">texture</span>(screenTexture, TexCoords.st + offsets[i]));<br>    &#125;<br>    <span class="hljs-type">vec3</span> col = <span class="hljs-type">vec3</span>(<span class="hljs-number">0.0</span>);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">9</span>; i++)<br>    col += sampleTex[i] * kernel[i];<br>    FragColor = <span class="hljs-type">vec4</span>(col, <span class="hljs-number">1.0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>卷积核不同，处理的效果也不同。</p>
+<ul>
+<li>锐化：2 2 2 2 -15 2 2 2 2</li>
+<li>模糊：（1 2 1 2 4 2 1 2 1)/16</li>
+<li>边缘检测：1 1 1 1 -8 1 1 1 1</li>
+</ul>
+<blockquote>
+<p>在对屏幕边缘的像素进行采样时，超出边缘的像素会按环绕方式进行采样。为了避免错误，需要设置为GL_CLAMP_TO_EDGE</p>
+</blockquote>
+<h2 id="立方体贴图">立方体贴图</h2>
+<p>立方体贴图（Cube
+Map）是包含了六个2D纹理的纹理，通过三维方向向量（立方体中心为原点）进行采样。</p>
+<figure>
+<img
+src="https://learnopengl-cn.github.io/img/04/06/cubemaps_sampling.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>创建、绑定立方体贴图的方法与2D纹理类似，只是目标<code>GL_TEXTURE_2D</code>要更改为<code>GL_TEXTURE_CUBE_MAP</code>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> textureID;<br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>,&amp;textureID);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP,textureID);<br></code></pre></td></tr></table></figure>
+<p>OpenGL并没有专门为Cube Map提供输入数据的函数。但Cube
+Map本质上是六个2D纹理组成的纹理，所以可以通过调用六次<code>glTexImage2D</code>的方式输入数据。</p>
+<p>Cube
+Map的每个面都有单独的Target，前缀都为<code>GL_TEXTURE_CUBE_MAP</code>，后缀依次为：<code>POSITIVE_X</code>、<code>NEGATIVE_X</code>、<code>POSITIVE_Y</code>、<code>NEGATIVE_Y</code>、<code>POSITIVE_Z</code>、<code>NEGATIVE_Z</code>，分别对应右、左、上、下、后、前。它们作为unsigned
+int，依次递增1，因此可以用循环赋值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">int</span> width, height, nrChannels;<br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *data;  <br><span class="hljs-keyword">for</span>(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; textures_faces.<span class="hljs-built_in">size</span>(); i++)<br>&#123;<br>    data = <span class="hljs-built_in">stbi_load</span>(textures_faces[i].<span class="hljs-built_in">c_str</span>(), &amp;width, &amp;height, &amp;nrChannels, <span class="hljs-number">0</span>);<br>    <span class="hljs-built_in">glTexImage2D</span>(<br>        GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, <br>        <span class="hljs-number">0</span>, GL_RGB, width, height, <span class="hljs-number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, data<br>    );<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>完成纹理数据输入后，同样需要设置纹理的过滤和环绕方式。与2D纹理不同的是，Cube
+Map在环绕方式上除了S、T还有R维度。它类似于三维空间中的Z轴，当方向矢量未击中任何面（如接缝处）时，返回边界值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);<br></code></pre></td></tr></table></figure>
+<p>在GLSL中，<code>samplerCube</code>用于定义一个Cube
+Map采样器。它使用一个vec3（方向矢量）而非vec2作为采样坐标。</p>
+<p><code>FragColor = texture(cubemap, textureDir)</code></p>
+<p>通过将天空盒顶点着色器的<code>gl_Position</code>设置为原本的xyww，即可让顶点z轴，即深度值，始终等于一。并且要把<code>glDepthFunc</code>修改为<code>GL_LEQUAL</code>，让深度值等于1的天空盒片元能够通过测试。</p>
+<blockquote>
+<p>需要注意，经过view和proj矩阵处理过过的gl_Position的z值始终在0-1之间。因此，z轴等于1时意味着这个顶点位于无限远处。因此，这样可以让所有物体都“位于”天空盒的前面。</p>
+</blockquote>
+<p>对于view矩阵，通过取其左上方的3*3矩阵，可以移除位移效果。这使得天空盒不会随着玩家移动。</p>
+<p><code>glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));</code></p>
+<h3 id="反射">反射</h3>
+<p>使用视线方向的反射向量作为采样立方体贴图的方向向量。</p>
+<figure>
+<img
+src="https://learnopengl-cn.github.io/img/04/06/cubemaps_reflection_theory.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<h3 id="折射">折射</h3>
+<p>使用视线方向的折射方向作为采样立方体贴图的方向向量。</p>
+<figure>
+<img
+src="https://learnopengl-cn.github.io/img/04/06/cubemaps_refraction_theory.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>一些材质的折射率：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">材质</th>
+<th style="text-align: left;">折射率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">空气</td>
+<td style="text-align: left;">1.00</td>
+</tr>
+<tr>
+<td style="text-align: left;">水</td>
+<td style="text-align: left;">1.33</td>
+</tr>
+<tr>
+<td style="text-align: left;">冰</td>
+<td style="text-align: left;">1.309</td>
+</tr>
+<tr>
+<td style="text-align: left;">玻璃</td>
+<td style="text-align: left;">1.52</td>
+</tr>
+<tr>
+<td style="text-align: left;">钻石</td>
+<td style="text-align: left;">2.42</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>GLSL内建函数<code>refract</code>包含三个参数，分别为：从视线出发的视线向量；法向量；1/折射率。前两个参数必须被归一化。</p>
+</blockquote>
+<h2 id="高级数据">高级数据</h2>
+<p>调用<code>glBufferData</code>为缓冲目标分配内存并填充数据时，若参数<code>data</code>设置为NULL，就会仅分配内存而不填充。</p>
+<p><code>glBufferSubData(TARGET, offset, length, *data)</code>用于向已分配内存的<code>TARGET</code>缓冲区，距离头部指针<code>offset</code>字节的内存位置写入长度为<code>length</code>的<code>data</code>数据。</p>
+<blockquote>
+<p><code>glBufferSubData</code>提供了一种更简洁的写入数据的方式。</p>
+<p>使用<code>glBufferData</code>写入数据时，我们必须确保单个顶点的各个属性在内存上是连续的。但用<code>glBufferSubData</code>，我们就可以把各属性作为单独的数组，分别调用<code>glBufferSubData</code>填充数据、调用<code>glVertexAttribPointer</code>指定顶点属性。例如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">float</span> positions[] = &#123; ... &#125;;<br><span class="hljs-type">float</span> normals[] = &#123; ... &#125;;<br><span class="hljs-type">float</span> tex[] = &#123; ... &#125;;<br><span class="hljs-comment">// 填充缓冲</span><br><span class="hljs-built_in">glBufferSubData</span>(GL_ARRAY_BUFFER, <span class="hljs-number">0</span>, <span class="hljs-built_in">sizeof</span>(positions), &amp;positions);<br><span class="hljs-built_in">glBufferSubData</span>(GL_ARRAY_BUFFER, <span class="hljs-built_in">sizeof</span>(positions), <span class="hljs-built_in">sizeof</span>(normals), &amp;normals);<br><span class="hljs-built_in">glBufferSubData</span>(GL_ARRAY_BUFFER, <span class="hljs-built_in">sizeof</span>(positions) + <span class="hljs-built_in">sizeof</span>(normals), <span class="hljs-built_in">sizeof</span>(tex), &amp;tex);<br><span class="hljs-built_in">glVertexAttribPointer</span>(<span class="hljs-number">0</span>, <span class="hljs-number">3</span>, GL_FLOAT, GL_FALSE, <span class="hljs-number">3</span> * <span class="hljs-built_in">sizeof</span>(<span class="hljs-type">float</span>), <span class="hljs-number">0</span>);  <br><span class="hljs-built_in">glVertexAttribPointer</span>(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, GL_FLOAT, GL_FALSE, <span class="hljs-number">3</span> * <span class="hljs-built_in">sizeof</span>(<span class="hljs-type">float</span>), (<span class="hljs-type">void</span>*)(<span class="hljs-built_in">sizeof</span>(positions)));  <br><span class="hljs-built_in">glVertexAttribPointer</span>(<br>  <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, GL_FLOAT, GL_FALSE, <span class="hljs-number">2</span> * <span class="hljs-built_in">sizeof</span>(<span class="hljs-type">float</span>), (<span class="hljs-type">void</span>*)(<span class="hljs-built_in">sizeof</span>(positions) + <span class="hljs-built_in">sizeof</span>(normals)));<br></code></pre></td></tr></table></figure>
+</blockquote>
+<p><code>glMapBuffer(TARGET, GL_WRITE_ONLY)</code>返回一个<code>void*</code>指针，指向<code>TARGET</code>缓冲区的头部位置。可以使用<code>memcpy</code>函数向指针指向的内存空间写入数据。完成数据写入后，需要调用<code>glUnmapBuffer(TAGRET)</code>解除映射。该函数返回一个<code>GL_BOOL</code>值，若成功映射数据到缓冲，则为<code>GL_TRUE</code>，否则（如写入内存超过分配内存）返回<code>GL_FALSE</code>。该函数在直接从文件读入数据写入缓冲目标时很有用。</p>
+<p><code>glCopySubData(READ_TARGET, WRITE_TARGET, readoffset, writeoffset, size)</code>用于从<code>READ_TARGET</code>缓冲区距离头部<code>readoffset</code>字节的内存位置复制长度为<code>size</code>的数据到<code>WRITE_TARGET</code>缓冲区距离头部<code>writeoffset</code>字节的内存位置。</p>
+<p>如果要复制的两个缓冲区类型相同，可以先把其中之一或者二者换为专用于复制的<code>GL_COPY_WRITE_BUFFER</code>和<code>GL_COPY_READ_BUFFER</code>缓冲区。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" class="print-no-link">#图形学</a>
+      
+        <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LearnOpenGL学习笔记（九） - 面剔除、帧缓冲、CubeMap与高级数据</div>
+      <div>http://example.com/2024/08/06/LearnOpenGL学习笔记（九）-面剔除、帧缓冲、CubeMap与高级数据/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yoi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/08/05/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%85%AB%EF%BC%89-%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%B7%B7%E5%90%88/" title="LearnOpenGL学习笔记（八） - 测试与混合">
+                        <span class="hidden-mobile">LearnOpenGL学习笔记（八） - 测试与混合</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       Tech · Art · Life. |  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
