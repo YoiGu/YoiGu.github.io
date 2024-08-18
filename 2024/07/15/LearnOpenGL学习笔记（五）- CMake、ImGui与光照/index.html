@@ -49,6 +49,8 @@
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
 
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
 
 
 <!-- 主题依赖的图标库，不要自行修改 -->
@@ -291,22 +293,22 @@
             
               <div class="markdown-body">
                 
-                <p>TA壬的舒适区<br />
+                <p>TA壬的舒适区<br>
 <span id="more"></span></p>
-<h1 id="cmake与imgui"><a class="markdownIt-Anchor" href="#cmake与imgui"></a> CMake与ImGui</h1>
-<h2 id="设置-cmake-最低版本和项目名称"><a class="markdownIt-Anchor" href="#设置-cmake-最低版本和项目名称"></a> 设置 CMake 最低版本和项目名称</h2>
+<h1>CMake与ImGui</h1>
+<h2 id="设置-CMake-最低版本和项目名称">设置 CMake 最低版本和项目名称</h2>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">cmake_minimum_required</span>(VERSION <span class="hljs-number">3.28</span>)<br><span class="hljs-keyword">project</span>(LearnOpenGL)<br></code></pre></td></tr></table></figure>
 <ul>
 <li><code>cmake_minimum_required(VERSION 3.28)</code>：这行代码指定了我们希望使用的最低 CMake 版本是 3.28。</li>
 <li><code>project(LearnOpenGL)</code>：这行代码将我们的项目命名为 “LearnOpenGL”。</li>
 </ul>
-<h2 id="设置-c-标准"><a class="markdownIt-Anchor" href="#设置-c-标准"></a> 设置 C++ 标准</h2>
+<h2 id="设置-C-标准">设置 C++ 标准</h2>
 <p>为了确保代码能够使用特定的 C++ 标准，我们需要明确指定它：</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">set</span><span class="hljs-params">(CMAKE_CXX_STANDARD <span class="hljs-number">17</span>)</span></span><br></code></pre></td></tr></table></figure>
 <ul>
-<li><code>set(CMAKE_CXX_STANDARD 17)</code>：这行代码将 C++ 标准设置为 C<ins>17。这样可以确保我们的代码能够使用 C</ins>17 的特性，同时也能确保编译器正确处理这些特性。</li>
+<li><code>set(CMAKE_CXX_STANDARD 17)</code>：这行代码将 C++ 标准设置为 C++17。这样可以确保我们的代码能够使用 C++17 的特性，同时也能确保编译器正确处理这些特性。</li>
 </ul>
-<h2 id="手动设置-glfw-路径"><a class="markdownIt-Anchor" href="#手动设置-glfw-路径"></a> 手动设置 GLFW 路径</h2>
+<h2 id="手动设置-GLFW-路径">手动设置 GLFW 路径</h2>
 <p>由于我们使用的是本地安装的 GLFW 库，因此需要手动设置其包含目录和库目录：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">set</span>(GLFW_INCLUDE_DIR <span class="hljs-string">&quot;$&#123;CMAKE_SOURCE_DIR&#125;/include/GLFW&quot;</span>)<br><span class="hljs-keyword">set</span>(GLFW_LIB_DIR <span class="hljs-string">&quot;$&#123;CMAKE_SOURCE_DIR&#125;/libs&quot;</span>)<br><span class="hljs-keyword">set</span>(GLFW_LIBRARY <span class="hljs-string">&quot;$&#123;CMAKE_SOURCE_DIR&#125;/libs/glfw3.dll&quot;</span>)<br></code></pre></td></tr></table></figure>
 <ul>
@@ -317,7 +319,7 @@
 <blockquote>
 <p>${CMAKE_SOURCE_DIR}是内置宏，指CMakeList.txt所在的目录。</p>
 </blockquote>
-<h2 id="添加-imgui-库"><a class="markdownIt-Anchor" href="#添加-imgui-库"></a> 添加 IMGUI 库</h2>
+<h2 id="添加-IMGUI-库">添加 IMGUI 库</h2>
 <p>IMGUI 是一个常用的图形用户界面库。我们需要将其添加到我们的项目中：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">add_library</span>(IMGUI SHARED<br>        ./imgui/imgui.cpp<br>        ./imgui/imgui_impl_glfw.cpp<br>        ./imgui/imgui_impl_opengl3.cpp<br>        ./imgui/imgui_draw.cpp<br>        ./imgui/imgui_tables.cpp<br>        ./imgui/imgui_widgets.cpp<br>        ./imgui/imgui_demo.cpp<br>        ./imgui/imgui_stdlib.cpp<br>)<br></code></pre></td></tr></table></figure>
 <ul>
@@ -329,25 +331,25 @@
 <li><code>target_include_directories(IMGUI PRIVATE $&#123;GLFW_INCLUDE_DIR&#125;)</code>：将 GLFW 的包含目录添加到 IMGUI 库的私有包含目录中，确保 IMGUI 库可以访问 GLFW 的头文件。</li>
 <li><code>target_link_libraries(IMGUI PRIVATE $&#123;GLFW_LIBRARY&#125;)</code>：将 GLFW 库文件链接到 IMGUI 库中，使 IMGUI 库能够使用 GLFW 的功能。</li>
 </ul>
-<h2 id="添加可执行文件"><a class="markdownIt-Anchor" href="#添加可执行文件"></a> 添加可执行文件</h2>
+<h2 id="添加可执行文件">添加可执行文件</h2>
 <p>接下来，我们为项目添加一个可执行文件：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">add_executable</span>(LearnOpenGL<br>        Archive/main.cpp<br>        glad.c<br>        <span class="hljs-keyword">include</span>/shader_s.h<br>        GLMTest.cpp<br>        stbitmp.cpp<br>        <span class="hljs-keyword">include</span>/camera.h<br>)<br></code></pre></td></tr></table></figure>
 <ul>
 <li><code>add_executable(LearnOpenGL ...)</code>：这行代码定义了一个可执行文件，名为 <code>LearnOpenGL</code>，并指定了其源文件列表。可执行文件是最终生成的程序，可以运行。</li>
 </ul>
-<h2 id="包含路径"><a class="markdownIt-Anchor" href="#包含路径"></a> 包含路径</h2>
+<h2 id="包含路径">包含路径</h2>
 <p>我们需要指定包含目录，以便编译器能够找到所有头文件：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">include_directories</span>(<span class="hljs-variable">$&#123;GLFW_INCLUDE_DIR&#125;</span> <span class="hljs-string">&quot;$&#123;CMAKE_SOURCE_DIR&#125;/include&quot;</span>)<br></code></pre></td></tr></table></figure>
 <ul>
 <li><code>include_directories(...)</code>：这行代码将 GLFW 的包含目录和项目的包含目录添加到编译器的搜索路径中，使编译器能够找到这些头文件。</li>
 </ul>
-<h2 id="链接库"><a class="markdownIt-Anchor" href="#链接库"></a> 链接库</h2>
+<h2 id="链接库">链接库</h2>
 <p>最后，我们需要将所有必要的库链接到可执行文件中：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">target_link_libraries</span>(LearnOpenGL PRIVATE <span class="hljs-variable">$&#123;GLFW_LIBRARY&#125;</span> IMGUI)<br></code></pre></td></tr></table></figure>
 <ul>
 <li><code>target_link_libraries(LearnOpenGL PRIVATE $&#123;GLFW_LIBRARY&#125; IMGUI)</code>：这行代码将 GLFW 库和 IMGUI 库链接到 <code>LearnOpenGL</code> 可执行文件中，使其能够使用这些库的功能。</li>
 </ul>
-<h2 id="与opengl工程集成"><a class="markdownIt-Anchor" href="#与opengl工程集成"></a> 与OpenGL工程集成</h2>
+<h2 id="与OpenGL工程集成">与OpenGL工程集成</h2>
 <ol>
 <li>添加头文件</li>
 </ol>
@@ -368,8 +370,8 @@
 <li>程序终止</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">ImGui_ImplOpenGL3_Shutdown</span>();<br><span class="hljs-built_in">ImGui_ImplGlfw_Shutdown</span>();<br>ImGui::<span class="hljs-built_in">DestroyContext</span>();<br></code></pre></td></tr></table></figure>
-<h2 id="控件"><a class="markdownIt-Anchor" href="#控件"></a> 控件</h2>
-<h3 id="文本"><a class="markdownIt-Anchor" href="#文本"></a> 文本</h3>
+<h2 id="控件">控件</h2>
+<h3 id="文本">文本</h3>
 <table>
 <thead>
 <tr>
@@ -411,7 +413,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="按钮"><a class="markdownIt-Anchor" href="#按钮"></a> 按钮</h3>
+<h3 id="按钮">按钮</h3>
 <table>
 <thead>
 <tr>
@@ -438,7 +440,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="复选框"><a class="markdownIt-Anchor" href="#复选框"></a> 复选框</h3>
+<h3 id="复选框">复选框</h3>
 <table>
 <thead>
 <tr>
@@ -460,7 +462,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="输入框"><a class="markdownIt-Anchor" href="#输入框"></a> 输入框</h3>
+<h3 id="输入框">输入框</h3>
 <table>
 <thead>
 <tr>
@@ -492,7 +494,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="滑块"><a class="markdownIt-Anchor" href="#滑块"></a> 滑块</h3>
+<h3 id="滑块">滑块</h3>
 <table>
 <thead>
 <tr>
@@ -524,7 +526,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="下拉框"><a class="markdownIt-Anchor" href="#下拉框"></a> 下拉框</h3>
+<h3 id="下拉框">下拉框</h3>
 <table>
 <thead>
 <tr>
@@ -541,8 +543,8 @@
 </tr>
 </tbody>
 </table>
-<h1 id="光照"><a class="markdownIt-Anchor" href="#光照"></a> 光照</h1>
-<h2 id="颜色"><a class="markdownIt-Anchor" href="#颜色"></a> 颜色</h2>
+<h1>光照</h1>
+<h2 id="颜色">颜色</h2>
 <p>颜色可以数字化的由红色(Red)、绿色(Green)和蓝色(Blue)三个分量组成，它们通常被缩写为RGB。</p>
 <p>glm中，使用<code>glm::vec3 COLOR_NAME(float x, float y, float z)</code>定义颜色变量。</p>
 <p>现实中，我们看到物体的颜色实际上是被物体反射（即无法被物体吸收）的颜色与光源颜色的叠加。因此，要计算最终我们看到物体的颜色，可以用<strong>光源颜色*物体颜色</strong>的方式得到最终的颜色项链。</p>
@@ -556,29 +558,29 @@
 <p>绘制应用不同Shader的对象时，需要<strong>use()</strong>。</p>
 <p>同时，也需要设置新Shader的View和Projection矩阵。</p>
 </blockquote>
-<h2 id="基础光照"><a class="markdownIt-Anchor" href="#基础光照"></a> 基础光照</h2>
+<h2 id="基础光照">基础光照</h2>
 <p>冯氏光照模型（Phong Lighting Model）是一种简单的光照模型。它分为三个部分：</p>
 <ul>
 <li><strong>环境光（Ambient）</strong>：在任何情况下都给予物体的颜色。</li>
 <li><strong>漫反射光（Diffuse)</strong>：模拟光源对物体的方向性影响。物体的某部分越正对光源，就越亮。</li>
 <li><strong>高光（Specular）</strong>：有光泽表面上出现的亮点，其颜色更加接近于光照颜色本身。</li>
 </ul>
-<h3 id="环境光"><a class="markdownIt-Anchor" href="#环境光"></a> 环境光</h3>
+<h3 id="环境光">环境光</h3>
 <p>全局光照（Global Illumination，GI）是考虑到间接光照的算法。环境光是一种极其简化的全局光照方式。其实现方式如下：</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">float</span> ambientStrength = <span class="hljs-number">0.1</span>; <span class="hljs-comment">//环境光强度，其值通常很小</span><br><span class="hljs-type">vec3</span> ambient = ambientStrength * lightColor; <span class="hljs-comment">//环境光色 </span><br><span class="hljs-type">vec3</span> result = ambient * objectColor; <span class="hljs-comment">//叠加物体本身颜色</span><br>FragColor = <span class="hljs-type">vec4</span>(result, <span class="hljs-number">1.0</span>);<br></code></pre></td></tr></table></figure>
-<h3 id="漫反射光"><a class="markdownIt-Anchor" href="#漫反射光"></a> 漫反射光</h3>
+<h3 id="漫反射光">漫反射光</h3>
 <p>法向量（Normal Vector）是垂直于片段表面的向量。法向量一般存储在顶点数据里，作为一个顶点属性。</p>
 <p>两个单位向量的夹角越小，它们点乘的结果越倾向于1。借助这一点，实现漫反射效果，即：越正对光源，颜色越亮。</p>
-<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202407152052444.png" srcset="/img/loading.gif" lazyload alt="image-20240715205247231" /></p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202407152052444.png" srcset="/img/loading.gif" lazyload alt="image-20240715205247231"></p>
 <p>这个算法需要获取两个数据：光照方向和法向量。前者通过使用uniform向着色器传递<code>lightPos</code>获得，后者通过顶点属性配置获得。</p>
 <p><strong>任何不涉及距离，只涉及方向的向量与计算都应当归一化</strong></p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">vec3</span> normal = <span class="hljs-built_in">normalize</span>(norm);<br><span class="hljs-type">vec3</span> lightDir = <span class="hljs-built_in">normalize</span>(lightPos-fragWorldPos);<br><span class="hljs-type">float</span> diffuseStrength = <span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(normal,lightDir),<span class="hljs-number">0.0</span>); <span class="hljs-comment">//防止得到负数</span><br><span class="hljs-type">vec3</span> diffuse = diffuseStrength*lightColor;<br><span class="hljs-type">vec3</span> ambient = ambientStrength*lightColor;<br>FragColor = <span class="hljs-type">vec4</span>((ambient+diffuse)*objectColor,<span class="hljs-number">1.0</span>f); <span class="hljs-comment">//相加而非相乘</span><br></code></pre></td></tr></table></figure>
 <blockquote>
 <p>传入的法向量是基于局部坐标的。法向量不能简单地通过乘以模型矩阵变换，因为这些变换会破坏发现的垂直性质。</p>
-<p><img src="https://learnopengl-cn.github.io/img/02/02/basic_lighting_normal_transformation.png" srcset="/img/loading.gif" lazyload alt="img" /></p>
+<p><img src="https://learnopengl-cn.github.io/img/02/02/basic_lighting_normal_transformation.png" srcset="/img/loading.gif" lazyload alt="img"></p>
 <p>法线矩阵（Normal Matrix）是专门将法向量变换到世界坐标的矩阵。它是模型矩阵左上叫3x3部分的逆矩阵的法线矩阵。因此，可以使用<code>Normal = mat3(transpose(inverse(model))) * aNormal</code>来计算世界坐标下的法线。这一操作应当在cpp程序中进行，然后通过uniform传递到着色器，因为矩阵求逆对着色器来说是非常耗时的。</p>
 </blockquote>
-<h3 id="高光"><a class="markdownIt-Anchor" href="#高光"></a> 高光</h3>
+<h3 id="高光">高光</h3>
 <p>高光取决于LightDir、Norm和ViewDir。</p>
 <img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202407152055591.png" srcset="/img/loading.gif" lazyload alt="image-20240715205521385" style="zoom:50%;" />
 <p>如图，入射光和反射光与法线的夹角都是α，ViewDir和反射光的夹角是θ。高光最强的地方就是反射光所在的方向，因此，θ越小，高光越强。因此，同样可以通过点乘来得到高光系数。</p>
@@ -587,12 +589,12 @@
 <blockquote>
 <p>在顶点着色器中完成的冯氏光照模型角Gouraud着色。它的效果不好，因为其颜色由插值决定。</p>
 </blockquote>
-<h3 id="代码"><a class="markdownIt-Anchor" href="#代码"></a> 代码</h3>
-<h4 id="世界空间下"><a class="markdownIt-Anchor" href="#世界空间下"></a> 世界空间下</h4>
+<h3 id="代码">代码</h3>
+<h4 id="世界空间下">世界空间下</h4>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">float</span> ambientStrength = <span class="hljs-number">0.1f</span>;<br>   <span class="hljs-type">float</span> specularStrength = <span class="hljs-number">0.5f</span>;<br>   <span class="hljs-type">int</span> shineness = <span class="hljs-number">32</span>;<br>   <span class="hljs-keyword">while</span>(!<span class="hljs-built_in">glfwWindowShouldClose</span>(window)) &#123;<br>       <span class="hljs-built_in">process_keyboard_input</span>(window);<br>       <span class="hljs-built_in">glClearColor</span>(<span class="hljs-number">0.2f</span>,<span class="hljs-number">0.3f</span>,<span class="hljs-number">0.4f</span>,<span class="hljs-number">1.0f</span>);<br>       <span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);<br>       shader.<span class="hljs-built_in">use</span>();<br>       shader.<span class="hljs-built_in">setVec3</span>(<span class="hljs-string">&quot;viewPos&quot;</span>,camera.Position.x,camera.Position.y,camera.Position.z);<br>       <span class="hljs-comment">//绘制imgui交互窗口</span><br>       <span class="hljs-built_in">imgui_frame_init</span>();<br>       <span class="hljs-keyword">if</span>(ImGui::<span class="hljs-built_in">Begin</span>(<span class="hljs-string">&quot;window&quot;</span>))&#123;<br>           ImGui::<span class="hljs-built_in">SliderFloat</span>(<span class="hljs-string">&quot;AmbientStrength&quot;</span>,&amp;ambientStrength,<span class="hljs-number">0.0f</span>,<span class="hljs-number">1.0f</span>);<br>           shader.<span class="hljs-built_in">setFloat</span>(<span class="hljs-string">&quot;ambientStrength&quot;</span>,ambientStrength);<br>           ImGui::<span class="hljs-built_in">SliderFloat</span>(<span class="hljs-string">&quot;SpecularStrength&quot;</span>,&amp;specularStrength,<span class="hljs-number">0.0f</span>,<span class="hljs-number">1.0f</span>);<br>           shader.<span class="hljs-built_in">setFloat</span>(<span class="hljs-string">&quot;specularStrength&quot;</span>,specularStrength);<br>           ImGui::<span class="hljs-built_in">SliderInt</span>(<span class="hljs-string">&quot;Shineness&quot;</span>,&amp;shineness,<span class="hljs-number">2</span>,<span class="hljs-number">256</span>);<br>           shader.<span class="hljs-built_in">setInt</span>(<span class="hljs-string">&quot;shineness&quot;</span>,shineness);<br>           ImGui::<span class="hljs-built_in">SliderFloat3</span>(<span class="hljs-string">&quot;LightPos&quot;</span>,glm::<span class="hljs-built_in">value_ptr</span>(lightPos),<span class="hljs-number">-3.0f</span>,<span class="hljs-number">3.0f</span>);<br>           ImGui::<span class="hljs-built_in">Checkbox</span>(<span class="hljs-string">&quot;canViewRotate(K to switch)&quot;</span>,&amp;canMove);<br>           ImGui::<span class="hljs-built_in">End</span>();<br>       &#125;<br>       <span class="hljs-type">float</span> currFrame=<span class="hljs-built_in">glfwGetTime</span>();<br>       deltaTime = currFrame-lastFrame;<br>       lastFrame = currFrame;<br>       <span class="hljs-comment">//变换</span><br>       glm::mat4 view = camera.<span class="hljs-built_in">GetViewMatrix</span>();<br>       glm::mat4 proj = glm::<span class="hljs-built_in">perspective</span>(glm::<span class="hljs-built_in">radians</span>(camera.Zoom), (<span class="hljs-type">float</span>)SCR_WIDTH / (<span class="hljs-type">float</span>)SCR_HEIGHT, <span class="hljs-number">0.1f</span>, <span class="hljs-number">100.0f</span>);<br>       shader.<span class="hljs-built_in">setMat4</span>(<span class="hljs-string">&quot;view&quot;</span>,view);<br>       shader.<span class="hljs-built_in">setMat4</span>(<span class="hljs-string">&quot;proj&quot;</span>,proj);<br>       <span class="hljs-comment">//绘制物体</span><br>       <span class="hljs-built_in">glBindVertexArray</span>(VAO);<br>       glm::mat4 model = glm::<span class="hljs-built_in">mat4</span>(<span class="hljs-number">1.0f</span>);<br>       shader.<span class="hljs-built_in">setMat4</span>(<span class="hljs-string">&quot;model&quot;</span>, model);<br>       shader.<span class="hljs-built_in">setVec3</span>(<span class="hljs-string">&quot;lightPos&quot;</span>,lightPos.x,lightPos.y,lightPos.z);<br>       <span class="hljs-built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="hljs-number">0</span>, <span class="hljs-number">36</span>);<br>   <span class="hljs-comment">//绘制光源</span><br>       <span class="hljs-built_in">glBindVertexArray</span>(lightVAO);<br>       lightShader.<span class="hljs-built_in">use</span>();<br>       lightShader.<span class="hljs-built_in">setMat4</span>(<span class="hljs-string">&quot;view&quot;</span>,view);<br>       lightShader.<span class="hljs-built_in">setMat4</span>(<span class="hljs-string">&quot;proj&quot;</span>,proj);<br>       model = glm::<span class="hljs-built_in">translate</span>(model,lightPos);<br>       model = glm::<span class="hljs-built_in">scale</span>(model,glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.5f</span>));<br>       lightShader.<span class="hljs-built_in">setMat4</span>(<span class="hljs-string">&quot;model&quot;</span>, model);<br>       <span class="hljs-built_in">glDrawArrays</span>(GL_TRIANGLES, <span class="hljs-number">0</span>, <span class="hljs-number">36</span>);<br>       <span class="hljs-built_in">imgui_end_draw</span>();<br>       <span class="hljs-comment">//收尾操作</span><br>       <span class="hljs-built_in">glfwSwapBuffers</span>(window);<br>       <span class="hljs-built_in">glfwPollEvents</span>();<br>   &#125;<br></code></pre></td></tr></table></figure>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">out</span> <span class="hljs-type">vec4</span> FragColor;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> norm;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> fragWorldPos;<br><br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> objectColor;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> lightColor;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">float</span> ambientStrength;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">float</span> specularStrength;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">int</span> shineness;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> lightPos;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> viewPos;<br><br><span class="hljs-type">void</span> main() &#123;<br>    <span class="hljs-comment">//漫反射光计算</span><br>    <span class="hljs-type">vec3</span> normal = <span class="hljs-built_in">normalize</span>(norm);<br>    <span class="hljs-type">vec3</span> lightDir = <span class="hljs-built_in">normalize</span>(lightPos-fragWorldPos);<br>    <span class="hljs-type">float</span> diffuseStrength = <span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(normal,lightDir),<span class="hljs-number">0.0</span>);<br>    <span class="hljs-type">vec3</span> diffuse = diffuseStrength*lightColor;<br>    <span class="hljs-comment">//环境光计算</span><br>    <span class="hljs-type">vec3</span> ambient = ambientStrength*lightColor;<br>    <span class="hljs-comment">//高光计算</span><br>    <span class="hljs-type">vec3</span> viewDir = <span class="hljs-built_in">normalize</span>(viewPos-fragWorldPos);<br>    <span class="hljs-type">vec3</span> reflectDir = <span class="hljs-built_in">reflect</span>(-lightDir,normal);<br>    <span class="hljs-type">vec3</span> specular = <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(reflectDir,viewDir),<span class="hljs-number">0.0</span>),shineness)*lightColor*specularStrength;<br>    FragColor = <span class="hljs-type">vec4</span>((ambient+diffuse+specular)*objectColor,<span class="hljs-number">1.0</span>f);<br>&#125;<br><br></code></pre></td></tr></table></figure>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">0</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> aPos;<br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">1</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> aNorm;<br><br><span class="hljs-keyword">uniform</span> <span class="hljs-type">mat4</span> model;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">mat4</span> view;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">mat4</span> proj;<br><span class="hljs-keyword">out</span> <span class="hljs-type">vec3</span> norm;<br><span class="hljs-keyword">out</span> <span class="hljs-type">vec3</span> fragWorldPos;<br><br><span class="hljs-type">void</span> main()<br>&#123;<br>    <span class="hljs-built_in">gl_Position</span> = proj * view * model * <span class="hljs-type">vec4</span>(aPos, <span class="hljs-number">1.0</span>);<br>    fragWorldPos = (model*<span class="hljs-type">vec4</span>(aPos,<span class="hljs-number">1.0</span>f)).xyz;<br>    norm = aNorm;<br>&#125;<br></code></pre></td></tr></table></figure>
-<h4 id="观察空间下"><a class="markdownIt-Anchor" href="#观察空间下"></a> 观察空间下</h4>
+<h4 id="观察空间下">观察空间下</h4>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">out</span> <span class="hljs-type">vec4</span> FragColor;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> norm;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> fragViewPos;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> lightViewPos;<br><br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> objectColor;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> lightColor;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">float</span> ambientStrength;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">float</span> specularStrength;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">int</span> shineness;<br><br><span class="hljs-type">void</span> main() &#123;<br>    <span class="hljs-comment">//漫反射光计算</span><br>    <span class="hljs-type">vec3</span> normal = <span class="hljs-built_in">normalize</span>(norm);<br>    <span class="hljs-type">vec3</span> lightDir = <span class="hljs-built_in">normalize</span>(lightViewPos-fragViewPos);<br>    <span class="hljs-type">float</span> diffuseStrength = <span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(normal,lightDir),<span class="hljs-number">0.0</span>);<br>    <span class="hljs-type">vec3</span> diffuse = diffuseStrength*lightColor;<br>    <span class="hljs-comment">//环境光计算</span><br>    <span class="hljs-type">vec3</span> ambient = ambientStrength*lightColor;<br>    <span class="hljs-comment">//高光计算</span><br>    <span class="hljs-type">vec3</span> viewDir = <span class="hljs-built_in">normalize</span>(-fragViewPos);<br>    <span class="hljs-type">vec3</span> reflectDir = <span class="hljs-built_in">reflect</span>(-lightDir,normal);<br>    <span class="hljs-type">vec3</span> specular = <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(reflectDir,viewDir),<span class="hljs-number">0.0</span>),shineness)*lightColor*specularStrength;<br>    FragColor = <span class="hljs-type">vec4</span>((ambient+diffuse+specular)*objectColor,<span class="hljs-number">1.0</span>f);<br>&#125;<br></code></pre></td></tr></table></figure>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">0</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> aPos;<br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">1</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> aNorm;<br><br><span class="hljs-keyword">uniform</span> <span class="hljs-type">mat4</span> model;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">mat4</span> view;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">mat4</span> proj;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> lightPos;<br><span class="hljs-keyword">out</span> <span class="hljs-type">vec3</span> norm;<br><span class="hljs-keyword">out</span> <span class="hljs-type">vec3</span> fragViewPos;<br><span class="hljs-keyword">out</span> <span class="hljs-type">vec3</span> lightViewPos;<br><br><span class="hljs-type">void</span> main()<br>&#123;<br>    <span class="hljs-built_in">gl_Position</span> = proj * view * model * <span class="hljs-type">vec4</span>(aPos, <span class="hljs-number">1.0</span>);<br>    fragViewPos = (view*model*<span class="hljs-type">vec4</span>(aPos,<span class="hljs-number">1.0</span>f)).xyz;<br>    lightViewPos = (view*<span class="hljs-type">vec4</span>(lightPos,<span class="hljs-number">1.0</span>f)).xyz;<br>    norm =  <span class="hljs-type">mat3</span>(<span class="hljs-built_in">transpose</span>(<span class="hljs-built_in">inverse</span>(view * model)))*aNorm; <span class="hljs-comment">//关键在于使用法线矩阵变换法线位置</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -736,6 +738,11 @@
 
 
   
+
+
+  
+  
+
 
 
 
