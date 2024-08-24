@@ -1,0 +1,792 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/tagIcon.png">
+  <link rel="icon" href="/img/tagIcon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yoi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="快速过一遍。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LearnOpenGL学习笔记（十二） - 万向阴影贴图、法线贴图与视差贴图">
+<meta property="og:url" content="http://example.com/2024/08/24/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%BA%8C%EF%BC%89-%E4%B8%87%E5%90%91%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE%E3%80%81%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE%E4%B8%8E%E8%A7%86%E5%B7%AE%E8%B4%B4%E5%9B%BE/index.html">
+<meta property="og:site_name" content="Yoi&#39;s Home">
+<meta property="og:description" content="快速过一遍。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408141858939.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151334023.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151351731.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151422972.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151442948.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151719400.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151838862.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151840267.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151931928.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408152006600.png">
+<meta property="og:image" content="https://learnopengl-cn.github.io/img/05/05/parallax_mapping_steep_parallax_mapping_diagram.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408191402588.png">
+<meta property="article:published_time" content="2024-08-24T10:34:08.000Z">
+<meta property="article:modified_time" content="2024-08-24T10:35:55.756Z">
+<meta property="article:author" content="Yoi">
+<meta property="article:tag" content="图形学">
+<meta property="article:tag" content="OpenGL">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408141858939.png">
+  
+  
+  
+  <title>LearnOpenGL学习笔记（十二） - 万向阴影贴图、法线贴图与视差贴图 - Yoi&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>攸一的文书档案</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202401261945400.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LearnOpenGL学习笔记（十二） - 万向阴影贴图、法线贴图与视差贴图"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-24 18:34" pubdate>
+          2024年8月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          32 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LearnOpenGL学习笔记（十二） - 万向阴影贴图、法线贴图与视差贴图</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年8月24日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>快速过一遍。<br>
+<span id="more"></span></p>
+<h3 id="点光源阴影">点光源阴影</h3>
+<p>对于平行光，我们只需要考虑一个方向。但点光源就需要考虑所有方向了。Cube Map这时候就派上用场了。</p>
+<p>我们以点光源为原点，以90的FOV对六个方向进行深度图渲染，然后将其拼接为CubeMap，供方向向量采样。具体如下：</p>
+<p>首先，创建立方体贴图，绑定至目标<code>GL_TEXTURE_CUBE_MAP</code>，然后创建六个数据值为NULL的2D纹理，映射到CubeMap的六个面上：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c++">GLuint depthCubemap;<br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>, &amp;depthCubemap);<br><span class="hljs-type">const</span> GLuint SHADOW_WIDTH = <span class="hljs-number">1024</span>, SHADOW_HEIGHT = <span class="hljs-number">1024</span>;<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP, depthCubemap);<br><span class="hljs-keyword">for</span> (GLuint i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">6</span>; ++i)<br>        <span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, <span class="hljs-number">0</span>, GL_DEPTH_COMPONENT, <br>                     SHADOW_WIDTH, SHADOW_HEIGHT, <span class="hljs-number">0</span>, GL_DEPTH_COMPONENT, GL_FLOAT, <span class="hljs-literal">NULL</span>);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);<br><span class="hljs-comment">//注意CubeMap的R分量也要设置环绕方式</span><br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);<br></code></pre></td></tr></table></figure>
+<p>接着，绑定光空间渲染帧缓冲，并将CubeMap作为帧缓冲的纹理附件，类型为<code>GL_DEPTH_ATTACHMENT</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, depthMapFBO);<br><span class="hljs-built_in">glFramebufferTexture</span>(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, <span class="hljs-number">0</span>);<br><span class="hljs-comment">// 当不需要颜色缓冲时，就调用下面两行</span><br><span class="hljs-built_in">glDrawBuffer</span>(GL_NONE);<br><span class="hljs-built_in">glReadBuffer</span>(GL_NONE);<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+<p>随后，进行光空间变换。由于CubeMap存在六个面，所以需要创建六个观察矩阵：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c++">GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;<br>GLfloat near = <span class="hljs-number">1.0f</span>;<br>GLfloat far = <span class="hljs-number">25.0f</span>;<br>glm::mat4 shadowProj = glm::<span class="hljs-built_in">perspective</span>(glm::<span class="hljs-built_in">radians</span>(<span class="hljs-number">90.0f</span>), aspect, near, far);<br>std::vector&lt;glm::mat4&gt; shadowTransforms;<br>shadowTransforms.<span class="hljs-built_in">push_back</span>(shadowProj * <br>                 glm::<span class="hljs-built_in">lookAt</span>(lightPos, lightPos + glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">1.0</span>,<span class="hljs-number">0.0</span>,<span class="hljs-number">0.0</span>), glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">-1.0</span>,<span class="hljs-number">0.0</span>)));<br>shadowTransforms.<span class="hljs-built_in">push_back</span>(shadowProj * <br>                 glm::<span class="hljs-built_in">lookAt</span>(lightPos, lightPos + glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">-1.0</span>,<span class="hljs-number">0.0</span>,<span class="hljs-number">0.0</span>), glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">-1.0</span>,<span class="hljs-number">0.0</span>)));<br>shadowTransforms.<span class="hljs-built_in">push_back</span>(shadowProj * <br>                 glm::<span class="hljs-built_in">lookAt</span>(lightPos, lightPos + glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">1.0</span>,<span class="hljs-number">0.0</span>), glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">0.0</span>,<span class="hljs-number">1.0</span>)));<br>shadowTransforms.<span class="hljs-built_in">push_back</span>(shadowProj * <br>                 glm::<span class="hljs-built_in">lookAt</span>(lightPos, lightPos + glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">-1.0</span>,<span class="hljs-number">0.0</span>), glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">0.0</span>,<span class="hljs-number">-1.0</span>)));<br>shadowTransforms.<span class="hljs-built_in">push_back</span>(shadowProj * <br>                 glm::<span class="hljs-built_in">lookAt</span>(lightPos, lightPos + glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">0.0</span>,<span class="hljs-number">1.0</span>), glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">-1.0</span>,<span class="hljs-number">0.0</span>)));<br>shadowTransforms.<span class="hljs-built_in">push_back</span>(shadowProj * <br>                 glm::<span class="hljs-built_in">lookAt</span>(lightPos, lightPos + glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">0.0</span>,<span class="hljs-number">-1.0</span>), glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0</span>,<span class="hljs-number">-1.0</span>,<span class="hljs-number">0.0</span>)));<br></code></pre></td></tr></table></figure>
+<p>然后，把shadowTransforms中的六个变换矩阵发送到着色器。</p>
+<p>在这里，我们需要使用几何着色器，将原来的三角形图元变换到六个坐标系下，并分别在这些坐标系下生成新的图元，供片段着色器使用。</p>
+<p>对于顶点着色器，由于坐标变换在几何着色器中完成，所以只需要进行世界坐标变换即可。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">0</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> position;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">mat4</span> model;<br><span class="hljs-type">void</span> main()<br>&#123;<br>    <span class="hljs-built_in">gl_Position</span> = model * <span class="hljs-type">vec4</span>(position, <span class="hljs-number">1.0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>几何着色器接收六元素的光坐标变换矩阵数组，对gl_Position进行坐标变换，然后发射顶点。</p>
+<blockquote>
+<p>为什么要经过几何着色器，而非直接在片段着色器进行六次变换？</p>
+<p>在片段着色器中处理六个不同的光变换矩阵会导致冗余计算，因为每个片段都需要判断其应属于哪个方向的阴影贴图。而几何着色器可以一次处理六个光方向变换，减少了片段着色器的调用次数，减少了性能开销。</p>
+<p>但在某些显卡驱动上，几何着色器速度比较慢。所以得看具体情况。</p>
+</blockquote>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">triangles</span>) <span class="hljs-keyword">in</span>;<br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">triangle_strip</span>, <span class="hljs-keyword">max_vertices</span>=<span class="hljs-number">18</span>) <span class="hljs-keyword">out</span>; <span class="hljs-comment">//共计6*3=18个顶点</span><br><span class="hljs-keyword">uniform</span> <span class="hljs-type">mat4</span> shadowMatrices[<span class="hljs-number">6</span>];<br><span class="hljs-keyword">out</span> <span class="hljs-type">vec4</span> FragPos;<br><span class="hljs-type">void</span> main()&#123;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> face = <span class="hljs-number">0</span>; face &lt; <span class="hljs-number">6</span>; ++face)&#123;<br>        <span class="hljs-comment">//gl_Layer指定了发送图元到CubeMap的哪个面</span><br>        <span class="hljs-built_in">gl_Layer</span> = face;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; ++i)&#123;<br>            FragPos = <span class="hljs-built_in">gl_in</span>[i].<span class="hljs-built_in">gl_Position</span>;<br>            <span class="hljs-built_in">gl_Position</span> = shadowMatrices[face] * FragPos;<br>            <span class="hljs-built_in">EmitVertex</span>();<br>        &#125;    <br>        <span class="hljs-built_in">EndPrimitive</span>();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>这一步是如何运作的？</p>
+<p>我们想象一下，一个固定视角的摄像机。六个变换，都会把各自方向上应当渲染的物体变换到摄像机正前方。六次变换完毕后，相当于六个场景的物体都挤在一起，叠加在正前方。六个场景的物体都有一个Tag（gl_Layer，指定了当前图元在CubeMap中处于的面)，每次只渲染其中的一个Tag到CubeMap上，直到六个面都渲染完为止。</p>
+</blockquote>
+<p>接下来我们手动配置片段深度，在片段着色器中完成：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">in</span> <span class="hljs-type">vec4</span> FragPos;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> lightPos;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">float</span> far_plane;<br><span class="hljs-type">void</span> main()&#123;<br>    <span class="hljs-comment">// get distance between fragment and light source</span><br>    <span class="hljs-type">float</span> lightDistance = <span class="hljs-built_in">length</span>(FragPos.xyz - lightPos);<br>    <span class="hljs-comment">// map to [0;1] range by dividing by far_plane</span><br>    lightDistance = lightDistance / far_plane;<br>    <span class="hljs-comment">// write this as modified depth</span><br>    <span class="hljs-built_in">gl_FragDepth</span> = lightDistance;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>随后，CubeMap深度贴图生成完毕，进入渲染阶段。</p>
+<p>与2D纹理深度贴图类似，使用<code>glActiveTexture</code>和<code>glBindTexture</code>绑定CubeMap材质。</p>
+<p>然后，修改顶点着色器，使其按照类似于无阴影时的方式，用MVP矩阵变换顶点坐标并传给片段着色器：<code>gl_Position = projection * view * model * vec4(position, 1.0f);</code></p>
+<p>对于片段着色器，将原本depthMap uniform的类型变更为samplerCube，并用FragPos作为采样向量即可。</p>
+<p>新的阴影计算函数：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">float</span> ShadowCalculation(<span class="hljs-type">vec3</span> fragPos)&#123;<br>    <span class="hljs-type">vec3</span> fragToLight = fragPos - lightPos;<br>    <span class="hljs-comment">//对CubeMap采样的方向向量无需归一化</span><br>    <span class="hljs-type">float</span> closestDepth = <span class="hljs-built_in">texture</span>(depthMap, fragToLight).r;<br>    <span class="hljs-comment">//变换深度值从[0,1]到[0,far_plane]</span><br>    closestDepth *= far_plane;<br>    <span class="hljs-comment">//手动计算当前深度值，即片段到光源的距离</span><br>    <span class="hljs-type">float</span> currentDepth = <span class="hljs-built_in">length</span>(fragToLight);<br>    <span class="hljs-type">float</span> bias = <span class="hljs-number">0.05</span>; <br>    <span class="hljs-type">float</span> shadow = currentDepth -  bias &gt; closestDepth ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span>;<br>    <span class="hljs-keyword">return</span> shadow;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="踩坑">踩坑</h4>
+<ul>
+<li>传递给几何着色器的光变换矩阵的投影矩阵的近平面不能过大，最好&lt;0.5f。</li>
+<li><code>CalculateShadow()</code>函数的返回值应当One Minus后再乘以各光照分量。</li>
+<li>光空间帧缓冲渲染所用的顶点着色器只需要对传入的顶点位置做世界空间变换。</li>
+<li>渲染光空间帧缓冲时，需要调整<code>glViewPort</code>至阴影贴图的分辨率。</li>
+</ul>
+<h4 id="PCF">PCF</h4>
+<p>与单阴影贴图类似，万向阴影贴图同样存在由于贴图分辨率导致的阴影走样问题。可以使用PCF技术，对周围像素采样、平均，减少走样程度：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">float</span> shadow = <span class="hljs-number">0.0</span>;<br><span class="hljs-type">float</span> bias = <span class="hljs-number">0.05</span>; <br><span class="hljs-type">float</span> samples = <span class="hljs-number">4.0</span>; <span class="hljs-comment">//每个维度的采样次数</span><br><span class="hljs-type">float</span> offset = <span class="hljs-number">0.1</span>;<br><span class="hljs-keyword">for</span>(<span class="hljs-type">float</span> x = -offset; x &lt; offset; x += offset / (samples * <span class="hljs-number">0.5</span>))&#123;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">float</span> y = -offset; y &lt; offset; y += offset / (samples * <span class="hljs-number">0.5</span>))&#123;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">float</span> z = -offset; z &lt; offset; z += offset / (samples * <span class="hljs-number">0.5</span>))&#123;<br>            <span class="hljs-type">float</span> closestDepth = <span class="hljs-built_in">texture</span>(depthMap, fragToLight + <span class="hljs-built_in">vec3</span>(x, y, z)).r; <br>            closestDepth *= far_plane;   <span class="hljs-comment">// Undo mapping [0;1]</span><br>            <span class="hljs-keyword">if</span>(currentDepth - bias &gt; closestDepth)<br>                shadow += <span class="hljs-number">1.0</span>;<br>        &#125;<br>    &#125;<br>&#125;<br>shadow /= (samples * samples * samples);<br></code></pre></td></tr></table></figure>
+<p>然而，上面的代码对每个片段都需要采样4*4*4=64次，性能开销大。我们需要抛弃一些彼此距离非常近的采样点，转而使用彼此分的比较开的采样点。为此，我们设定一个采样方向数组，里面包含了若干个vec3，彼此分离的很开，并且指向不同的方向。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">vec3</span> sampleOffsetDirections[<span class="hljs-number">20</span>] = <span class="hljs-type">vec3</span>[]<br>(<br>   <span class="hljs-type">vec3</span>( <span class="hljs-number">1</span>,  <span class="hljs-number">1</span>,  <span class="hljs-number">1</span>), <span class="hljs-type">vec3</span>( <span class="hljs-number">1</span>, <span class="hljs-number">-1</span>,  <span class="hljs-number">1</span>), <span class="hljs-type">vec3</span>(<span class="hljs-number">-1</span>, <span class="hljs-number">-1</span>,  <span class="hljs-number">1</span>), <span class="hljs-type">vec3</span>(<span class="hljs-number">-1</span>,  <span class="hljs-number">1</span>,  <span class="hljs-number">1</span>), <br>   <span class="hljs-type">vec3</span>( <span class="hljs-number">1</span>,  <span class="hljs-number">1</span>, <span class="hljs-number">-1</span>), <span class="hljs-type">vec3</span>( <span class="hljs-number">1</span>, <span class="hljs-number">-1</span>, <span class="hljs-number">-1</span>), <span class="hljs-type">vec3</span>(<span class="hljs-number">-1</span>, <span class="hljs-number">-1</span>, <span class="hljs-number">-1</span>), <span class="hljs-type">vec3</span>(<span class="hljs-number">-1</span>,  <span class="hljs-number">1</span>, <span class="hljs-number">-1</span>),<br>   <span class="hljs-type">vec3</span>( <span class="hljs-number">1</span>,  <span class="hljs-number">1</span>,  <span class="hljs-number">0</span>), <span class="hljs-type">vec3</span>( <span class="hljs-number">1</span>, <span class="hljs-number">-1</span>,  <span class="hljs-number">0</span>), <span class="hljs-type">vec3</span>(<span class="hljs-number">-1</span>, <span class="hljs-number">-1</span>,  <span class="hljs-number">0</span>), <span class="hljs-type">vec3</span>(<span class="hljs-number">-1</span>,  <span class="hljs-number">1</span>,  <span class="hljs-number">0</span>),<br>   <span class="hljs-type">vec3</span>( <span class="hljs-number">1</span>,  <span class="hljs-number">0</span>,  <span class="hljs-number">1</span>), <span class="hljs-type">vec3</span>(<span class="hljs-number">-1</span>,  <span class="hljs-number">0</span>,  <span class="hljs-number">1</span>), <span class="hljs-type">vec3</span>( <span class="hljs-number">1</span>,  <span class="hljs-number">0</span>, <span class="hljs-number">-1</span>), <span class="hljs-type">vec3</span>(<span class="hljs-number">-1</span>,  <span class="hljs-number">0</span>, <span class="hljs-number">-1</span>),<br>   <span class="hljs-type">vec3</span>( <span class="hljs-number">0</span>,  <span class="hljs-number">1</span>,  <span class="hljs-number">1</span>), <span class="hljs-type">vec3</span>( <span class="hljs-number">0</span>, <span class="hljs-number">-1</span>,  <span class="hljs-number">1</span>), <span class="hljs-type">vec3</span>( <span class="hljs-number">0</span>, <span class="hljs-number">-1</span>, <span class="hljs-number">-1</span>), <span class="hljs-type">vec3</span>( <span class="hljs-number">0</span>,  <span class="hljs-number">1</span>, <span class="hljs-number">-1</span>)<br>);<br><span class="hljs-type">float</span> shadow = <span class="hljs-number">0.0</span>;<br><span class="hljs-type">float</span> bias = <span class="hljs-number">0.15</span>;<br><span class="hljs-type">int</span> samples = <span class="hljs-number">20</span>;<br><span class="hljs-type">float</span> viewDistance = <span class="hljs-built_in">length</span>(viewPos - fragPos);<br><span class="hljs-comment">//此处diskRadius就是offset</span><br><span class="hljs-comment">//这里采样的技巧是，当观察者距离片段越远，阴影越柔和，否则越锐利</span><br><span class="hljs-type">float</span> diskRadius = (<span class="hljs-number">1.0</span> + (viewDistance / far_plane)) / <span class="hljs-number">25.0</span>; <br><span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; samples; ++i)<br>&#123;<br>    <span class="hljs-type">float</span> closestDepth = <span class="hljs-built_in">texture</span>(depthMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;<br>    closestDepth *= far_plane;   <span class="hljs-comment">// Undo mapping [0;1]</span><br>    <span class="hljs-keyword">if</span>(currentDepth - bias &gt; closestDepth)<br>        shadow += <span class="hljs-number">1.0</span>;<br>&#125;<br>shadow /= <span class="hljs-type">float</span>(samples);<br></code></pre></td></tr></table></figure>
+<h2 id="法线贴图">法线贴图</h2>
+<p>法线贴图（Normal Map）用于对顶点的法线作手动偏移。</p>
+<p>类似于漫反射和镜面贴图，法线贴图是一个2D纹理，它的每个像素的颜色是一个vec3（颜色的r、g、b值，刚好是三个分量），代表着使用此处纹理坐标采样的片段的法线。</p>
+<p>法线向量的范围在[-1,1]，而RGB颜色的值在[0,1]，所以要先进行处理：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">vec3</span> rgb_normal = normal * <span class="hljs-number">0.5</span> + <span class="hljs-number">0.5</span>; <span class="hljs-comment">// 从法线向量转换为颜色向量</span><br><span class="hljs-comment">// 或</span><br><span class="hljs-type">vec3</span> normal = (rgb_normal - <span class="hljs-number">0.5</span>) / <span class="hljs-number">0.5</span> <span class="hljs-comment">//从颜色向量转换为法线向量</span><br></code></pre></td></tr></table></figure>
+<p>法线贴图看起来是这样的：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408141858939.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>一般法线贴图都偏向蓝色，因为正对“屏幕外”的法线指向(0,0,1)，即Z轴，这是一种偏向蓝色的颜色。对于偏“上方”的法线，指向Y轴(0,1,0)，就偏绿。</p>
+<p>但是，要想让复杂模型正确应用法线贴图，就需要把采样得到的法线值进行坐标变换。</p>
+<p>法线贴图中存储的法线向量处于<strong>切线空间</strong>（Tangent Space）。在切线空间中，法线永远指向正Z方向。</p>
+<p>将切线空间的Z方向和顶点法线方向对齐的变换矩阵叫做<strong>TBN矩阵</strong>（Tangent、Bitangent、Normal）。顾名思义，构建此矩阵需要三个向量：法线向量N、切线向量T、副切线向量B。</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151334023.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>法线向量可以直接从顶点属性中获取。其余两个向量需要计算获得。</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151351731.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>如图，三角形边E1、E2可以被看做是切线向量T和副切线向量B的线性组合：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151422972.png" srcset="/img/loading.gif" lazyload alt="image-20240815142253689"></p>
+<p>转换为矩阵乘法：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151442948.png" srcset="/img/loading.gif" lazyload alt="image-20240815144221678"></p>
+<p>变换（乘逆矩阵）可得：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151719400.png" srcset="/img/loading.gif" lazyload alt="image-20240815171907132"></p>
+<p>由此，可计算出T和B。</p>
+<p>代码形式如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// positions</span><br><span class="hljs-function">glm::vec3 <span class="hljs-title">pos1</span><span class="hljs-params">(<span class="hljs-number">-1.0</span>,  <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>)</span></span>;<br><span class="hljs-function">glm::vec3 <span class="hljs-title">pos2</span><span class="hljs-params">(<span class="hljs-number">-1.0</span>, <span class="hljs-number">-1.0</span>, <span class="hljs-number">0.0</span>)</span></span>;<br><span class="hljs-function">glm::vec3 <span class="hljs-title">pos3</span><span class="hljs-params">(<span class="hljs-number">1.0</span>, <span class="hljs-number">-1.0</span>, <span class="hljs-number">0.0</span>)</span></span>;<br><span class="hljs-function">glm::vec3 <span class="hljs-title">pos4</span><span class="hljs-params">(<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>)</span></span>;<br><span class="hljs-comment">// texture coordinates</span><br><span class="hljs-function">glm::vec2 <span class="hljs-title">uv1</span><span class="hljs-params">(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>)</span></span>;<br><span class="hljs-function">glm::vec2 <span class="hljs-title">uv2</span><span class="hljs-params">(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>)</span></span>;<br><span class="hljs-function">glm::vec2 <span class="hljs-title">uv3</span><span class="hljs-params">(<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>)</span></span>;<br><span class="hljs-function">glm::vec2 <span class="hljs-title">uv4</span><span class="hljs-params">(<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>)</span></span>;<br><span class="hljs-comment">// normal vector</span><br><span class="hljs-function">glm::vec3 <span class="hljs-title">nm</span><span class="hljs-params">(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>)</span></span>;<br>glm::vec3 edge1 = pos2 - pos1; <span class="hljs-comment">//E1</span><br>glm::vec3 edge2 = pos3 - pos1; <span class="hljs-comment">//E2</span><br>glm::vec2 deltaUV1 = uv2 - uv1; <span class="hljs-comment">//ΔU</span><br>glm::vec2 deltaUV2 = uv3 - uv1; <span class="hljs-comment">//ΔV</span><br>GLfloat f = <span class="hljs-number">1.0f</span> / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);<br><span class="hljs-comment">//计算三角形1的切线与副切线</span><br>tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);<br>tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);<br>tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);<br>tangent1 = glm::<span class="hljs-built_in">normalize</span>(tangent1);<br>bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);<br>bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);<br>bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);<br>bitangent1 = glm::<span class="hljs-built_in">normalize</span>(bitangent1);  <br><br>[...] <span class="hljs-comment">// 对平面的第二个三角形采用类似步骤计算切线和副切线</span><br></code></pre></td></tr></table></figure>
+<p>我们把计算得到的切线、副切线向量作为顶点属性传递给顶点着色器，供顶点着色器构造TBN矩阵：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">0</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> position;<br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">1</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> normal;<br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">2</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec2</span> texCoords;<br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">3</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> tangent;<br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">4</span>) <span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> bitangent; <span class="hljs-comment">//实际上，副切线向量可以用cross(T,N)得到，无需传递</span><br><span class="hljs-type">void</span> main()<br>&#123;<br>   [...]<br>   <span class="hljs-type">vec3</span> T = <span class="hljs-built_in">normalize</span>(<span class="hljs-type">vec3</span>(model * <span class="hljs-type">vec4</span>(tangent,   <span class="hljs-number">0.0</span>)));<br>   <span class="hljs-type">vec3</span> B = <span class="hljs-built_in">normalize</span>(<span class="hljs-type">vec3</span>(model * <span class="hljs-type">vec4</span>(bitangent, <span class="hljs-number">0.0</span>)));<br>   <span class="hljs-type">vec3</span> N = <span class="hljs-built_in">normalize</span>(<span class="hljs-type">vec3</span>(model * <span class="hljs-type">vec4</span>(normal,    <span class="hljs-number">0.0</span>)));<br>   <span class="hljs-type">mat3</span> TBN = <span class="hljs-type">mat3</span>(T, B, N)<br>   [...]<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>一种方式是将TBN矩阵传递至片段着色器，将采样得到的法线乘以TBN矩阵，将其从切线空间变换到世界空间。但这种方式在片段着色器中引入了矩阵乘法，增加了许多性能开销。</p>
+<p>第二种方式是在顶点着色器中，首先获取TBN矩阵的逆矩阵（由于TBN正交，所以获取其transpose矩阵即可），然后用这个逆矩阵把光照方向、观察方向等相关向量变换到切线空间，再传递给片段着色器。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-keyword">out</span> VS_OUT &#123;<br>    <span class="hljs-type">vec3</span> FragPos;<br>    <span class="hljs-type">vec2</span> TexCoords;<br>    <span class="hljs-type">vec3</span> TangentLightPos;<br>    <span class="hljs-type">vec3</span> TangentViewPos;<br>    <span class="hljs-type">vec3</span> TangentFragPos;<br>&#125; vs_out;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> lightPos;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> viewPos;<br>[...]<br><span class="hljs-type">void</span> main()<br>&#123;    <br>    [...]<br>    <span class="hljs-type">mat3</span> TBN = <span class="hljs-built_in">transpose</span>(<span class="hljs-type">mat3</span>(T, B, N));<br>    vs_out.TangentLightPos = TBN * lightPos;<br>    vs_out.TangentViewPos  = TBN * viewPos;<br>    vs_out.TangentFragPos  = TBN * <span class="hljs-type">vec3</span>(model * <span class="hljs-type">vec4</span>(position, <span class="hljs-number">0.0</span>));<br>    [...]<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="Assimpt-API">Assimpt API</h3>
+<p>使用Assimp的importer进行模型导入时，使用<code>aiProcess_CalcTangentSpace</code>的Flag，即可自动为每个顶点计算切线与副切线向量，并使用<code>aiMesh</code>类的<code>mTangents[i]</code>获取切线向量，使用<code>mBitangents[i]</code>获取副切线向量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">const</span> aiScene* scene = importer.<span class="hljs-built_in">ReadFile</span>(<br>    path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace<br>);<br></code></pre></td></tr></table></figure>
+<p><strong>Assimp无法使用<code>aiTextureType_NORMAL</code>加载.obj的法线贴图，而是得使用<code>aiTextureType_HEIGHT</code>。</strong></p>
+<h3 id="施密特正交化">施密特正交化</h3>
+<p>当法线贴图应用到高面数模型时，通过类似于采样周边像素的方式对法线进行平均化能获得较平滑的结果。但是，这会导致TBN矩阵并非正交矩阵。</p>
+<p>可以使用施密特正交化让TBN向量重新相互正交。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">vec3</span> T = <span class="hljs-built_in">normalize</span>(<span class="hljs-type">vec3</span>(model * <span class="hljs-type">vec4</span>(tangent, <span class="hljs-number">0.0</span>)));<br><span class="hljs-type">vec3</span> N = <span class="hljs-built_in">normalize</span>(<span class="hljs-type">vec3</span>(model * <span class="hljs-type">vec4</span>(normal, <span class="hljs-number">0.0</span>)));<br><span class="hljs-comment">// re-orthogonalize T with respect to N</span><br>T = <span class="hljs-built_in">normalize</span>(T - <span class="hljs-built_in">dot</span>(T, N) * N);<br><span class="hljs-comment">// then retrieve perpendicular vector B with the cross product of T and N</span><br><span class="hljs-type">vec3</span> B = <span class="hljs-built_in">cross</span>(T, N);<br><span class="hljs-type">mat3</span> TBN = <span class="hljs-type">mat3</span>(T, B, N)<br></code></pre></td></tr></table></figure>
+<h2 id="视差贴图">视差贴图</h2>
+<p>法线贴图只是对光照的欺骗操作，而视差贴图（Paralax Mapping）则让平面贴图真正“拥有”深度。</p>
+<p>视差贴图与光照无关，它根据存储在纹理中的几何信息对顶点进行偏移。</p>
+<p>然而，一个平面基本不会有那么多顶点用于偏移。实际上，视差贴图是通过修改纹理坐标来让片段看起来比实际的更高或者更低的。如图：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151838862.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>红线代表视差贴图中的数值，V代表<code>ViewDir</code>，A代表片段位置。视差贴图的目的是，渲染片段A时，不再使用A处的纹理坐标，而是使用B处的。实现方式如下：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151840267.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>采样视差贴图的A处，可以得到H(A)，代表着对<code>viewDir</code>向量（原V向量）进行缩放后的长度。缩放后得到向量P。</p>
+<p>随后，得到向量P在视差贴图上的投影，取其长度作为纹理坐标偏移值。</p>
+<blockquote>
+<p>为什么这个能work？</p>
+<p>对于现实中的物体，我们看向A处时，实际上只会看到B。我们通过这种方法偏移纹理坐标，最终采样的位置十分接近B。H(P)点与B越接近，效果越接近现实。</p>
+</blockquote>
+<p>但是，我们在视差贴图的采样过程中引入了另一个坐标空间，在这个空间中，P向量的x、y分量总是与贴图表面对齐。当表面被旋转后，由于坐标空间未变化，我们会得到错误的结果。</p>
+<p>为了解决这一问题，视差贴图往往是在切线空间实现的。我们要做的就是把<code>V</code>向量转换到切线空间。</p>
+<h3 id="实现">实现</h3>
+<p>视差贴图需要与法线贴图结合使用，因为如果光照与视差效果不匹配，就很出戏了。</p>
+<p>一般情况下，我们用“深度”图而非“高度”图作为视差贴图。如下：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408151931928.png" srcset="/img/loading.gif" lazyload alt="视差贴图示意"></p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">vec2</span> ParallaxMapping(<span class="hljs-type">vec2</span> texCoords, <span class="hljs-type">vec3</span> viewDir)<br>&#123; <br>    <span class="hljs-type">float</span> height =  <span class="hljs-built_in">texture</span>(depthMap, texCoords).r;    <br>    <span class="hljs-type">vec2</span> p = viewDir.xy / viewDir.z * (height * height_scale);<br>    <span class="hljs-keyword">return</span> texCoords - p;    <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上面是一种相对简单的视差函数实现。其中，<code>viewDir.xy / viewDir.z</code>求取的是<code>viewDir</code>在z轴方向的“倾斜度”。当<code>viewDir</code>与纹理表面越平行，获取的偏移向量<code>p</code>就越大。这个函数返回偏移以后的纹理坐标，我们使用这个纹理坐标采样漫反射贴图。</p>
+<h3 id="陡峭视差映射">陡峭视差映射</h3>
+<p>在表面高度变化较大的情况下，会出现一些不好的结果。原理图如下：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408152006600.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>当蓝点与H(P)点距离越大时，画面表现就越不真实。为解决这一问题，我们引入陡峭视差映射（Steep Parallax Mapping）技术：</p>
+<p><img src="https://learnopengl-cn.github.io/img/05/05/parallax_mapping_steep_parallax_mapping_diagram.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>SPM技术的基本思想是，把总深度范围划分为若干层，每采样一次，便移动纹理坐标，并下降一层继续采样，直到采样深度小于当前层的深度值为止。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">vec2</span> ParallaxMapping(<span class="hljs-type">vec2</span> texCoords, <span class="hljs-type">vec3</span> viewDir)<br>&#123; <br>    <span class="hljs-keyword">const</span> <span class="hljs-type">float</span> minLayers = <span class="hljs-number">8</span>;<br>    <span class="hljs-keyword">const</span> <span class="hljs-type">float</span> maxLayers = <span class="hljs-number">32</span>;<br>    <span class="hljs-type">float</span> numLayers = <span class="hljs-built_in">mix</span>(maxLayers, minLayers, <span class="hljs-built_in">abs</span>(<span class="hljs-built_in">dot</span>(<span class="hljs-type">vec3</span>(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>), viewDir)));<br>    <span class="hljs-type">float</span> layerDepth = <span class="hljs-number">1.0</span> / numLayers;<br>    <span class="hljs-type">float</span> currentLayerDepth = <span class="hljs-number">0.0</span>;<br>    <span class="hljs-type">vec2</span> P = viewDir.xy * height_scale; <br>    <span class="hljs-type">vec2</span> deltaTexCoords = P / numLayers;<br>	<span class="hljs-type">vec2</span>  currentTexCoords     = texCoords;<br>	<span class="hljs-type">float</span> currentDepthMapValue = <span class="hljs-built_in">texture</span>(depthMap, currentTexCoords).r;<br>	<span class="hljs-keyword">while</span>(currentLayerDepth &lt; currentDepthMapValue)<br>	&#123;<br>        currentTexCoords -= deltaTexCoords;<br>        currentDepthMapValue = <span class="hljs-built_in">texture</span>(depthMap, currentTexCoords).r;  <br>        currentLayerDepth += layerDepth;  <br>	&#125;<br>	<span class="hljs-keyword">return</span> currentTexCoords;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="视差遮蔽映射">视差遮蔽映射</h3>
+<p>视差遮蔽映射（Parallax Occlusion Mapping）用于减少陡峭视差映射的断层现象。其原理与陡峭视差映射相同，但并非使用第一次纹理采样值大于采样层深度的采样层深度作为纹理坐标偏移量，而是：当满足条件时，使用当前层的深度和上一层深度的比例关系作为插值权重，对当前层对应的纹理坐标和上一层对应的纹理坐标进行插值。如图：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408191402588.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>代码如下：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs glsl">[...]<br><span class="hljs-type">vec2</span> prevTexCoords = currentTexCoords + deltaTexCoords;<br><span class="hljs-type">float</span> afterDepth  = currentDepthMapValue - currentLayerDepth;<br><span class="hljs-type">float</span> beforeDepth = <span class="hljs-built_in">texture</span>(depthMap, prevTexCoords).r - currentLayerDepth + layerDepth;<br><span class="hljs-type">float</span> weight = afterDepth / (afterDepth - beforeDepth);<br><span class="hljs-type">vec2</span> finalTexCoords = prevTexCoords * weight + currentTexCoords * (<span class="hljs-number">1.0</span> - weight);<br><span class="hljs-keyword">return</span> finalTexCoords;<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" class="print-no-link">#图形学</a>
+      
+        <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LearnOpenGL学习笔记（十二） - 万向阴影贴图、法线贴图与视差贴图</div>
+      <div>http://example.com/2024/08/24/LearnOpenGL学习笔记（十二）-万向阴影贴图、法线贴图与视差贴图/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yoi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/08/24/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89-HDR%E3%80%81%E6%B3%9B%E5%85%89%E3%80%81%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93%E4%B8%8ESSAO/" title="LearnOpenGL学习笔记（十三） - HDR、泛光、延迟渲染与SSAO">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LearnOpenGL学习笔记（十三） - HDR、泛光、延迟渲染与SSAO</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/08/18/%E6%8A%95%E5%BD%B1%E7%9F%A9%E9%98%B5%E8%AF%A6%E8%A7%A3/" title="投影矩阵详解">
+                        <span class="hidden-mobile">投影矩阵详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       Tech · Art · Life. |  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

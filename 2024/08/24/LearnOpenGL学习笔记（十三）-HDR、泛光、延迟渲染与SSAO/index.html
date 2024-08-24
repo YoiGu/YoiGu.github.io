@@ -1,0 +1,822 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/tagIcon.png">
+  <link rel="icon" href="/img/tagIcon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yoi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="冲刺。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LearnOpenGL学习笔记（十三） - HDR、泛光、延迟渲染与SSAO">
+<meta property="og:url" content="http://example.com/2024/08/24/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89-HDR%E3%80%81%E6%B3%9B%E5%85%89%E3%80%81%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93%E4%B8%8ESSAO/index.html">
+<meta property="og:site_name" content="Yoi&#39;s Home">
+<meta property="og:description" content="冲刺。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408231731761.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408231914805.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408232041147.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408241357521.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408241411366.png">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408241419227.jpeg">
+<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408241420561.png">
+<meta property="article:published_time" content="2024-08-24T10:34:33.000Z">
+<meta property="article:modified_time" content="2024-08-24T10:36:12.753Z">
+<meta property="article:author" content="Yoi">
+<meta property="article:tag" content="图形学">
+<meta property="article:tag" content="OpenGL">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408231731761.png">
+  
+  
+  
+  <title>LearnOpenGL学习笔记（十三） - HDR、泛光、延迟渲染与SSAO - Yoi&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>攸一的文书档案</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202401261945400.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LearnOpenGL学习笔记（十三） - HDR、泛光、延迟渲染与SSAO"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-24 18:34" pubdate>
+          2024年8月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          48 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LearnOpenGL学习笔记（十三） - HDR、泛光、延迟渲染与SSAO</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年8月24日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>冲刺。<br>
+<span id="more"></span></p>
+<h2 id="HDR">HDR</h2>
+<p>当场景内存在多个高强度光源时，会导致相当一部分片段的颜色值大于1.0。而大于1.0部分的颜色值会被约束在1.0，因此会出现一片一片糊在一起的白色区域。</p>
+<p>一种方法是减少场景内的光源强度，但这会引入不切实际的光照参数。更好的方法是允许颜色值超过1.0，然后将其映射到[0,1]之内。</p>
+<p>通过使用高动态范围（High Dynamic Range，HDR），我们可以让片段的颜色超过1.0。首先，我们在光照方程中用更大范围的颜色值渲染，然后将所有HDR值转换到低动态范围（Low Dynamic Range, LDR）内。这个转换的过程叫做色调映射（Tone Mapping）。</p>
+<p>在实时渲染中，HDR不仅允许让颜色值超过LDR范围，也允许我们根据光源的真实强度指定其强度。</p>
+<h3 id="浮点帧缓冲">浮点帧缓冲</h3>
+<p>对于使用标准化定点格式（如<code>GL_RGB</code>）的颜色缓冲，OpenGL会在将这些值存入帧缓冲前将其自动约束到LDR范围。当一个帧缓冲的颜色缓冲的内部格式被设置为<code>GL_RGB16F</code>、<code>GL_RGBA16F</code>、<code>GL_RGB32F</code>或<code>GL_RGBA32F</code>时，该帧缓冲便被称为浮点帧缓冲（Floating Point Buffer）。它可以存储超过LDR范围的浮点值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, colorBuffer);<br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, <span class="hljs-number">0</span>, GL_RGB, GL_FLOAT, <span class="hljs-literal">NULL</span>);  <br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, hdrFBO);<br><span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  <br>    <span class="hljs-comment">// [...] 渲染(光照的)场景</span><br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="hljs-number">0</span>);<br><span class="hljs-comment">// 现在使用一个不同的着色器将HDR颜色缓冲渲染至2D铺屏四边形上</span><br>hdrShader.<span class="hljs-built_in">Use</span>();<br><span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE0);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, hdrColorBufferTexture);<br><span class="hljs-built_in">RenderQuad</span>();<br></code></pre></td></tr></table></figure>
+<h3 id="色调映射">色调映射</h3>
+<p>色调映射（Tone Mapping）用于在损失很小的前提下将浮点颜色值转换至LDR范围，并且伴有特定风格的色平衡（Stylistic Color Balance）。</p>
+<p>Reinhard色调映射是最简单的色调映射。它平均地将所有亮度值分散到LDR上，并且通常伴随Gamma矫正过滤：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">void</span> main()<br>&#123;             <br>    <span class="hljs-keyword">const</span> <span class="hljs-type">float</span> gamma = <span class="hljs-number">2.2</span>;<br>    <span class="hljs-type">vec3</span> hdrColor = <span class="hljs-built_in">texture</span>(hdrBuffer, TexCoords).rgb;<br>    <span class="hljs-type">vec3</span> mapped = hdrColor / (hdrColor + <span class="hljs-type">vec3</span>(<span class="hljs-number">1.0</span>));<br>    mapped = <span class="hljs-built_in">pow</span>(mapped, <span class="hljs-type">vec3</span>(<span class="hljs-number">1.0</span> / gamma));<br>    color = <span class="hljs-type">vec4</span>(mapped, <span class="hljs-number">1.0</span>);<br>&#125;   <br></code></pre></td></tr></table></figure>
+<p>曝光（Exposure）参数用于设置不同光照条件下的光照参数，让画面无论是在高亮度条件还是低亮度条件下都能较好地呈现：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-keyword">uniform</span> <span class="hljs-type">float</span> exposure;<br><span class="hljs-type">void</span> main()<br>&#123;             <br>    <span class="hljs-keyword">const</span> <span class="hljs-type">float</span> gamma = <span class="hljs-number">2.2</span>;<br>    <span class="hljs-type">vec3</span> hdrColor = <span class="hljs-built_in">texture</span>(hdrBuffer, TexCoords).rgb;<br>    <span class="hljs-type">vec3</span> mapped = <span class="hljs-type">vec3</span>(<span class="hljs-number">1.0</span>) - <span class="hljs-built_in">exp</span>(-hdrColor * exposure);<br>    mapped = <span class="hljs-built_in">pow</span>(mapped, <span class="hljs-type">vec3</span>(<span class="hljs-number">1.0</span> / gamma));<br>    color = <span class="hljs-type">vec4</span>(mapped, <span class="hljs-number">1.0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="泛光">泛光</h2>
+<p>泛光（Bloom）是后处理技术的一种，用于在光源附近加上一层光晕。</p>
+<p>泛光常常与HDR技术结合使用。其基本原理如下：</p>
+<p>对于HDR颜色缓冲纹理，提取所有超过一定亮度的片段，得到一个新纹理。随后对这个新闻里进行高斯模糊处理，然后叠加到原来的颜色缓冲纹理上。</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408231731761.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h3 id="提取亮色">提取亮色</h3>
+<p>多渲染目标（Multiple Render Targets, MRT）用于指定多个片段着色器输出。</p>
+<p>使用MRT的必要条件是<strong>当前的帧缓冲附加有多个颜色附件</strong>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c++">GLuint hdrFBO;<br><span class="hljs-built_in">glGenFramebuffers</span>(<span class="hljs-number">1</span>, &amp;hdrFBO);<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, hdrFBO);<br>GLuint colorBuffers[<span class="hljs-number">2</span>];<br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">2</span>, colorBuffers);<br><span class="hljs-keyword">for</span> (GLuint i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; i++)<br>&#123;<br>    <span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, colorBuffers[i]);<br>    <span class="hljs-built_in">glTexImage2D</span>(<br>        GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, <span class="hljs-number">0</span>, GL_RGB, GL_FLOAT, <span class="hljs-literal">NULL</span><br>    );<br>    <span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);<br>    <span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);<br>    <span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);<br>    <span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);<br>    <span class="hljs-built_in">glFramebufferTexture2D</span>(<br>        GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], <span class="hljs-number">0</span><br>    );<br>&#125;<br>GLuint attachments[<span class="hljs-number">2</span>] = &#123; GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 &#125;;<br><span class="hljs-comment">//glDrawBuffers用于告知OpenGL渲染到哪些颜色缓冲，默认仅渲染到GL_COLOR_ATTACHMENT0</span><br><span class="hljs-built_in">glDrawBuffers</span>(<span class="hljs-number">2</span>, attachments);<br></code></pre></td></tr></table></figure>
+<p>在片段着色器中使用<code>layout</code>关键字定义多个颜色缓冲输出：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">0</span>) <span class="hljs-keyword">out</span> <span class="hljs-type">vec4</span> FragColor;<br><span class="hljs-keyword">layout</span> (<span class="hljs-keyword">location</span> = <span class="hljs-number">1</span>) <span class="hljs-keyword">out</span> <span class="hljs-type">vec4</span> BrightColor;<br>[...]<br><span class="hljs-type">void</span> main()<br>&#123;            <br>    [...]<br>    FragColor = <span class="hljs-type">vec4</span>(lighting, <span class="hljs-number">1.0</span>f);<br>    <span class="hljs-type">float</span> brightness = <span class="hljs-built_in">dot</span>(FragColor.rgb, <span class="hljs-type">vec3</span>(<span class="hljs-number">0.2126</span>, <span class="hljs-number">0.7152</span>, <span class="hljs-number">0.0722</span>));<br>    <span class="hljs-keyword">if</span>(brightness &gt; <span class="hljs-number">1.0</span>)<br>        BrightColor = <span class="hljs-type">vec4</span>(FragColor.rgb, <span class="hljs-number">1.0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="高斯模糊">高斯模糊</h3>
+<p>高斯模糊（Gaussian Blur）是一种基于核的后处理技术。高斯曲线是一种钟形曲线，将其扩展到二维便可以形成一个卷积核的权重。但这样做需要采样很多次，极大消耗性能。</p>
+<p>为此，我们可以把二维方程拆解为两个一维方程，一个描述水平权重，一个描述垂直权重。如图：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408231914805.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>该方法称为两步高斯模糊（Two-Pass Gaussian Blur）。我们用帧缓冲对象实现“两步”：在第一个帧缓冲对象进行水平模糊，然后将纹理传入第二个帧缓冲对象渲染时所用的着色器，进行垂直模糊。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">out</span> <span class="hljs-type">vec4</span> FragColor;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec2</span> TexCoords;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> image;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">bool</span> horizontal; <span class="hljs-comment">//使用bool指定水平还是垂直渲染</span><br><span class="hljs-keyword">uniform</span> <span class="hljs-type">float</span> weight[<span class="hljs-number">5</span>] = <span class="hljs-type">float</span>[] (<span class="hljs-number">0.227027</span>, <span class="hljs-number">0.1945946</span>, <span class="hljs-number">0.1216216</span>, <span class="hljs-number">0.054054</span>, <span class="hljs-number">0.016216</span>); <span class="hljs-comment">//核内容</span><br><span class="hljs-type">void</span> main()&#123;             <br>    <span class="hljs-type">vec2</span> tex_offset = <span class="hljs-number">1.0</span> / <span class="hljs-built_in">textureSize</span>(image, <span class="hljs-number">0</span>);<br>    <span class="hljs-type">vec3</span> result = <span class="hljs-built_in">texture</span>(image, TexCoords).rgb * weight[<span class="hljs-number">0</span>];<br>    <span class="hljs-keyword">if</span>(horizontal)&#123;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt; <span class="hljs-number">5</span>; ++i)&#123;<br>            result += <span class="hljs-built_in">texture</span>(image, TexCoords + <span class="hljs-type">vec2</span>(tex_offset.x * i, <span class="hljs-number">0.0</span>)).rgb * weight[i];<br>            result += <span class="hljs-built_in">texture</span>(image, TexCoords - <span class="hljs-type">vec2</span>(tex_offset.x * i, <span class="hljs-number">0.0</span>)).rgb * weight[i];<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">else</span>&#123;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt; <span class="hljs-number">5</span>; ++i)&#123;<br>            result += <span class="hljs-built_in">texture</span>(image, TexCoords + <span class="hljs-type">vec2</span>(<span class="hljs-number">0.0</span>, tex_offset.y * i)).rgb * weight[i];<br>            result += <span class="hljs-built_in">texture</span>(image, TexCoords - <span class="hljs-type">vec2</span>(<span class="hljs-number">0.0</span>, tex_offset.y * i)).rgb * weight[i];<br>        &#125;<br>    &#125;<br>    FragColor = <span class="hljs-type">vec4</span>(result, <span class="hljs-number">1.0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs c++">GLuint pingpongFBO[<span class="hljs-number">2</span>];<br>GLuint pingpongBuffer[<span class="hljs-number">2</span>];<br><span class="hljs-built_in">glGenFramebuffers</span>(<span class="hljs-number">2</span>, pingpongFBO);<br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">2</span>, pingpongBuffer);<br><span class="hljs-comment">//生成两个帧缓冲对象，并分别为它们绑定颜色缓冲</span><br><span class="hljs-keyword">for</span> (GLuint i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; i++)<br>&#123;<br>    <span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, pingpongFBO[i]);<br>    <span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, pingpongBuffer[i]);<br>    <span class="hljs-built_in">glTexImage2D</span>(<br>        GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, <span class="hljs-number">0</span>, GL_RGB, GL_FLOAT, <span class="hljs-literal">NULL</span><br>    );<br>    <span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);<br>    <span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);<br>    <span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);<br>    <span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);<br>    <span class="hljs-built_in">glFramebufferTexture2D</span>(<br>        GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongBuffer[i], <span class="hljs-number">0</span><br>    );<br>&#125;<br>GLboolean horizontal = <span class="hljs-literal">true</span>, first_iteration = <span class="hljs-literal">true</span>;<br>GLuint amount = <span class="hljs-number">10</span>;<br>shaderBlur.<span class="hljs-built_in">Use</span>();<br><span class="hljs-comment">//这里的循环与Shader内的循环不同，后者是用于卷积核采样的，前者是进行高斯模糊的次数，越大效果越好</span><br><span class="hljs-keyword">for</span> (GLuint i = <span class="hljs-number">0</span>; i &lt; amount; i++)<br>&#123;<br>    <span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, pingpongFBO[horizontal]); <br>    <span class="hljs-built_in">glUniform1i</span>(<span class="hljs-built_in">glGetUniformLocation</span>(shaderBlur.Program, <span class="hljs-string">&quot;horizontal&quot;</span>), horizontal);<br>    <span class="hljs-built_in">glBindTexture</span>(<br>        <span class="hljs-comment">//此处colorBuffers存放着MRT，其中1号元素代表对HDR画面进行强度筛选后的RT</span><br>        <span class="hljs-comment">//如果是第一次循环，直接采用初始RT</span><br>        <span class="hljs-comment">//否则，水平和垂直模糊交替进行</span><br>        <span class="hljs-comment">//需注意，pingpongBuffers是blur帧缓冲绑定的颜色纹理附件，每次渲染到帧缓冲，该纹理附件都会变更为渲染后的画面</span><br>        <span class="hljs-comment">//绑定FBO时的数组下标与pingpongBuffers的数组下标相反，代表着颜色数据的交换传输</span><br>        GL_TEXTURE_2D, first_iteration ? colorBuffers[<span class="hljs-number">1</span>] : pingpongBuffers[!horizontal]<br>    ); <br>    <span class="hljs-built_in">RenderQuad</span>();<br>    horizontal = !horizontal;<br>    <span class="hljs-keyword">if</span> (first_iteration)<br>        first_iteration = <span class="hljs-literal">false</span>;<br>&#125;<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+<p>随后，在片段着色器中定义两个sampler2D，一个是原始画面，一个是经模糊的HDR筛选画面，将二者采样后相加即可得到最终颜色。</p>
+<h2 id="延迟着色">延迟着色</h2>
+<p>目前为止我们使用的光照方式皆为前向渲染（Forward Rendering），在场景中我们根据所有光源渲染一个物体，然后再渲染下一个物体，以此类推。但是，这种方式对于每一个需要渲染的物体，程序都需要对每一个光源进行迭代。当片段和光源数量持续增加时，需要迭代的次数将会爆炸式增长。</p>
+<p>为了解决这一问题，我们引入延迟渲染法（Deferred Renderring）。该方法将光照等计算量较大的过程推迟到后期进行。延迟渲染分为两个过程（Pass），几何处理Pass和光照处理Pass。</p>
+<p>在几何处理Pass中，首先渲染场景一次，以获取各类几何信息（如位置、颜色、法线、镜面值），并将其存储在被称为G缓冲（G-Buffer）的纹理中。</p>
+<p>在光照处理Pass中，使用G缓冲中的数据（而非顶点着色器传入的数据）对每个片段计算场景光照。这种方法避免了无Early-Z情况下的单像素多次渲染，确保了每个像素只调用一次片段着色器。</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408232041147.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>延迟渲染的缺点是：</p>
+<ul>
+<li>消耗显存多，因为G-Buffer中要存储大量数据</li>
+<li>因为只有最前方的片段信息，所以无法使用Blend渲染半透明物体</li>
+<li>因为需要MRT技术支持，延迟渲染需要的RT数量极多，如果使用MSAA的话每个RT的分辨率都要翻倍，需要消耗极大的显存，所以一般说延迟渲染不支持MSAA</li>
+</ul>
+<h3 id="G缓冲">G缓冲</h3>
+<p>G-Buffer用来存储所有跟光照有关的数据，包括：</p>
+<ul>
+<li>3D位置向量</li>
+<li>RGB漫反射颜色向量，即反照率（Albedo）</li>
+<li>3D法向量</li>
+<li>镜面强度浮点值</li>
+<li>光源位置与颜色向量</li>
+<li>相机位置</li>
+</ul>
+<p>其中，后两点对于所有的片段都相同，可以通过uniform设置。而剩余变量对于每个变量都不同，所以可以使用G-Buffer传输。</p>
+<p>使用MRT技术，每个变量对应一个RT。过程如下：</p>
+<p>初始化FBO，它包含了若干颜色缓冲和一个深度缓冲对象。位置和法向量使用高精度纹理，反照率和镜面值使用默认精度。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs c++">GLuint gBuffer;<br><span class="hljs-built_in">glGenFramebuffers</span>(<span class="hljs-number">1</span>, &amp;gBuffer);<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, gBuffer);<br>GLuint gPosition, gNormal, gColorSpec;<br><br><span class="hljs-comment">// - 位置颜色缓冲</span><br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>, &amp;gPosition);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, gPosition);<br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, <span class="hljs-number">0</span>, GL_RGB, GL_FLOAT, <span class="hljs-literal">NULL</span>);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, <span class="hljs-number">0</span><br><br><span class="hljs-comment">// - 法线颜色缓冲</span><br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>, &amp;gNormal);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, gNormal);<br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, <span class="hljs-number">0</span>, GL_RGB, GL_FLOAT, <span class="hljs-literal">NULL</span>);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, <span class="hljs-number">0</span>);<br><br><span class="hljs-comment">// - 颜色 + 镜面颜色缓冲</span><br><span class="hljs-comment">//使用GL_RGBA，其中RGB通道渲染颜色，A通道存储镜面强度</span><br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>, &amp;gAlbedoSpec);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, gAlbedoSpec);<br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RGBA, SCR_WIDTH, SCR_HEIGHT, <span class="hljs-number">0</span>, GL_RGBA, GL_FLOAT, <span class="hljs-literal">NULL</span>);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, <span class="hljs-number">0</span>);<br><br><span class="hljs-comment">// - 告诉OpenGL我们将要使用(帧缓冲的)哪种颜色附件来进行渲染</span><br>GLuint attachments[<span class="hljs-number">3</span>] = &#123; GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 &#125;;<br><span class="hljs-built_in">glDrawBuffers</span>(<span class="hljs-number">3</span>, attachments);<br><br><span class="hljs-comment">// 之后同样添加渲染缓冲对象(Render Buffer Object)为深度缓冲(Depth Buffer)，并检查完整性</span><br>[...]<br></code></pre></td></tr></table></figure>
+<p>完成几何处理阶段后，进入光照处理阶段。</p>
+<p>此阶段，首先渲染一个铺屏四边形，然后在四边形的每个像素上运行一次片段着色器：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);<br>shaderLightingPass.<span class="hljs-built_in">Use</span>();<br><span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE0);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, gPosition);<br><span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE1);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, gNormal);<br><span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE2);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, gAlbedoSpec);<br><span class="hljs-comment">// 同样发送光照相关的uniform</span><br><span class="hljs-built_in">SendAllLightUniformsToShader</span>(shaderLightingPass);<br><span class="hljs-built_in">glUniform3fv</span>(<span class="hljs-built_in">glGetUniformLocation</span>(shaderLightingPass.Program, <span class="hljs-string">&quot;viewPos&quot;</span>), <span class="hljs-number">1</span>, &amp;camera.Position[<span class="hljs-number">0</span>]);<br><span class="hljs-built_in">RenderQuad</span>();  <br></code></pre></td></tr></table></figure>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">out</span> <span class="hljs-type">vec4</span> FragColor;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec2</span> TexCoords;<br><br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> gPosition;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> gNormal;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> gAlbedoSpec;<br><br>struct Light &#123;<br>    <span class="hljs-type">vec3</span> Position;<br>    <span class="hljs-type">vec3</span> Color;<br>&#125;;<br><span class="hljs-keyword">const</span> <span class="hljs-type">int</span> NR_LIGHTS = <span class="hljs-number">32</span>;<br><span class="hljs-keyword">uniform</span> Light lights[NR_LIGHTS];<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> viewPos;<br><br><span class="hljs-type">void</span> main()<br>&#123;             <br>    <span class="hljs-comment">// 从G缓冲中获取数据</span><br>    <span class="hljs-type">vec3</span> FragPos = <span class="hljs-built_in">texture</span>(gPosition, TexCoords).rgb;<br>    <span class="hljs-type">vec3</span> Normal = <span class="hljs-built_in">texture</span>(gNormal, TexCoords).rgb;<br>    <span class="hljs-type">vec3</span> Albedo = <span class="hljs-built_in">texture</span>(gAlbedoSpec, TexCoords).rgb;<br>    <span class="hljs-type">float</span> Specular = <span class="hljs-built_in">texture</span>(gAlbedoSpec, TexCoords).a;<br><br>    <span class="hljs-comment">// 然后和往常一样地计算光照</span><br>    <span class="hljs-type">vec3</span> lighting = Albedo * <span class="hljs-number">0.1</span>; <span class="hljs-comment">// 硬编码环境光照分量</span><br>    <span class="hljs-type">vec3</span> viewDir = <span class="hljs-built_in">normalize</span>(viewPos - FragPos);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; NR_LIGHTS; ++i)<br>    &#123;<br>        <span class="hljs-comment">// 漫反射</span><br>        <span class="hljs-type">vec3</span> lightDir = <span class="hljs-built_in">normalize</span>(lights[i].Position - FragPos);<br>        <span class="hljs-type">vec3</span> diffuse = <span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(Normal, lightDir), <span class="hljs-number">0.0</span>) * Albedo * lights[i].Color;<br>        lighting += diffuse;<br>    &#125;<br><br>    FragColor = <span class="hljs-type">vec4</span>(lighting, <span class="hljs-number">1.0</span>);<br>&#125;  <br></code></pre></td></tr></table></figure>
+<h3 id="结合延迟与前向渲染">结合延迟与前向渲染</h3>
+<p>为了克服延迟渲染的缺点（如无法Blend），一般采用延迟与正向渲染相结合的方式。</p>
+<p>对于光源，我们无需考虑其受光照影响，所以首先渲染光立方体。但渲染完毕后，我们发现，因为没有获取到延迟渲染中的深度信息，光立方体无法正常进行深度测试。为此，我们需要把延迟渲染的几何处理阶段中存储的深度信息输出到默认帧缓冲的深度缓冲中。</p>
+<p>使用<code>glBlitFrameBuffer</code>函数将帧缓冲的内容复制到另一个帧缓冲：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glBindFramebuffer</span>(GL_READ_FRAMEBUFFER, gBuffer);<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_DRAW_FRAMEBUFFER, <span class="hljs-number">0</span>); <span class="hljs-comment">// 写入到默认帧缓冲</span><br><span class="hljs-built_in">glBlitFramebuffer</span>(<br>  <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, SCR_WIDTH, SCR_HEIGHT, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST<br>);<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+<p>类似地，我们也可以传输其他缓冲到默认帧缓冲。</p>
+<h3 id="光体积">光体积</h3>
+<p>延迟渲染本身并不能支持大量光源，因为即便是在铺屏四边形的逐像素渲染中，假设有1000个光源，我们还是要考虑每个光源对像素的贡献，无论光源有多远。为了解决这一问题，我们引入光体积（Light Volumns）技术：</p>
+<p>光体积的基本原理是计算光源的半径，即光能够到达片段的范围。计算光照贡献时，我们只需要考虑覆盖在各个光源范围内的片段就可以了。</p>
+<h4 id="计算光源半径">计算光源半径</h4>
+<p>在之前计算点光源衰减时，我们使用了常量+线性量+平方量的高级衰减方程。</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mrow><mi>l</mi><mi>i</mi><mi>g</mi><mi>h</mi><mi>t</mi></mrow></msub><mo>=</mo><mfrac><mi>I</mi><mrow><msub><mi>K</mi><mi>c</mi></msub><mo>+</mo><msub><mi>K</mi><mi>l</mi></msub><mo>∗</mo><mi>d</mi><mo>+</mo><msub><mi>K</mi><mi>q</mi></msub><mo>∗</mo><msup><mi>d</mi><mn>2</mn></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">F_{light} = \frac{I}{K_c + K_l * d + K_q * d^2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">h</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.4147em;vertical-align:-0.5423em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8723em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">+</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3488em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1512em;"><span></span></span></span></span></span></span><span class="mbin mtight">∗</span><span class="mord mathnormal mtight">d</span><span class="mbin mtight">+</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2819em;"><span></span></span></span></span></span></span><span class="mbin mtight">∗</span><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7463em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">I</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.5423em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+<p>其中，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mrow><mi>l</mi><mi>i</mi><mi>g</mi><mi>h</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">F_{light}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">g</span><span class="mord mathnormal mtight">h</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>是当前片段受光照影响的程度，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span>代表光照强度值（对于白光光源一般是1.0）。</p>
+<p>但这个方程永远不会真正等于0，所以我们需要选择一个合适的“黑暗阈值”。在这里，我们使用5/256作为阈值。</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mfrac><mn>5</mn><mn>256</mn></mfrac><mo>=</mo><mfrac><msub><mi>I</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mrow><msub><mi>K</mi><mi>c</mi></msub><mo>+</mo><msub><mi>K</mi><mi>l</mi></msub><mo>∗</mo><mi>d</mi><mo>+</mo><msub><mi>K</mi><mi>q</mi></msub><mo>∗</mo><msup><mi>d</mi><mn>2</mn></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{5}{256} = \frac{I_{max}}{K_c + K_l * d + K_q * d^2}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.0074em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">256</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">5</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.3324em;vertical-align:-0.9721em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal">d</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ma</span><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9721em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>其中，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub></mrow><annotation encoding="application/x-tex">I_{max}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ma</span><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>代表光源中RGB中最强的光照分量，我们要做的是求出<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span>的值。</p>
+<p>通过求根公式我们可以求出：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mfrac><mrow><mo>−</mo><msub><mi>K</mi><mi>l</mi></msub><mo>+</mo><msqrt><mrow><msubsup><mi>K</mi><mi>l</mi><mn>2</mn></msubsup><mo>−</mo><mn>4</mn><mo>∗</mo><msub><mi>K</mi><mi>q</mi></msub><mo>∗</mo><mo stretchy="false">(</mo><msub><mi>K</mi><mi>c</mi></msub><mo>−</mo><msub><mi>I</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>∗</mo><mfrac><mn>256</mn><mn>5</mn></mfrac><mo stretchy="false">)</mo></mrow></msqrt></mrow><mrow><mn>2</mn><mo>∗</mo><msub><mi>K</mi><mi>q</mi></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">d = \frac{-K_l + \sqrt{K_l^2 - 4 * K_q * (K_c - I_{max} * \frac{256}{5})}}{2 * K_q}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.8719em;vertical-align:-0.5423em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3296em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mbin mtight">∗</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2819em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.6048em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3488em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1512em;"><span></span></span></span></span></span></span><span class="mbin mtight">+</span><span class="mord sqrt mtight"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0355em;"><span class="svg-align" style="top:-3.4286em;"><span class="pstrut" style="height:3.4286em;"></span><span class="mord mtight" style="padding-left:1.19em;"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8051em;"><span style="top:-2.1528em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span><span style="top:-2.8448em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3472em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mtight">4</span><span class="mbin mtight">∗</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2819em;"><span></span></span></span></span></span></span><span class="mbin mtight">∗</span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.0785em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ma</span><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">∗</span><span class="mord mtight"><span class="mopen nulldelimiter sizing reset-size3 size6"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8443em;"><span style="top:-2.656em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">5</span></span></span></span><span style="top:-3.2255em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line mtight" style="border-bottom-width:0.049em;"></span></span><span style="top:-3.384em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">256</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.344em;"><span></span></span></span></span></span><span class="mclose nulldelimiter sizing reset-size3 size6"></span></span><span class="mclose mtight">)</span></span></span><span style="top:-3.0075em;"><span class="pstrut" style="height:3.4286em;"></span><span class="hide-tail mtight" style="min-width:0.853em;height:1.5429em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.5429em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4211em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.5423em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+<p>转换为代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++">GLfloat constant  = <span class="hljs-number">1.0</span>; <br>GLfloat linear    = <span class="hljs-number">0.7</span>;<br>GLfloat quadratic = <span class="hljs-number">1.8</span>;<br>GLfloat lightMax  = std::<span class="hljs-built_in">fmaxf</span>(std::<span class="hljs-built_in">fmaxf</span>(lightColor.r, lightColor.g), lightColor.b);<br>GLfloat radius    = <br>  (-linear +  std::<span class="hljs-built_in">sqrtf</span>(linear * linear - <span class="hljs-number">4</span> * quadratic * (constant - (<span class="hljs-number">256.0</span> / <span class="hljs-number">5.0</span>) * lightMax))) <br>  / (<span class="hljs-number">2</span> * quadratic);  <br></code></pre></td></tr></table></figure>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs glsl">struct Light &#123;<br>    [...]<br>    <span class="hljs-type">float</span> Radius;<br>&#125;; <br><span class="hljs-type">void</span> main()&#123;<br>    [...]<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; NR_LIGHTS; ++i)&#123;<br>        <span class="hljs-comment">// 计算光源和该片段间距离</span><br>        <span class="hljs-type">float</span> <span class="hljs-built_in">distance</span> = <span class="hljs-built_in">length</span>(lights[i].Position - FragPos);<br>        <span class="hljs-keyword">if</span>(<span class="hljs-built_in">distance</span> &lt; lights[i].Radius)&#123;<br>            <span class="hljs-comment">// 执行大开销光照</span><br>            [...]<br>        &#125;<br>    &#125;   <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>但是问题是，着色器运行时总是会执行if语句所有的分支，因为GPU上的着色器程序是高度并行的，必须要确保每次运行着色器的代码都是一样的。因此，<strong>上面的着色器代码中的if判断实际上无用</strong>。</p>
+<p>为了解决这一问题，我们可以使用延迟渲染的方式，将每个光源的光体积球渲染出来，将其作为一个单独的RT，然后在实际计算光照时采样这个RT即可。</p>
+<p>**延迟光照(Deferred Lighting)<strong>和</strong>切片式延迟着色法(Tile-based Deferred Shading)**是比渲染光体积更优的方法，并且这两种方法允许MSAA。</p>
+<h3 id="SSAO">SSAO</h3>
+<p>Phong模型中的环境光照（Ambient Lighting）常量用于模拟光的散射（Scattering）。但在现实里，光线会以任意方向散射，它的强度会不断发生改变。环境光遮蔽（Ambient Occlusion）用于模拟更真实的间接光，它通过将褶皱、孔洞和非常靠近的墙面所处的片段变暗来模拟出间接光照。</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408241357521.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>实现真正意义上的环境光遮蔽需要对每个片段周围的几何体的情况进行确认，开销较大。为解决这一问题，我们引入屏幕空间环境光遮蔽（Screen-Space Ambient Occlusion, SSAO）技术，该技术使用屏幕空间的场景深度而非真实几何体数据来确定屏蔽量。</p>
+<p>SSAO的底层原理是：对于铺屏四边形上的每个片段，都根据周围的深度值计算一个遮蔽因子（Occlusion Factor）。这个遮蔽因子在之后用于抵消片段的环境光照分量。</p>
+<p>遮蔽因子通过采集片段周围球形核（Kernel）的多个深度样本，并和当前片段的深度值对比得到。高于片段深度值样本的个数就是遮蔽因子。</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408241411366.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>如图，黑色折线代表几何体表面，球形代表核的范围。灰色采样点代表位于几何体内部的采样点，它们能对遮蔽因子产生影响。灰色样本越多，遮蔽因子越大，简介光照越暗。</p>
+<p>对于这种方式，采样的样本数量和最终效果有着非常直接的关系。若样本数量太低，精度就会急剧减少，导致波纹（Banding）效果；若样本数量太高，又会影响性能。</p>
+<p>为此，我们通过给采样核心（Sample Kernel）引入随机性，从而在减少样本数的情况下优化效果。但是随机性会引入噪点，因此，给结果叠加一个模糊处理效果会更好。如图：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408241419227.jpeg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>即便是平整的墙面，球形采样核心也会囊括入约一半的采样点。但只有狭窄、内缩的表面才需要进行遮蔽。因此，我们使用沿表面法向量的半球形采样核心（被称为法向半球体，Normal-oriented Hemisphere）。如图：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202408241420561.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<h4 id="样本缓冲">样本缓冲</h4>
+<p>使用SSAO，我们需要获取以下数据：</p>
+<ul>
+<li>片段位置向量</li>
+<li>片段法线向量</li>
+<li>片段反射颜色</li>
+<li>采样核心</li>
+<li>用于旋转采样核心的随机旋转向量</li>
+</ul>
+<p>SSAO是一种屏幕空间技术，因此不难发现，它非常适合在延迟渲染管线中使用，因为它可以直接通过G-Buffer获取所有需要的屏幕空间数据。</p>
+<p>我们在片段着色器中，使用内建变量<code>gl_FragCoord.z</code>获取非线性片段深度，并可以将其变为线性深度值：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">float</span> LinearizeDepth(<span class="hljs-type">float</span> depth)&#123;<br>    <span class="hljs-type">float</span> z = depth * <span class="hljs-number">2.0</span> - <span class="hljs-number">1.0</span>; <span class="hljs-comment">// 回到NDC</span><br>    <span class="hljs-keyword">return</span> (<span class="hljs-number">2.0</span> * NEAR * FAR) / (FAR + NEAR - z * (FAR - NEAR));    <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>提取的线性深度基于观察空间，因此需要确保G-Buffer中的位置和法线都处于观察空间。</p>
+<blockquote>
+<p>我们也可以通过深度值重构位置向量，这是一种优化技巧：</p>
+<p><a target="_blank" rel="noopener" href="https://mynameismjp.wordpress.com/2010/09/05/position-from-depth-3/">Position From Depth 3: Back In The Habit – The Danger Zone (wordpress.com)</a></p>
+</blockquote>
+<h4 id="法向半球">法向半球</h4>
+<p>对每个表面法线方向生成采样核心比较困难，所以我们会在切线空间生成采样核心，所有核心的朝向都指向正z方向，即表面法向量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">std::uniform_real_distribution&lt;GLfloat&gt; <span class="hljs-title">randomFloats</span><span class="hljs-params">(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>)</span></span>; <span class="hljs-comment">// 随机浮点数，范围0.0 - 1.0</span><br>std::default_random_engine generator;<br>std::vector&lt;glm::vec3&gt; ssaoKernel;<br><span class="hljs-keyword">for</span> (GLuint i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">64</span>; ++i)<br>&#123;<br>    <span class="hljs-comment">//向x和y方向随机偏移(-1,1)</span><br>    <span class="hljs-function">glm::vec3 <span class="hljs-title">sample</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">        randomFloats(generator) * <span class="hljs-number">2.0</span> - <span class="hljs-number">1.0</span>, </span></span><br><span class="hljs-params"><span class="hljs-function">        randomFloats(generator) * <span class="hljs-number">2.0</span> - <span class="hljs-number">1.0</span>, </span></span><br><span class="hljs-params"><span class="hljs-function">        randomFloats(generator) <span class="hljs-comment">//z方向不能为负，因为是半球</span></span></span><br><span class="hljs-params"><span class="hljs-function">    )</span></span>;<br>    sample = glm::<span class="hljs-built_in">normalize</span>(sample);<br>    sample *= <span class="hljs-built_in">randomFloats</span>(generator); <span class="hljs-comment">//用于调整向量长度，使向量终点在半球内均匀分布</span><br>    GLfloat scale = <span class="hljs-built_in">GLfloat</span>(i) / <span class="hljs-number">64.0</span>; <br>    scale = <span class="hljs-built_in">lerp</span>(<span class="hljs-number">0.1f</span>, <span class="hljs-number">1.0f</span>, scale * scale); <span class="hljs-comment">//缩放因子用于调整向量的分布方式，这里使得采样点更靠近片段原点</span><br>    sample *= scale;<br>    ssaoKernel.<span class="hljs-built_in">push_back</span>(sample);  <br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="随机核心转动">随机核心转动</h4>
+<p>因为我们不可能在每次片段计算时都生成随机数，所以上面提到的带有随机性的采样核心会被运用至所有片段，但这会导致随机性偏少。</p>
+<p>为了解决这一问题，我们创建一个随机旋转向量纹理并将其平铺至屏幕，通过采样来获取旋转向量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c++">std::vector&lt;glm::vec3&gt; ssaoNoise;<br><span class="hljs-keyword">for</span> (GLuint i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">16</span>; i++)<br>&#123;<br>    <span class="hljs-function">glm::vec3 <span class="hljs-title">noise</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">        randomFloats(generator) * <span class="hljs-number">2.0</span> - <span class="hljs-number">1.0</span>, </span></span><br><span class="hljs-params"><span class="hljs-function">        randomFloats(generator) * <span class="hljs-number">2.0</span> - <span class="hljs-number">1.0</span>, </span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-number">0.0f</span>)</span></span>; <br>    ssaoNoise.<span class="hljs-built_in">push_back</span>(noise);<br>&#125;<br>GLuint noiseTexture; <br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>, &amp;noiseTexture);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, noiseTexture);<br><span class="hljs-comment">//这个纹理本身只有4*4，我们通过设置环绕方式为GL_REPEAT来将其平铺在屏幕上</span><br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RGB16F, <span class="hljs-number">4</span>, <span class="hljs-number">4</span>, <span class="hljs-number">0</span>, GL_RGB, GL_FLOAT, &amp;ssaoNoise[<span class="hljs-number">0</span>]);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);<br></code></pre></td></tr></table></figure>
+<h4 id="SSAO着色器">SSAO着色器</h4>
+<p>SSAO着色器计算的是逐片段的遮蔽值而非最终的颜色，因此我们使用一个独立的帧缓冲计算SSAO结果，并将结果存储至纹理附件供后续叠加使用。</p>
+<blockquote>
+<p>为什么不用MRT？</p>
+<p>SSAO与最终颜色输出之间存在先后关系，凡是存在先后关系的都不能用MRT。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c++">GLuint ssaoFBO;<br><span class="hljs-built_in">glGenFramebuffers</span>(<span class="hljs-number">1</span>, &amp;ssaoFBO);  <br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, ssaoFBO);<br>GLuint ssaoColorBuffer;<br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>, &amp;ssaoColorBuffer);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, ssaoColorBuffer);<br><span class="hljs-comment">//InnerFormat参数为GL_RED，因为SSAO结果值为灰度值</span><br><span class="hljs-comment">//尽管Format参数是GL_RGB，但由于源数据为NULL，所以这个参数取什么值都不会影响结果</span><br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RED, SCR_WIDTH, SCR_HEIGHT, <span class="hljs-number">0</span>, GL_RGB, GL_FLOAT, <span class="hljs-literal">NULL</span>);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+<p>SSAO完整渲染流程如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">// 几何处理阶段: 渲染到G缓冲中</span><br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, gBuffer);<br>    [...]<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="hljs-number">0</span>);  <br><br><span class="hljs-comment">// 使用G缓冲渲染SSAO纹理</span><br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, ssaoFBO);<br>    <span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT);<br>    shaderSSAO.<span class="hljs-built_in">Use</span>();<br>    <span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE0);<br>    <span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, gPositionDepth);<br>    <span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE1);<br>    <span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, gNormal);<br>    <span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE2);<br>    <span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, noiseTexture);<br>    <span class="hljs-built_in">SendKernelSamplesToShader</span>();<br>    <span class="hljs-built_in">glUniformMatrix4fv</span>(projLocation, <span class="hljs-number">1</span>, GL_FALSE, glm::<span class="hljs-built_in">value_ptr</span>(projection));<br>    <span class="hljs-built_in">RenderQuad</span>();<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, <span class="hljs-number">0</span>);<br><br><span class="hljs-comment">// 光照处理阶段: 渲染场景光照</span><br><span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);<br>shaderLightingPass.<span class="hljs-built_in">Use</span>();<br>[...]<br><span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE3);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, ssaoColorBuffer);<br>[...]<br><span class="hljs-built_in">RenderQuad</span>();<br></code></pre></td></tr></table></figure>
+<p>SSAO着色器代码：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">out</span> <span class="hljs-type">float</span> FragColor;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec2</span> TexCoords;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> gPositionDepth;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> gNormal;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> texNoise;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> samples[<span class="hljs-number">64</span>];<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">mat4</span> projection;<br><span class="hljs-comment">// 屏幕的平铺噪声纹理会根据屏幕分辨率除以噪声大小的值来决定</span><br><span class="hljs-comment">// 该值用于对纹理坐标进行缩放，使其能够根据本身的分辨率以及屏幕分辨率合理平铺</span><br><span class="hljs-keyword">const</span> <span class="hljs-type">vec2</span> noiseScale = <span class="hljs-type">vec2</span>(<span class="hljs-number">800.0</span>/<span class="hljs-number">4.0</span>, <span class="hljs-number">600.0</span>/<span class="hljs-number">4.0</span>); <span class="hljs-comment">// 屏幕 = 800x600</span><br><span class="hljs-type">void</span> main()&#123;<br>    <span class="hljs-comment">// 采样G-Buffer数据</span><br>	<span class="hljs-type">vec3</span> fragPos = <span class="hljs-built_in">texture</span>(gPositionDepth, TexCoords).xyz;<br>	<span class="hljs-type">vec3</span> normal = <span class="hljs-built_in">texture</span>(gNormal, TexCoords).rgb;<br>	<span class="hljs-type">vec3</span> randomVec = <span class="hljs-built_in">texture</span>(texNoise, TexCoords * noiseScale).xyz;<br>    <span class="hljs-comment">// 有了数据后，可计算TBN矩阵，将基于切线空间的SSAO向量转换到观察空间</span><br>    <span class="hljs-comment">// TBN向量位于哪个空间，他就可以把坐标从切线空间转换到哪个空间</span><br>    <span class="hljs-comment">// 这里使用了施密特正交化，让TBN矩阵形成的正交基根据randomVec值略微倾斜</span><br>    <span class="hljs-type">vec3</span> tangent = <span class="hljs-built_in">normalize</span>(randomVec - normal * <span class="hljs-built_in">dot</span>(randomVec, normal));<br>	<span class="hljs-type">vec3</span> bitangent = <span class="hljs-built_in">cross</span>(normal, tangent);<br>	<span class="hljs-type">mat3</span> TBN = <span class="hljs-type">mat3</span>(tangent, bitangent, normal);<br>    <span class="hljs-keyword">sample</span> = fragPos + <span class="hljs-keyword">sample</span> * radius; <br>	<span class="hljs-type">float</span> occlusion = <span class="hljs-number">0.0</span>; <span class="hljs-comment">//最终的遮蔽值</span><br>    <span class="hljs-comment">//kernelSize用于调整采样点个数，默认64</span><br>	<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; kernelSize; ++i)&#123;<br>    	<span class="hljs-comment">// 获取样本位置（本质上是为了获取采样点的UV坐标）</span><br>    	<span class="hljs-type">vec3</span> <span class="hljs-keyword">sample</span> = TBN * samples[i]; <span class="hljs-comment">// 切线-&gt;观察空间</span><br>        <span class="hljs-comment">//radius用于调整采样半球半径，默认1.0</span><br>    	<span class="hljs-keyword">sample</span> = fragPos + <span class="hljs-keyword">sample</span> * radius; <br>    	<span class="hljs-type">vec4</span> <span class="hljs-keyword">offset</span> = <span class="hljs-type">vec4</span>(<span class="hljs-keyword">sample</span>, <span class="hljs-number">1.0</span>);<br>		<span class="hljs-keyword">offset</span> = projection * <span class="hljs-keyword">offset</span>; <span class="hljs-comment">// 观察-&gt;裁剪空间</span><br>		<span class="hljs-keyword">offset</span>.xyz /= <span class="hljs-keyword">offset</span>.w; <span class="hljs-comment">// 透视划分</span><br>		<span class="hljs-keyword">offset</span>.xyz = <span class="hljs-keyword">offset</span>.xyz * <span class="hljs-number">0.5</span> + <span class="hljs-number">0.5</span>; <span class="hljs-comment">// 变换到0.0 - 1.0的值域</span><br>        <span class="hljs-comment">//取反是因为，sample.z是观察空间下的深度值，越小越远</span><br>        <span class="hljs-type">float</span> sampleDepth = -<span class="hljs-built_in">texture</span>(gPositionDepth, <span class="hljs-keyword">offset</span>.xy).w;<br>        <span class="hljs-comment">//注意，这里sampleDepth和sample.z都是负数，越小，代表越远</span><br>		<span class="hljs-comment">//深度差超过radius时，被限制到1.0，否则无论深度差多大，处于背景物体的片段都会产生AO</span><br>		<span class="hljs-type">float</span> rangeCheck = <span class="hljs-built_in">smoothstep</span>(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, radius / <span class="hljs-built_in">abs</span>(fragPos.z - sampleDepth));<br>		occlusion += (sampleDepth &gt;= <span class="hljs-keyword">sample</span>.z ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span>) * rangeCheck;    	<br>	&#125;<br>    <span class="hljs-comment">//最终的遮蔽值是用于缩放光照分量的，所以遮蔽越强，occlusion越接近0</span><br>    occlusion = <span class="hljs-number">1.0</span> - (occlusion / kernelSize);<br>	FragColor = occlusion;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="环境遮蔽模糊">环境遮蔽模糊</h4>
+<p>现在这版会由于采样点数量以及随机性的限制，出现噪点。所以我们需要对SSAO输出进行模糊。</p>
+<p>由于存在先后关系（先SSAO，后Blur），所以使用FBO：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c++">GLuint ssaoBlurFBO, ssaoColorBufferBlur;<br><span class="hljs-built_in">glGenFramebuffers</span>(<span class="hljs-number">1</span>, &amp;ssaoBlurFBO);<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER, ssaoBlurFBO);<br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>, &amp;ssaoColorBufferBlur);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, ssaoColorBufferBlur);<br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RED, SCR_WIDTH, SCR_HEIGHT, <span class="hljs-number">0</span>, GL_RGB, GL_FLOAT, <span class="hljs-literal">NULL</span>);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBufferBlur, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">in</span> <span class="hljs-type">vec2</span> TexCoords;<br><span class="hljs-keyword">out</span> <span class="hljs-type">float</span> fragColor;<br><br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> ssaoInput;<br><br><span class="hljs-type">void</span> main() &#123;<br>    <span class="hljs-type">vec2</span> texelSize = <span class="hljs-number">1.0</span> / <span class="hljs-type">vec2</span>(<span class="hljs-built_in">textureSize</span>(ssaoInput, <span class="hljs-number">0</span>));<br>    <span class="hljs-type">float</span> result = <span class="hljs-number">0.0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> x = <span class="hljs-number">-2</span>; x &lt; <span class="hljs-number">2</span>; ++x) <br>    &#123;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> y = <span class="hljs-number">-2</span>; y &lt; <span class="hljs-number">2</span>; ++y) <br>        &#123;<br>            <span class="hljs-type">vec2</span> <span class="hljs-keyword">offset</span> = <span class="hljs-type">vec2</span>(<span class="hljs-type">float</span>(x), <span class="hljs-type">float</span>(y)) * texelSize;<br>            result += <span class="hljs-built_in">texture</span>(ssaoInput, TexCoords + <span class="hljs-keyword">offset</span>).r;<br>        &#125;<br>    &#125;<br>    fragColor = result / (<span class="hljs-number">4.0</span> * <span class="hljs-number">4.0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="应用">应用</h4>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><span class="hljs-keyword">out</span> <span class="hljs-type">vec4</span> FragColor;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec2</span> TexCoords;<br><br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> gPositionDepth;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> gNormal;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> gAlbedo;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">sampler2D</span> ssao;<br><br>struct Light &#123;<br>    <span class="hljs-type">vec3</span> Position;<br>    <span class="hljs-type">vec3</span> Color;<br><br>    <span class="hljs-type">float</span> Linear;<br>    <span class="hljs-type">float</span> Quadratic;<br>    <span class="hljs-type">float</span> Radius;<br>&#125;;<br><span class="hljs-keyword">uniform</span> Light light;<br><br><span class="hljs-type">void</span> main()<br>&#123;             <br>    <span class="hljs-comment">// 从G缓冲中提取数据</span><br>    <span class="hljs-type">vec3</span> FragPos = <span class="hljs-built_in">texture</span>(gPositionDepth, TexCoords).rgb;<br>    <span class="hljs-type">vec3</span> Normal = <span class="hljs-built_in">texture</span>(gNormal, TexCoords).rgb;<br>    <span class="hljs-type">vec3</span> Diffuse = <span class="hljs-built_in">texture</span>(gAlbedo, TexCoords).rgb;<br>    <span class="hljs-type">float</span> AmbientOcclusion = <span class="hljs-built_in">texture</span>(ssao, TexCoords).r;<br><br>    <span class="hljs-comment">// Blinn-Phong (观察空间中)</span><br>    <span class="hljs-type">vec3</span> ambient = <span class="hljs-type">vec3</span>(<span class="hljs-number">0.3</span> * AmbientOcclusion); <span class="hljs-comment">// 这里我们加上遮蔽因子</span><br>    <span class="hljs-type">vec3</span> lighting  = ambient; <br>    <span class="hljs-type">vec3</span> viewDir  = <span class="hljs-built_in">normalize</span>(-FragPos); <span class="hljs-comment">// Viewpos 为 (0.0.0)，在观察空间中</span><br>    <span class="hljs-comment">// 漫反射</span><br>    <span class="hljs-type">vec3</span> lightDir = <span class="hljs-built_in">normalize</span>(light.Position - FragPos);<br>    <span class="hljs-type">vec3</span> diffuse = <span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(Normal, lightDir), <span class="hljs-number">0.0</span>) * Diffuse * light.Color;<br>    <span class="hljs-comment">// 镜面</span><br>    <span class="hljs-type">vec3</span> halfwayDir = <span class="hljs-built_in">normalize</span>(lightDir + viewDir);  <br>    <span class="hljs-type">float</span> spec = <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(Normal, halfwayDir), <span class="hljs-number">0.0</span>), <span class="hljs-number">8.0</span>);<br>    <span class="hljs-type">vec3</span> specular = light.Color * spec;<br>    <span class="hljs-comment">// 衰减</span><br>    <span class="hljs-type">float</span> dist = <span class="hljs-built_in">length</span>(light.Position - FragPos);<br>    <span class="hljs-type">float</span> attenuation = <span class="hljs-number">1.0</span> / (<span class="hljs-number">1.0</span> + light.Linear * dist + light.Quadratic * dist * dist);<br>    diffuse  *= attenuation;<br>    specular *= attenuation;<br>    lighting += diffuse + specular;<br><br>    FragColor = <span class="hljs-type">vec4</span>(lighting, <span class="hljs-number">1.0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" class="print-no-link">#图形学</a>
+      
+        <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LearnOpenGL学习笔记（十三） - HDR、泛光、延迟渲染与SSAO</div>
+      <div>http://example.com/2024/08/24/LearnOpenGL学习笔记（十三）-HDR、泛光、延迟渲染与SSAO/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yoi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/08/24/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%BA%8C%EF%BC%89-%E4%B8%87%E5%90%91%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE%E3%80%81%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE%E4%B8%8E%E8%A7%86%E5%B7%AE%E8%B4%B4%E5%9B%BE/" title="LearnOpenGL学习笔记（十二） - 万向阴影贴图、法线贴图与视差贴图">
+                        <span class="hidden-mobile">LearnOpenGL学习笔记（十二） - 万向阴影贴图、法线贴图与视差贴图</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       Tech · Art · Life. |  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
