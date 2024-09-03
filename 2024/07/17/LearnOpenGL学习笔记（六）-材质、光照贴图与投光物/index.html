@@ -29,8 +29,8 @@
 <meta property="article:modified_time" content="2024-08-06T06:30:50.213Z">
 <meta property="article:author" content="Yoi">
 <meta property="article:tag" content="图形学">
-<meta property="article:tag" content="学习笔记">
 <meta property="article:tag" content="OpenGL">
+<meta property="article:tag" content="学习笔记">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://learnopengl-cn.github.io/img/02/05/attenuation.png">
   
@@ -292,185 +292,162 @@
             
               <div class="markdown-body">
                 
-                <p>有趣。 <span id="more"></span></p>
-<h2 id="材质">材质</h2>
-<p>在通常的着色器编写中，并不是直接使用 <code>objectColor</code>
-计算表面颜色的，而是使用材质（Material）。材质定义了物体表面的反射特性，包含环境光、漫反射率和镜面反射率等属性。</p>
-<p>与 C 语言类似，OpenGL
-也可以定义结构体来组织数据。以下示例展示了如何在 GLSL 中定义一个
-<code>Material</code> 结构体，并将其用作 uniform 变量：</p>
+                <p>有趣。<br />
+<span id="more"></span></p>
+<h2 id="材质"><a class="markdownIt-Anchor" href="#材质"></a> 材质</h2>
+<p>在通常的着色器编写中，并不是直接使用 <code>objectColor</code> 计算表面颜色的，而是使用材质（Material）。材质定义了物体表面的反射特性，包含环境光、漫反射率和镜面反射率等属性。</p>
+<p>与 C 语言类似，OpenGL 也可以定义结构体来组织数据。以下示例展示了如何在 GLSL 中定义一个 <code>Material</code> 结构体，并将其用作 uniform 变量：</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br>struct Material &#123;<br>    <span class="hljs-type">vec3</span> ambient;<br>    <span class="hljs-type">vec3</span> diffuse;<br>    <span class="hljs-type">vec3</span> specular;<br>    <span class="hljs-type">float</span> shininess;<br>&#125;; <br><span class="hljs-keyword">uniform</span> Material material;<br></code></pre></td></tr></table></figure>
-<h3 id="环境光">环境光</h3>
-<p><code>ambient</code>
-材质向量定义了在环境光照下，这个表面反射的颜色。环境光通常是模拟全局光照的，它在所有方向上均匀地影响物体的每个部分。<code>ambient</code>
-通常设置为表面的基础颜色，以确保即使在阴影中物体也能被轻微看到。</p>
-<h3 id="漫反射">漫反射</h3>
-<p><code>diffuse</code>
-材质向量定义了表面的漫反射颜色。漫反射模拟了光在粗糙表面上的扩散反射，使光在多个方向上散射。漫反射颜色设置为期望的物体颜色，因为它直接影响物体在被光照射时的可见颜色。</p>
-<h3 id="镜面反射">镜面反射</h3>
-<p><code>specular</code>
-材质向量设置了表面的镜面反射颜色。它决定了光在表面上的镜面高光颜色。这种反射通常用于模拟光滑表面的光泽度或闪亮效果。高光的颜色可以是白色的（表示强光反射），也可以是其他颜色，具体取决于表面材料的特性。</p>
-<h3 id="镜面反射度">镜面反射度</h3>
-<p><code>shininess</code> 参数影响镜面高光的散射程度或半径。较高的
-<code>shininess</code>
-值会使高光更加集中和尖锐，模拟光滑或抛光的表面；较低的
-<code>shininess</code> 值会使高光更加扩散和柔和，模拟粗糙的表面。</p>
+<h3 id="环境光"><a class="markdownIt-Anchor" href="#环境光"></a> 环境光</h3>
+<p><code>ambient</code> 材质向量定义了在环境光照下，这个表面反射的颜色。环境光通常是模拟全局光照的，它在所有方向上均匀地影响物体的每个部分。<code>ambient</code> 通常设置为表面的基础颜色，以确保即使在阴影中物体也能被轻微看到。</p>
+<h3 id="漫反射"><a class="markdownIt-Anchor" href="#漫反射"></a> 漫反射</h3>
+<p><code>diffuse</code> 材质向量定义了表面的漫反射颜色。漫反射模拟了光在粗糙表面上的扩散反射，使光在多个方向上散射。漫反射颜色设置为期望的物体颜色，因为它直接影响物体在被光照射时的可见颜色。</p>
+<h3 id="镜面反射"><a class="markdownIt-Anchor" href="#镜面反射"></a> 镜面反射</h3>
+<p><code>specular</code> 材质向量设置了表面的镜面反射颜色。它决定了光在表面上的镜面高光颜色。这种反射通常用于模拟光滑表面的光泽度或闪亮效果。高光的颜色可以是白色的（表示强光反射），也可以是其他颜色，具体取决于表面材料的特性。</p>
+<h3 id="镜面反射度"><a class="markdownIt-Anchor" href="#镜面反射度"></a> 镜面反射度</h3>
+<p><code>shininess</code> 参数影响镜面高光的散射程度或半径。较高的 <code>shininess</code> 值会使高光更加集中和尖锐，模拟光滑或抛光的表面；较低的 <code>shininess</code> 值会使高光更加扩散和柔和，模拟粗糙的表面。</p>
 <p>材质属性的设置需要丰富的实践。</p>
-<h3 id="光源">光源</h3>
+<h3 id="光源"><a class="markdownIt-Anchor" href="#光源"></a> 光源</h3>
 <p>通常来说，物体对于环境光、漫反射光和高光的反射力度是不同的。材质描述了物体在反射这三类光时的颜色属性，而反射力度是另一种截然不同的属性。</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs glsl">struct Light &#123;<br>    <span class="hljs-type">vec3</span> position;<br>    <span class="hljs-type">vec3</span> ambient; <span class="hljs-comment">//环境光影响系数</span><br>    <span class="hljs-type">vec3</span> diffuse; <span class="hljs-comment">//漫反射率</span><br>    <span class="hljs-type">vec3</span> specular; <span class="hljs-comment">//镜面反射率</span><br>&#125;;<br><span class="hljs-keyword">uniform</span> Light light;<br></code></pre></td></tr></table></figure>
 <p>一般，环境光的反射力度较小，在0.1f左右。漫反射可以在0.5f-0.7f左右，而高光一般都为1.0f。</p>
 <blockquote>
 <p>我该如何理解漫反射、镜面反射率？</p>
 <p>与漫反射颜色不同，漫反射率是指物体对漫反射颜色中R、G、B分量的反射程度。</p>
-<p>假设漫反射率为（0.2f, 0.3f,
-0.4f），那么，漫反射颜色中，有20%的红色能被漫反射到观察者视角中，30%的绿色以及40%的红色同理。</p>
-<p>镜面反射率也是如此。镜面反射率通常被设置为（1.0f, 1.0f,
-1.0f），因为镜面反射一般直接反映出光源的颜色。</p>
+<p>假设漫反射率为（0.2f, 0.3f, 0.4f），那么，漫反射颜色中，有20%的红色能被漫反射到观察者视角中，30%的绿色以及40%的红色同理。</p>
+<p>镜面反射率也是如此。镜面反射率通常被设置为（1.0f, 1.0f, 1.0f），因为镜面反射一般直接反映出光源的颜色。</p>
 </blockquote>
-<h2 id="光照贴图">光照贴图</h2>
+<h2 id="光照贴图"><a class="markdownIt-Anchor" href="#光照贴图"></a> 光照贴图</h2>
 <p>之前，我们对材质三个光照分类的控制，是使用传入uniform来实现的。但实际上，我们经常会遇到一个物体的不同部分是不同材质的情况。为了处理这种情况，我们引入光照贴图（Map）的概念，对材质的不同区域设置不同的光照分量强度。</p>
 <p>贴图，类似于纹理，也是一种覆盖物体的图像。它允许着色器逐片段索引其中的颜色值。</p>
 <p>和纹理一样，在着色器内使用<code>sampler2D</code>类型定义采样器，并使用<code>texture(sampler2D tex, vec2 uv)</code>函数采样。</p>
-<h3 id="漫反射贴图">漫反射贴图</h3>
-<p>漫反射贴图（Diffuse
-Map）可以看作是传统光照模型（如Phong、Blinn-Phong）中的Base-Color。它表现了物体本身的颜色。</p>
+<h3 id="漫反射贴图"><a class="markdownIt-Anchor" href="#漫反射贴图"></a> 漫反射贴图</h3>
+<p>漫反射贴图（Diffuse Map）可以看作是传统光照模型（如Phong、Blinn-Phong）中的Base-Color。它表现了物体本身的颜色。</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs glsl">struct Material &#123;<br>    <span class="hljs-type">sampler2D</span> diffuse;<br>    <span class="hljs-type">vec3</span>      specular;<br>    <span class="hljs-type">float</span>     shininess;<br>&#125;; <br>...<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec2</span> TexCoords;<br>...<br><span class="hljs-type">vec3</span> diffuse = light.diffuse * diff * <span class="hljs-type">vec3</span>(<span class="hljs-built_in">texture</span>(material.diffuse, TexCoords));<br><span class="hljs-type">vec3</span> ambient = <span class="hljs-type">vec3</span>(<span class="hljs-built_in">texture</span>(material.diffuse,TexCoords))*lightColor*light.ambient;<br></code></pre></td></tr></table></figure>
 <blockquote>
 <p>这里移除了结构体内的<code>vec3 ambient</code>属性，因为几乎在所有情况下，环境光颜色都等于漫反射颜色，所以环境光用漫反射贴图进行采样。</p>
 </blockquote>
-<h3 id="高光贴图">高光贴图</h3>
+<h3 id="高光贴图"><a class="markdownIt-Anchor" href="#高光贴图"></a> 高光贴图</h3>
 <p>高光贴图用于控制高光分量。</p>
 <p><code>vec3 specular = specularRatio * lightColor * vec3(texture(material.specular, TexCoords)) * light.specular</code></p>
-<h2 id="投光物">投光物</h2>
+<h2 id="投光物"><a class="markdownIt-Anchor" href="#投光物"></a> 投光物</h2>
 <p>将光投射到物体的光源叫做投光物（Light Caster）。</p>
-<h3 id="平行光">平行光</h3>
-<p>平行光，又称定向光（Directional
-Light），投射的所有光线都来自于同一方向，与光源的位置无关。</p>
+<h3 id="平行光"><a class="markdownIt-Anchor" href="#平行光"></a> 平行光</h3>
+<p>平行光，又称定向光（Directional Light），投射的所有光线都来自于同一方向，与光源的位置无关。</p>
 <p>太阳光被视为一种平行光。</p>
 <p>对于定向光，其结构体中只需包含一个方向向量和三个光照分量即可。</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs glsl">struct Light &#123;<br>    <span class="hljs-type">vec3</span> direction;<br>    <span class="hljs-type">vec3</span> ambient;<br>    <span class="hljs-type">vec3</span> diffuse;<br>    <span class="hljs-type">vec3</span> specular;<br>&#125;;<br></code></pre></td></tr></table></figure>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version 330 core</span><br><br>struct Material &#123;<br>    <span class="hljs-type">sampler2D</span> diffuse;<br>    <span class="hljs-type">sampler2D</span> specular;<br>    <span class="hljs-type">float</span> shininess;<br>&#125;;<br><br>struct Light &#123;<br>    <span class="hljs-type">vec3</span> direction;<br>    <span class="hljs-type">vec3</span> ambient;<br>    <span class="hljs-type">vec3</span> diffuse;<br>    <span class="hljs-type">vec3</span> specular;<br>    <span class="hljs-type">vec3</span> color;<br>    <span class="hljs-type">float</span> strength;<br>&#125;;<br><br><span class="hljs-keyword">uniform</span> Light light;<br><span class="hljs-keyword">uniform</span> Material material;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">vec3</span> viewPos;<br><span class="hljs-keyword">uniform</span> <span class="hljs-type">float</span> time;<br><br><span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> norm;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec3</span> fragPos;<br><span class="hljs-keyword">in</span> <span class="hljs-type">vec2</span> TexCoords;<br><span class="hljs-keyword">out</span> <span class="hljs-type">vec4</span> FragColor;<br><br><span class="hljs-type">void</span> main() &#123;<br>    <span class="hljs-comment">// 计算光源方向</span><br>    <span class="hljs-type">vec3</span> lightDir = <span class="hljs-built_in">normalize</span>(-light.direction);<br><br>    <span class="hljs-comment">// 计算环境光</span><br>    <span class="hljs-type">vec3</span> ambient = <span class="hljs-type">vec3</span>(<span class="hljs-built_in">texture</span>(material.diffuse, TexCoords)) * light.ambient;<br><br>    <span class="hljs-comment">// 计算漫反射光</span><br>    <span class="hljs-type">vec3</span> normal = <span class="hljs-built_in">normalize</span>(norm);<br>    <span class="hljs-type">float</span> diffuseStrength = <span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(normal, lightDir), <span class="hljs-number">0.0</span>);<br>    <span class="hljs-type">vec3</span> diffuse = <span class="hljs-type">vec3</span>(<span class="hljs-built_in">texture</span>(material.diffuse, TexCoords)) * diffuseStrength * light.diffuse;<br><br>    <span class="hljs-comment">// 计算高光</span><br>    <span class="hljs-type">vec3</span> viewDir = <span class="hljs-built_in">normalize</span>(viewPos - fragPos);<br>    <span class="hljs-type">vec3</span> reflectDir = <span class="hljs-built_in">reflect</span>(-lightDir, normal);<br>    <span class="hljs-type">float</span> specularStrength = <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(viewDir, reflectDir), <span class="hljs-number">0.0</span>), material.shininess);<br>    <span class="hljs-type">vec3</span> specular = specularStrength * <span class="hljs-type">vec3</span>(<span class="hljs-built_in">texture</span>(material.specular, TexCoords)) * light.specular;<br><br>    <span class="hljs-comment">// 合并所有光照效果</span><br>    <span class="hljs-type">vec3</span> result = ambient + diffuse + specular;<br><br>    <span class="hljs-comment">// 输出最终颜色</span><br>    FragColor = <span class="hljs-type">vec4</span>(result*light.color*light.strength, <span class="hljs-number">1.0</span>f);<br>&#125;<br></code></pre></td></tr></table></figure>
-<h3 id="点光源">点光源</h3>
-<p>与平行光不同，点光源（Point
-Light）的光线会随距离衰减（Attenuation）。</p>
+<h3 id="点光源"><a class="markdownIt-Anchor" href="#点光源"></a> 点光源</h3>
+<p>与平行光不同，点光源（Point Light）的光线会随距离衰减（Attenuation）。</p>
 <p>在现实世界中，灯在近处通常会非常亮，但随着距离的增加光源的亮度一开始会下降非常快，但在远处时剩余的光强度就会下降的非常缓慢了。为了模拟这一过程，我们使用下列公式：</p>
 <span class="katex-error" title="ParseError: KaTeX parse error: {equation} can be used only in display mode." style="color:#cc0000">\begin{equation} F_{att} = \frac{1.0}{K_c + K_l * d + K_q * d^2} \end{equation}</span>
-<p><br></p>
+<br>
 <p>其中，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mrow><mi>a</mi><mi>t</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">F_{att}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight">tt</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>是衰减率，用于乘以光照强度。</p>
-<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">K_{c}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>
-<p>是常数项，通常为1.0，用于保证分母大于1，使得衰减率始终随距离增大而减小。</p>
-<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">K_{l}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>
-<p>是一次项系数，以线性方式减少强度。</p>
-<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">K_{q}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>
-<p>是二次项系数，当距离较大时，二次项的影响会更加显著。。</p>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">K_{c}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>是常数项，通常为1.0，用于保证分母大于1，使得衰减率始终随距离增大而减小。
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">K_{l}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>是一次项系数，以线性方式减少强度。
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">K_{q}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>是二次项系数，当距离较大时，二次项的影响会更加显著。。
 <p>经过该公式计算的衰减率乘以光强，最终得到的亮度如下：</p>
-<figure>
-<img src="https://learnopengl-cn.github.io/img/02/05/attenuation.png" srcset="/img/loading.gif" lazyload
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><img src="https://learnopengl-cn.github.io/img/02/05/attenuation.png" srcset="/img/loading.gif" lazyload alt="img" /></p>
 <p>三个K值的具体值设置需要实践经验。一次项系数越小，光源覆盖的距离越大，二次项系数的变化趋势与一次项系数相同，但它比一次项系数小更多。</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">距离</th>
-<th style="text-align: left;">常数项</th>
-<th style="text-align: left;">一次项</th>
-<th style="text-align: left;">二次项</th>
+<th style="text-align:left">距离</th>
+<th style="text-align:left">常数项</th>
+<th style="text-align:left">一次项</th>
+<th style="text-align:left">二次项</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">7</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.7</td>
-<td style="text-align: left;">1.8</td>
+<td style="text-align:left">7</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.7</td>
+<td style="text-align:left">1.8</td>
 </tr>
 <tr>
-<td style="text-align: left;">13</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.35</td>
-<td style="text-align: left;">0.44</td>
+<td style="text-align:left">13</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.35</td>
+<td style="text-align:left">0.44</td>
 </tr>
 <tr>
-<td style="text-align: left;">20</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.22</td>
-<td style="text-align: left;">0.20</td>
+<td style="text-align:left">20</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.22</td>
+<td style="text-align:left">0.20</td>
 </tr>
 <tr>
-<td style="text-align: left;">32</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.14</td>
-<td style="text-align: left;">0.07</td>
+<td style="text-align:left">32</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.14</td>
+<td style="text-align:left">0.07</td>
 </tr>
 <tr>
-<td style="text-align: left;">50</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.09</td>
-<td style="text-align: left;">0.032</td>
+<td style="text-align:left">50</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.09</td>
+<td style="text-align:left">0.032</td>
 </tr>
 <tr>
-<td style="text-align: left;">65</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.07</td>
-<td style="text-align: left;">0.017</td>
+<td style="text-align:left">65</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.07</td>
+<td style="text-align:left">0.017</td>
 </tr>
 <tr>
-<td style="text-align: left;">100</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.045</td>
-<td style="text-align: left;">0.0075</td>
+<td style="text-align:left">100</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.045</td>
+<td style="text-align:left">0.0075</td>
 </tr>
 <tr>
-<td style="text-align: left;">160</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.027</td>
-<td style="text-align: left;">0.0028</td>
+<td style="text-align:left">160</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.027</td>
+<td style="text-align:left">0.0028</td>
 </tr>
 <tr>
-<td style="text-align: left;">200</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.022</td>
-<td style="text-align: left;">0.0019</td>
+<td style="text-align:left">200</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.022</td>
+<td style="text-align:left">0.0019</td>
 </tr>
 <tr>
-<td style="text-align: left;">325</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.014</td>
-<td style="text-align: left;">0.0007</td>
+<td style="text-align:left">325</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.014</td>
+<td style="text-align:left">0.0007</td>
 </tr>
 <tr>
-<td style="text-align: left;">600</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.007</td>
-<td style="text-align: left;">0.0002</td>
+<td style="text-align:left">600</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.007</td>
+<td style="text-align:left">0.0002</td>
 </tr>
 <tr>
-<td style="text-align: left;">3250</td>
-<td style="text-align: left;">1.0</td>
-<td style="text-align: left;">0.0014</td>
-<td style="text-align: left;">0.000007</td>
+<td style="text-align:left">3250</td>
+<td style="text-align:left">1.0</td>
+<td style="text-align:left">0.0014</td>
+<td style="text-align:left">0.000007</td>
 </tr>
 </tbody>
 </table>
 <p>具体实现衰减同样需要修改着色器中的Light结构体，并把计算得到的衰减值乘以三个光照分量。</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs glsl">struct Light &#123;<br>    <span class="hljs-comment">//光源位置</span><br>    <span class="hljs-type">vec3</span> position;<br>    <span class="hljs-comment">//材质光照分量</span><br>    <span class="hljs-type">vec3</span> ambient;<br>    <span class="hljs-type">vec3</span> diffuse;<br>    <span class="hljs-type">vec3</span> specular;<br>    <span class="hljs-comment">//灯光自身属性</span><br>    <span class="hljs-type">vec3</span> color;<br>    <span class="hljs-type">float</span> strength;<br>    <span class="hljs-comment">//点光源衰减参数</span><br>    <span class="hljs-type">float</span> constant;<br>    <span class="hljs-type">float</span> linear;<br>    <span class="hljs-type">float</span> quadratic;<br>&#125;;<br>    <br>    <span class="hljs-type">void</span> main()&#123;<br>            <span class="hljs-type">float</span> <span class="hljs-built_in">distance</span> = <span class="hljs-built_in">length</span>(fragPos-light.position);<br>    <span class="hljs-type">float</span> attenuation = <span class="hljs-number">1.0</span>/(light.constant+<span class="hljs-built_in">distance</span>*light.linear+<span class="hljs-built_in">distance</span>*<span class="hljs-built_in">distance</span>*light.quadratic);<br>    ambient  *= attenuation;<br>    diffuse   *= attenuation;<br>    specular *= attenuation;<br>    <span class="hljs-comment">// 合并所有光照效果</span><br>    <span class="hljs-type">vec3</span> result = ambient + diffuse + specular;<br>    <span class="hljs-comment">// 输出最终颜色</span><br>    FragColor = <span class="hljs-type">vec4</span>(result*light.color*light.strength, <span class="hljs-number">1.0</span>f);<br>    &#125;<br></code></pre></td></tr></table></figure>
-<h3 id="聚光">聚光</h3>
+<h3 id="聚光"><a class="markdownIt-Anchor" href="#聚光"></a> 聚光</h3>
 <p>聚光（Spotlight）是位于环境中某个位置的光源，它只朝一个特定方向而不是所有方向照射光线。</p>
-<p>聚光可以用一个世界坐标、一个方向和一个切光角（Cufoff
-Angle）确定。切光角指定了光锥体的半径。</p>
-<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202407171229493.png" srcset="/img/loading.gif" lazyload alt="image-20240717122930242" style="zoom:50%;" /></p>
+<p>聚光可以用一个世界坐标、一个方向和一个切光角（Cufoff Angle）确定。切光角指定了光锥体的半径。</p>
+<img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202407171229493.png" srcset="/img/loading.gif" lazyload alt="image-20240717122930242" style="zoom:50%;" />
 <p>如图所示，θ代表图元和聚光方向的夹角，ϕ代表切光角。</p>
 <p>具体计算过程为：首先判断θ的cos值，若大于cosϕ，则说明片段位于光锥体内，执行光照计算（与点光源相同）。若小于，则直接输出环境光色。</p>
 <p>使用<code>smoothstep(float t1, float t2, float x)</code>函数来生成平滑边缘。</p>
 <blockquote>
-<p>当x小于t1时，函数返回0；x大于t2时，函数返回1；x位于[t1,
-t2]时，进行平滑插值。</p>
+<p>当x小于t1时，函数返回0；x大于t2时，函数返回1；x位于[t1, t2]时，进行平滑插值。</p>
 </blockquote>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs glsl">struct Light &#123;<br>    <span class="hljs-type">vec3</span> direction;<br>    <span class="hljs-type">vec3</span> position;<br>    <span class="hljs-type">float</span> cutoff;<br>    <span class="hljs-type">float</span> outer;<br>    <span class="hljs-type">vec3</span> ambient;<br>    <span class="hljs-type">vec3</span> diffuse;<br>    <span class="hljs-type">vec3</span> specular;<br>    <span class="hljs-type">vec3</span> color;<br>    <span class="hljs-type">float</span> strength;<br>&#125;;<br>...<br><span class="hljs-type">void</span> main() &#123;<br>    <span class="hljs-comment">//计算聚光区域</span><br>    <span class="hljs-type">vec3</span> light_frag_dir = <span class="hljs-built_in">normalize</span>(fragPos-light.position);<br>    <span class="hljs-type">float</span> theta = <span class="hljs-built_in">dot</span>(light_frag_dir,<span class="hljs-built_in">normalize</span>(light.direction));<br>    <span class="hljs-type">float</span> spotRange = <span class="hljs-built_in">smoothstep</span>(light.outer,light.cutoff,theta);<br>    <span class="hljs-type">vec3</span> lightDir = -light.direction;<br>    <span class="hljs-comment">// 计算环境光</span><br>    <span class="hljs-type">vec3</span> ambient = <span class="hljs-type">vec3</span>(<span class="hljs-built_in">texture</span>(material.diffuse, TexCoords)) * light.ambient;<br>    <span class="hljs-comment">// 计算漫反射光</span><br>    <span class="hljs-type">vec3</span> normal = <span class="hljs-built_in">normalize</span>(norm);<br>    <span class="hljs-type">float</span> diffuseStrength = <span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(normal, lightDir), <span class="hljs-number">0.0</span>);<br>    <span class="hljs-type">vec3</span> diffuse = <span class="hljs-type">vec3</span>(<span class="hljs-built_in">texture</span>(material.diffuse, TexCoords)) * diffuseStrength * light.diffuse;<br>    <span class="hljs-comment">// 计算高光</span><br>    <span class="hljs-type">vec3</span> viewDir = <span class="hljs-built_in">normalize</span>(viewPos - fragPos);<br>    <span class="hljs-type">vec3</span> reflectDir = <span class="hljs-built_in">reflect</span>(-lightDir, normal);<br>    <span class="hljs-type">float</span> specularStrength = <span class="hljs-built_in">pow</span>(<span class="hljs-built_in">max</span>(<span class="hljs-built_in">dot</span>(viewDir, reflectDir), <span class="hljs-number">0.0</span>), material.shininess);<br>    <span class="hljs-type">vec3</span> specular = specularStrength * <span class="hljs-type">vec3</span>(<span class="hljs-built_in">texture</span>(material.specular, TexCoords)) * light.specular;<br>    <span class="hljs-comment">// 合并所有光照效果</span><br>    <span class="hljs-type">vec3</span> result = ambient + diffuse*spotRange + specular*spotRange;<br>    <span class="hljs-comment">// 输出最终颜色</span><br>    FragColor = <span class="hljs-type">vec4</span>(result*light.color*light.strength, <span class="hljs-number">1.0</span>f);<br>&#125;<br></code></pre></td></tr></table></figure>
-<h3 id="多光源">多光源</h3>
+<h3 id="多光源"><a class="markdownIt-Anchor" href="#多光源"></a> 多光源</h3>
 <p>GLSL中的函数和C函数很相似，它有一个函数名、一个返回值类型，如果函数不是在main函数之前声明的，我们还必须在代码文件顶部声明一个原型。</p>
 <p>为了实现多光源效果，我们需要将每个光源对各光照分量的贡献进行累加。</p>
 <p>对于数组类型的uniform，使用<code>“pointLights[0].position”</code>来访问。</p>
@@ -490,9 +467,9 @@ t2]时，进行平滑插值。</p>
       
         <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" class="print-no-link">#图形学</a>
       
-        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
-      
         <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
       
     </div>
   

@@ -23,13 +23,16 @@
 <meta property="og:site_name" content="Yoi&#39;s Home">
 <meta property="og:description" content="重新开始。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://learnopengl-cn.github.io/img/04/01/depth_non_linear_graph.png">
+<meta property="og:image" content="https://learnopengl-cn.github.io/img/04/03/blending_equation.png">
 <meta property="article:published_time" content="2024-08-05T01:20:23.000Z">
 <meta property="article:modified_time" content="2024-08-05T01:22:45.138Z">
 <meta property="article:author" content="Yoi">
 <meta property="article:tag" content="图形学">
-<meta property="article:tag" content="学习笔记">
 <meta property="article:tag" content="OpenGL">
+<meta property="article:tag" content="学习笔记">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://learnopengl-cn.github.io/img/04/01/depth_non_linear_graph.png">
   
   
   
@@ -289,71 +292,62 @@
             
               <div class="markdown-body">
                 
-                <p>重新开始。 <span id="more"></span></p>
-<h2 id="深度测试">深度测试</h2>
-<p>深度缓冲（Depth Buffer，or
-Z-Buffer）用于放置被阻挡的面被渲染到其他面的前面。</p>
-<p>在每个Fragment中都存储有Depth
-Buffer信息，它由程序自动创建，一般情况下是24位的float。</p>
-<p>当深度测试（Depth
-Test）被启用时，OpenGL会把Fragment的深度值和深度缓冲内容进行对比，这个过程被称为深度测试。测试通过时，深度缓冲就会更新为这个片段的深度值，否则这个片段会被剔除。</p>
+                <p>重新开始。<br />
+<span id="more"></span></p>
+<h2 id="深度测试"><a class="markdownIt-Anchor" href="#深度测试"></a> 深度测试</h2>
+<p>深度缓冲（Depth Buffer，or Z-Buffer）用于放置被阻挡的面被渲染到其他面的前面。</p>
+<p>在每个Fragment中都存储有Depth Buffer信息，它由程序自动创建，一般情况下是24位的float。</p>
+<p>当深度测试（Depth Test）被启用时，OpenGL会把Fragment的深度值和深度缓冲内容进行对比，这个过程被称为深度测试。测试通过时，深度缓冲就会更新为这个片段的深度值，否则这个片段会被剔除。</p>
 <p>深度缓冲运行在模板测试后，作用于<strong>屏幕空间</strong>。</p>
 <blockquote>
 <p><code>gl_FragCoord</code>是GLSL内建变量，它是一个vec3，x和y分量代表了片段的屏幕坐标（左下角为原点），z分量为片段的深度值。</p>
-<p>提前深度测试（Early Depth Testing,
-Early-Z）允许深度测试在Fragment着色器之前运行。只要判断该片段在其他物体之后，便会将他提前剔除。</p>
+<p>提前深度测试（Early Depth Testing, Early-Z）允许深度测试在Fragment着色器之前运行。只要判断该片段在其他物体之后，便会将他提前剔除。</p>
 <p>使用Early-Z的条件是，Fragment Shader里不能有写入深度值的操作。</p>
 </blockquote>
 <p>使用<code>glEnable(GL_DEPTH_TEST)</code>开启深度测试。</p>
 <p>开启深度测试后，在每个渲染迭代开始之前还应当使用<code>glClear(GL_DEPTH_BUFFER_BIT)</code>清除深度缓冲。</p>
 <p>使用<code>glDepthMask(GL_FALSE)</code>禁用深度缓冲写入，深度缓冲将不会更新，作为<strong>只读</strong>属性。</p>
-<h3 id="深度测试函数">深度测试函数</h3>
+<h3 id="深度测试函数"><a class="markdownIt-Anchor" href="#深度测试函数"></a> 深度测试函数</h3>
 <p><code>glDepthFunc</code>函数用于控制OpenGL什么时候通过、丢弃片段，以及什么时候更新深度缓冲。它接收一个比较符。</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">函数</th>
-<th style="text-align: left;">描述</th>
+<th style="text-align:left">函数</th>
+<th style="text-align:left">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">GL_ALWAYS</td>
-<td style="text-align: left;">永远通过深度测试</td>
+<td style="text-align:left">GL_ALWAYS</td>
+<td style="text-align:left">永远通过深度测试</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_NEVER</td>
-<td style="text-align: left;">永远不通过深度测试</td>
+<td style="text-align:left">GL_NEVER</td>
+<td style="text-align:left">永远不通过深度测试</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_LESS</td>
-<td
-style="text-align: left;">在片段深度值小于缓冲的深度值时通过测试</td>
+<td style="text-align:left">GL_LESS</td>
+<td style="text-align:left">在片段深度值小于缓冲的深度值时通过测试</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_EQUAL</td>
-<td
-style="text-align: left;">在片段深度值等于缓冲区的深度值时通过测试</td>
+<td style="text-align:left">GL_EQUAL</td>
+<td style="text-align:left">在片段深度值等于缓冲区的深度值时通过测试</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_LEQUAL</td>
-<td
-style="text-align: left;">在片段深度值小于等于缓冲区的深度值时通过测试</td>
+<td style="text-align:left">GL_LEQUAL</td>
+<td style="text-align:left">在片段深度值小于等于缓冲区的深度值时通过测试</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_GREATER</td>
-<td
-style="text-align: left;">在片段深度值大于缓冲区的深度值时通过测试</td>
+<td style="text-align:left">GL_GREATER</td>
+<td style="text-align:left">在片段深度值大于缓冲区的深度值时通过测试</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_NOTEQUAL</td>
-<td
-style="text-align: left;">在片段深度值不等于缓冲区的深度值时通过测试</td>
+<td style="text-align:left">GL_NOTEQUAL</td>
+<td style="text-align:left">在片段深度值不等于缓冲区的深度值时通过测试</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_GEQUAL</td>
-<td
-style="text-align: left;">在片段深度值大于等于缓冲区的深度值时通过测试</td>
+<td style="text-align:left">GL_GEQUAL</td>
+<td style="text-align:left">在片段深度值大于等于缓冲区的深度值时通过测试</td>
 </tr>
 </tbody>
 </table>
@@ -364,24 +358,13 @@ style="text-align: left;">在片段深度值大于等于缓冲区的深度值时
 <p>当我们渲染了两个方块时，这两个方块的z值必然比无穷大要小，它们通过了深度测试，两个方块占据的片段位置的深度缓冲被更新为新的深度值。</p>
 <p>当渲染位于两个方块底下的地板时，对于没被方块遮挡的部分的片段深度值，它们的深度缓冲值依然是无穷大，所以它们能通过深度测试，正常显示。而被方块遮挡的部分，很明显深度值要大于方块的深度值，所以未通过测试，被剔除。</p>
 </blockquote>
-<h3 id="深度值精度">深度值精度</h3>
-<p>只要一个float表示的是深度，那么它的范围必定是[0.0,
-1.0]。深度缓冲存储的float的范围都是如此。</p>
-<p>但我们知道，片段的z值可不是这样。为了把z值转换为深度值，我们使用方程：<span
-class="math display">\[\begin{equation} F_{depth} = \frac{z - near}{far
-- near} \end{equation}\]</span></p>
+<h3 id="深度值精度"><a class="markdownIt-Anchor" href="#深度值精度"></a> 深度值精度</h3>
+<p>只要一个float表示的是深度，那么它的范围必定是[0.0, 1.0]。深度缓冲存储的float的范围都是如此。</p>
+<p>但我们知道，片段的z值可不是这样。为了把z值转换为深度值，我们使用方程：$$\begin{equation} F_{depth} = \frac{z - near}{far - near} \end{equation}$$</p>
 <p>其中，<code>near</code>和<code>far</code>是平截头体的近平面z值和远平面z值。</p>
-<p>上面的公式被称为线性深度缓冲（Linear Depth
-Buffer）。这种方法实际上不是很好，因为对于透视投影的观察者来说，极远处物体的z轴变化是很难观察到的，而近处物体z轴很微小的变化都会很明显。为了体现这点，我们引入非线性深度缓冲方程：<span
-class="math inline">\(\begin{equation} F_{depth} = \frac{1/z -
-1/near}{1/far - 1/near} \end{equation}\)</span></p>
+<p>上面的公式被称为线性深度缓冲（Linear Depth Buffer）。这种方法实际上不是很好，因为对于透视投影的观察者来说，极远处物体的z轴变化是很难观察到的，而近处物体z轴很微小的变化都会很明显。为了体现这点，我们引入非线性深度缓冲方程：<span class='katex-error' title='ParseError: KaTeX parse error: No such environment: equation at position 7: \begin{̲e̲q̲u̲a̲t̲i̲o̲n̲}̲ F_{depth} = \f…'>\begin{equation} F_{depth} = \frac{1/z - 1/near}{1/far - 1/near} \end{equation}</span></p>
 <p>对于这个方程，z值和最终深度的变化如下图：</p>
-<figure>
-<img
-src="https://learnopengl-cn.github.io/img/04/01/depth_non_linear_graph.png" srcset="/img/loading.gif" lazyload
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><img src="https://learnopengl-cn.github.io/img/04/01/depth_non_linear_graph.png" srcset="/img/loading.gif" lazyload alt="img" /></p>
 <p>可以看到，深度值的很大一部分都是由很小的z值决定的。</p>
 <p>非线性深度值转换方程被嵌入到了投影矩阵中，在观察空间-&gt;裁剪空间的转换过程中被应用。</p>
 <blockquote>
@@ -390,7 +373,7 @@ alt="img" />
 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mrow><mi>v</mi><mi>i</mi><mi>e</mi><mi>w</mi></mrow></msub><mo>=</mo><mfrac><mrow><mn>2</mn><mo>⋅</mo><mi>f</mi><mi>a</mi><mi>r</mi><mo>⋅</mo><mi>n</mi><mi>e</mi><mi>a</mi><mi>r</mi></mrow><mrow><mo stretchy="false">(</mo><mi>f</mi><mi>a</mi><mi>r</mi><mo>+</mo><mi>n</mi><mi>e</mi><mi>a</mi><mi>r</mi><mo stretchy="false">)</mo><mo>−</mo><mo stretchy="false">(</mo><mi>f</mi><mi>a</mi><mi>r</mi><mo>−</mo><mi>n</mi><mi>e</mi><mi>a</mi><mi>r</mi><mo stretchy="false">)</mo><mo>⋅</mo><msub><mi>z</mi><mrow><mi>n</mi><mi>d</mi><mi>c</mi></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">z_{view} = \frac{2 \cdot far \cdot near}{(far + near)-(far - near) \cdot z_{ndc} }</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.044em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.4522em;vertical-align:-0.52em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9322em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mclose mtight">)</span><span class="mbin mtight">−</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mclose mtight">)</span><span class="mbin mtight">⋅</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3488em;margin-left:-0.044em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight">c</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1512em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.4461em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mbin mtight">⋅</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mbin mtight">⋅</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">e</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>
 <p>上述方程用于把非线性深度值转换为线性。它是使用投影矩阵推导得出的。其中<code>Zndc</code>是NDC坐标下的z值，由原深度值*2-1变换得到。在shader中可以这么写：</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">float</span> z = depth * <span class="hljs-number">2.0</span> - <span class="hljs-number">1.0</span>;<br><span class="hljs-type">float</span> linearDepth = (<span class="hljs-number">2.0</span> * near * far) / (far + near - z * (far - near));<br></code></pre></td></tr></table></figure>
-<h3 id="深度冲突">深度冲突</h3>
+<h3 id="深度冲突"><a class="markdownIt-Anchor" href="#深度冲突"></a> 深度冲突</h3>
 <p>深度冲突（Z-fight）指两个片段的深度值非常接近，以至于深度缓冲没有足够的精度来决定该显示哪个片段的情况。深度冲突发生时，可以看到锯齿状的贴图闪烁。</p>
 <p>一般我们采用下列方法防止深度冲突：</p>
 <ul>
@@ -403,9 +386,8 @@ alt="img" />
 <ul>
 <li>使用高精度深度缓冲。</li>
 </ul>
-<h2 id="模板测试">模板测试</h2>
-<p>模板测试（Stencil Test）紧接着Fragment
-Shader处理完一个片段后执行。</p>
+<h2 id="模板测试"><a class="markdownIt-Anchor" href="#模板测试"></a> 模板测试</h2>
+<p>模板测试（Stencil Test）紧接着Fragment Shader处理完一个片段后执行。</p>
 <p>模板缓冲类似于一个遮罩。当片元的模板缓冲值为1时，通过测试，否则剔除。</p>
 <p>与深度缓冲类似，模板缓冲通过<code>glEnable(GL_STENCIL_TEST)</code>开启，每次渲染循环通过<code>glClear(GL_STENCIL_BUFFER_BIT)</code>清除上帧缓存，通过<code>glStencilMask</code>设置位掩码。</p>
 <p><code>glStencilFunc(GLenum func, GLint ref, GLuint mask)</code>用于告诉程序如何进行模板测试。</p>
@@ -425,58 +407,53 @@ Shader处理完一个片段后执行。</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">行为</th>
-<th style="text-align: left;">描述</th>
+<th style="text-align:left">行为</th>
+<th style="text-align:left">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">GL_KEEP</td>
-<td style="text-align: left;">保持当前储存的模板值</td>
+<td style="text-align:left">GL_KEEP</td>
+<td style="text-align:left">保持当前储存的模板值</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_ZERO</td>
-<td style="text-align: left;">将模板值设置为0</td>
+<td style="text-align:left">GL_ZERO</td>
+<td style="text-align:left">将模板值设置为0</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_REPLACE</td>
-<td
-style="text-align: left;">将模板值设置为glStencilFunc函数设置的<code>ref</code>值</td>
+<td style="text-align:left">GL_REPLACE</td>
+<td style="text-align:left">将模板值设置为glStencilFunc函数设置的<code>ref</code>值</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_INCR</td>
-<td style="text-align: left;">如果模板值小于最大值则将模板值加1</td>
+<td style="text-align:left">GL_INCR</td>
+<td style="text-align:left">如果模板值小于最大值则将模板值加1</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_INCR_WRAP</td>
-<td
-style="text-align: left;">与GL_INCR一样，但如果模板值超过了最大值则归零</td>
+<td style="text-align:left">GL_INCR_WRAP</td>
+<td style="text-align:left">与GL_INCR一样，但如果模板值超过了最大值则归零</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_DECR</td>
-<td style="text-align: left;">如果模板值大于最小值则将模板值减1</td>
+<td style="text-align:left">GL_DECR</td>
+<td style="text-align:left">如果模板值大于最小值则将模板值减1</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_DECR_WRAP</td>
-<td
-style="text-align: left;">与GL_DECR一样，但如果模板值小于0则将其设置为最大值</td>
+<td style="text-align:left">GL_DECR_WRAP</td>
+<td style="text-align:left">与GL_DECR一样，但如果模板值小于0则将其设置为最大值</td>
 </tr>
 <tr>
-<td style="text-align: left;">GL_INVERT</td>
-<td style="text-align: left;">按位翻转当前的模板缓冲值</td>
+<td style="text-align:left">GL_INVERT</td>
+<td style="text-align:left">按位翻转当前的模板缓冲值</td>
 </tr>
 </tbody>
 </table>
-<h3 id="描边">描边</h3>
+<h3 id="描边"><a class="markdownIt-Anchor" href="#描边"></a> 描边</h3>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glEnable</span>(GL_DEPTH_TEST);<br><span class="hljs-built_in">glStencilOp</span>(GL_KEEP, GL_KEEP, GL_REPLACE);  <br><br><span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); <br><br><span class="hljs-built_in">glStencilMask</span>(<span class="hljs-number">0x00</span>); <span class="hljs-comment">// 记得保证我们在绘制地板的时候不会更新模板缓冲</span><br>normalShader.<span class="hljs-built_in">use</span>();<br><span class="hljs-built_in">DrawFloor</span>()  <br><br><span class="hljs-built_in">glStencilFunc</span>(GL_ALWAYS, <span class="hljs-number">1</span>, <span class="hljs-number">0xFF</span>); <br><span class="hljs-built_in">glStencilMask</span>(<span class="hljs-number">0xFF</span>); <br><span class="hljs-built_in">DrawTwoContainers</span>();<br><br><span class="hljs-built_in">glStencilFunc</span>(GL_NOTEQUAL, <span class="hljs-number">1</span>, <span class="hljs-number">0xFF</span>);<br><span class="hljs-built_in">glStencilMask</span>(<span class="hljs-number">0x00</span>); <br><span class="hljs-built_in">glDisable</span>(GL_DEPTH_TEST);<br>shaderSingleColor.<span class="hljs-built_in">use</span>(); <br><span class="hljs-built_in">DrawTwoScaledUpContainers</span>();<br><span class="hljs-built_in">glStencilMask</span>(<span class="hljs-number">0xFF</span>);<br><span class="hljs-built_in">glEnable</span>(GL_DEPTH_TEST);  <br></code></pre></td></tr></table></figure>
 <blockquote>
 <p>我该如何理解这段代码？</p>
 <p>我们使用模板测试来实现描边的效果。</p>
 <p>这里用的方法是：在原物体的位置，复制一个物体，将其略微放大一些。这个物体应用的Shader应当是不受光照影响的纯色Shader。</p>
 <p>描边就是要让原物体好好地显示出来，而原物体所占据片元以外的地方，允许大物体显示。</p>
-<p>首先，我们定义模板测试失败和成功后的结果：glStencilOp(GL_KEEP,
-GL_KEEP, GL_REPLACE);
-当模板测试通过时，替换片元模板值为ref值。否则保留原本的模板值。</p>
+<p>首先，我们定义模板测试失败和成功后的结果：glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); 当模板测试通过时，替换片元模板值为ref值。否则保留原本的模板值。</p>
 <p>我们需要先绘制不需要描边的物体。需要注意，绘制这些物体时，应当禁用模板缓冲（可以直接glDisable，也可以glStencilMask(0x00)）。</p>
 <p>当绘制到原物体时，开启模板缓冲，让原物体占据片元区域的模板值变为1。</p>
 <p><code>glStencilFunc(GL_ALWAYS,1,0XFF)</code>执行后，对于新渲染的片段，模板测试始终通过。</p>
@@ -486,10 +463,9 @@ GL_KEEP, GL_REPLACE);
 <p>然后绘制大物体。因为原物体片元区域的模板值都是1，所以大物体的模板测试不会通过，这些片元不会被渲染。这就达到了描边的效果。</p>
 <p>为什么要禁用深度测试呢？因为描边区域通常不可被障碍遮挡。如果有这个需求，也可以不禁用。</p>
 </blockquote>
-<h2 id="混合">混合</h2>
+<h2 id="混合"><a class="markdownIt-Anchor" href="#混合"></a> 混合</h2>
 <p>png图片是四通道的，第四通道的值代表透明度（alpha）。</p>
-<p>通过在Fragment
-Shader中对采样的alpha值进行判断并剔除（discard），可以实现“透明的地方不渲染”的效果：</p>
+<p>通过在Fragment Shader中对采样的alpha值进行判断并剔除（discard），可以实现“透明的地方不渲染”的效果：</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-type">vec4</span> col = <span class="hljs-built_in">texture</span>(tex,TexCoord);<br><span class="hljs-keyword">if</span>(col.a&lt;<span class="hljs-number">0.1</span>f)&#123;<br>    <span class="hljs-keyword">discard</span>;<br>&#125;<br>FragColor = col;<br></code></pre></td></tr></table></figure>
 <blockquote>
 <p>采用这种方法实现透明显示时，需要把纹理环绕方式设置为<code>GL_CLAMP_TO_EDGE</code>，否则当实际渲染物体的大小超过纹理大小时，底部uv会重复到顶部，导致物体的重复渲染。</p>
@@ -498,12 +474,7 @@ Shader中对采样的alpha值进行判断并剔除（discard），可以实现�
 <p>为实现半透明物体的渲染，我们引入Blend技术。</p>
 <p><code>glEnable(GL_BLEND)</code></p>
 <p>Blend借助alpha值实现”物体本身“和”后方物体“颜色的混合。让我们举一个具体例子：</p>
-<figure>
-<img
-src="https://learnopengl-cn.github.io/img/04/03/blending_equation.png" srcset="/img/loading.gif" lazyload
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
-</figure>
+<p><img src="https://learnopengl-cn.github.io/img/04/03/blending_equation.png" srcset="/img/loading.gif" lazyload alt="img" /></p>
 <p>我们把绿色半透明Quad放在红色不透明Quad前面。绿色Quad的alpha值是0.6，那么当二者叠加时，叠加区域的最终颜色中，绿色Quad对颜色的贡献值就是60%，红色则是(1-60%)=40%。最终颜色就是：</p>
 <span class="katex-error" title="ParseError: KaTeX parse error: {equation} can be used only in display mode." style="color:#cc0000">\begin{equation}\bar{C}_{result} = \begin{pmatrix} \color{red}{0.0} \\ \color{green}{1.0} \\ \color{blue}{0.0} \\ \color{purple}{0.6} \end{pmatrix} * \color{green}{0.6} + \begin{pmatrix} \color{red}{1.0} \\ \color{green}{0.0} \\ \color{blue}{0.0} \\ \color{purple}{1.0} \end{pmatrix} * \color{red}{(1 - 0.6)} \end{equation}</span>
 <blockquote>
@@ -513,68 +484,66 @@ alt="img" />
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">选项</th>
-<th style="text-align: left;">值</th>
+<th style="text-align:left">选项</th>
+<th style="text-align:left">值</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>GL_ZERO</code></td>
-<td style="text-align: left;">因子等于0</td>
+<td style="text-align:left"><code>GL_ZERO</code></td>
+<td style="text-align:left">因子等于0</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_ONE</code></td>
-<td style="text-align: left;">因子等于1</td>
+<td style="text-align:left"><code>GL_ONE</code></td>
+<td style="text-align:left">因子等于1</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_SRC_COLOR</code></td>
-<td style="text-align: left;">因子等于源颜色向量C¯source</td>
+<td style="text-align:left"><code>GL_SRC_COLOR</code></td>
+<td style="text-align:left">因子等于源颜色向量C¯source</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_ONE_MINUS_SRC_COLOR</code></td>
-<td style="text-align: left;">因子等于1−C¯source1</td>
+<td style="text-align:left"><code>GL_ONE_MINUS_SRC_COLOR</code></td>
+<td style="text-align:left">因子等于1−C¯source1</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_DST_COLOR</code></td>
-<td style="text-align: left;">因子等于目标颜色向量C¯destination</td>
+<td style="text-align:left"><code>GL_DST_COLOR</code></td>
+<td style="text-align:left">因子等于目标颜色向量C¯destination</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_ONE_MINUS_DST_COLOR</code></td>
-<td style="text-align: left;">因子等于1−C¯destination</td>
+<td style="text-align:left"><code>GL_ONE_MINUS_DST_COLOR</code></td>
+<td style="text-align:left">因子等于1−C¯destination</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_SRC_ALPHA</code></td>
-<td style="text-align: left;">因子等于C¯source的alpha分量</td>
+<td style="text-align:left"><code>GL_SRC_ALPHA</code></td>
+<td style="text-align:left">因子等于C¯source的alpha分量</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_ONE_MINUS_SRC_ALPHA</code></td>
-<td style="text-align: left;">因子等于1−C¯source的alpha分量</td>
+<td style="text-align:left"><code>GL_ONE_MINUS_SRC_ALPHA</code></td>
+<td style="text-align:left">因子等于1−C¯source的alpha分量</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_DST_ALPHA</code></td>
-<td style="text-align: left;">因子等于C¯destination的alpha分量</td>
+<td style="text-align:left"><code>GL_DST_ALPHA</code></td>
+<td style="text-align:left">因子等于C¯destination的alpha分量</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_ONE_MINUS_DST_ALPHA</code></td>
-<td style="text-align: left;">因子等于1− C¯destination的alpha分量</td>
+<td style="text-align:left"><code>GL_ONE_MINUS_DST_ALPHA</code></td>
+<td style="text-align:left">因子等于1− C¯destination的alpha分量</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_CONSTANT_COLOR</code></td>
-<td style="text-align: left;">因子等于常数颜色向量C¯constant</td>
+<td style="text-align:left"><code>GL_CONSTANT_COLOR</code></td>
+<td style="text-align:left">因子等于常数颜色向量C¯constant</td>
 </tr>
 <tr>
-<td
-style="text-align: left;"><code>GL_ONE_MINUS_CONSTANT_COLOR</code></td>
-<td style="text-align: left;">因子等于1−C¯constant1</td>
+<td style="text-align:left"><code>GL_ONE_MINUS_CONSTANT_COLOR</code></td>
+<td style="text-align:left">因子等于1−C¯constant1</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>GL_CONSTANT_ALPHA</code></td>
-<td style="text-align: left;">因子等于C¯constant的alpha分量</td>
+<td style="text-align:left"><code>GL_CONSTANT_ALPHA</code></td>
+<td style="text-align:left">因子等于C¯constant的alpha分量</td>
 </tr>
 <tr>
-<td
-style="text-align: left;"><code>GL_ONE_MINUS_CONSTANT_ALPHA</code></td>
-<td style="text-align: left;">因子等于1− C¯constant的alpha分量</td>
+<td style="text-align:left"><code>GL_ONE_MINUS_CONSTANT_ALPHA</code></td>
+<td style="text-align:left">因子等于1− C¯constant的alpha分量</td>
 </tr>
 </tbody>
 </table>
@@ -591,16 +560,15 @@ style="text-align: left;"><code>GL_ONE_MINUS_CONSTANT_ALPHA</code></td>
 <p>混合与深度测试结合时，会出现问题。若一个物体深度值大于半透明物体，但在半透明物体后面渲染，深度测试不会管物体是不是半透明的，而是一刀切地把这个物体的片元全部丢弃了。</p>
 <p>为了解决这一问题，我们必须把深度值大的物体放在渲染顺序的前面。</p>
 <p>一般渲染顺序如下：</p>
-<ol type="1">
+<ol>
 <li>先绘制所有不透明的物体。（因为不透明物体无需混合，无所谓渲染顺序）</li>
 <li>对所有透明的物体排序。</li>
 <li>按顺序绘制所有透明的物体。</li>
 </ol>
 <p>可以采用STL map自动排序的方式，管理所有透明物体：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs C++">std::map&lt;<span class="hljs-type">float</span>, glm::vec3&gt; sorted;<br><span class="hljs-keyword">for</span> (<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; windows.<span class="hljs-built_in">size</span>(); i++)<br>&#123;<br>    <span class="hljs-type">float</span> distance = glm::<span class="hljs-built_in">length</span>(camera.Position - windows[i]);<br>    sorted[distance] = windows[i];<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>但这种方法也只是简单地以物体的中心值作为位置顺序。当物体形状很复杂时，这种方法就不太好了，需要手动微调。一种较高级的解决这类问题的技术叫做次序无关透明度(Order
-Independent Transparency, OIT)。</p>
-<h2 id="面剔除">面剔除</h2>
+<p>但这种方法也只是简单地以物体的中心值作为位置顺序。当物体形状很复杂时，这种方法就不太好了，需要手动微调。一种较高级的解决这类问题的技术叫做次序无关透明度(Order Independent Transparency, OIT)。</p>
+<h2 id="面剔除"><a class="markdownIt-Anchor" href="#面剔除"></a> 面剔除</h2>
 <p>每个封闭形状的面都有正反之分。在OpenGL中，通过三角形片段三个顶点的绘制顺序判断该三角形所在面的正反。默认情况下，逆时针顶点所定义的三角形为正向三角形。</p>
 <p>背向观察者的面通常不会被渲染。如果能够取消这些面的渲染，程序速度将会提高约50%。</p>
 <p><code>glEnable(GL_CULL_FACE)</code>用于开启面剔除。</p>
@@ -630,9 +598,9 @@ Independent Transparency, OIT)。</p>
       
         <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" class="print-no-link">#图形学</a>
       
-        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
-      
         <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
       
     </div>
   
