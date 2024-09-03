@@ -16,24 +16,20 @@
   <meta name="author" content="Yoi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="面剔除 每个封闭形状的面都有正反之分。在OpenGL中，通过三角形片段三个顶点的绘制顺序判断该三角形所在面的正反。默认情况下，逆时针顶点所定义的三角形为正向三角形。 背向观察者的面通常不会被渲染。如果能够取消这些面的渲染，程序速度将会提高约50%。 glEnable(GL_CULL_FACE)用于开启面剔除。 glCullFace(GLEnum mode)用于指定剔除的面。  GL_FRONT：剔">
+    <meta name="description" content="面剔除 每个封闭形状的面都有正反之分。在OpenGL中，通过三角形片段三个顶点的绘制顺序判断该三角形所在面的正反。默认情况下，逆时针顶点所定义的三角形为正向三角形。 背向观察者的面通常不会被渲染。如果能够取消这些面的渲染，程序速度将会提高约50%。 glEnable(GL_CULL_FACE)用于开启面剔除。 glCullFace(GLEnum mode)用于指定剔除的面。  GL_F">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LearnOpenGL学习笔记（九） - 面剔除、帧缓冲、CubeMap与高级数据">
 <meta property="og:url" content="http://example.com/2024/08/06/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B9%9D%EF%BC%89-%E9%9D%A2%E5%89%94%E9%99%A4%E3%80%81%E5%B8%A7%E7%BC%93%E5%86%B2%E3%80%81CubeMap%E4%B8%8E%E9%AB%98%E7%BA%A7%E6%95%B0%E6%8D%AE/index.html">
 <meta property="og:site_name" content="Yoi&#39;s Home">
-<meta property="og:description" content="面剔除 每个封闭形状的面都有正反之分。在OpenGL中，通过三角形片段三个顶点的绘制顺序判断该三角形所在面的正反。默认情况下，逆时针顶点所定义的三角形为正向三角形。 背向观察者的面通常不会被渲染。如果能够取消这些面的渲染，程序速度将会提高约50%。 glEnable(GL_CULL_FACE)用于开启面剔除。 glCullFace(GLEnum mode)用于指定剔除的面。  GL_FRONT：剔">
+<meta property="og:description" content="面剔除 每个封闭形状的面都有正反之分。在OpenGL中，通过三角形片段三个顶点的绘制顺序判断该三角形所在面的正反。默认情况下，逆时针顶点所定义的三角形为正向三角形。 背向观察者的面通常不会被渲染。如果能够取消这些面的渲染，程序速度将会提高约50%。 glEnable(GL_CULL_FACE)用于开启面剔除。 glCullFace(GLEnum mode)用于指定剔除的面。  GL_F">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://learnopengl-cn.github.io/img/04/06/cubemaps_sampling.png">
-<meta property="og:image" content="https://learnopengl-cn.github.io/img/04/06/cubemaps_reflection_theory.png">
-<meta property="og:image" content="https://learnopengl-cn.github.io/img/04/06/cubemaps_refraction_theory.png">
 <meta property="article:published_time" content="2024-08-06T06:30:30.000Z">
 <meta property="article:modified_time" content="2024-08-06T06:32:04.523Z">
 <meta property="article:author" content="Yoi">
 <meta property="article:tag" content="图形学">
-<meta property="article:tag" content="OpenGL">
 <meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="OpenGL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://learnopengl-cn.github.io/img/04/06/cubemaps_sampling.png">
   
   
   
@@ -310,17 +306,21 @@
 </ul>
 <p><strong>使用面缓冲时，必须确保顶点数据的定义是”逆时针为正“的顺序。否则会出现渲染错误。</strong></p>
 <h2 id="帧缓冲">帧缓冲</h2>
-<p>帧缓冲（Framebuffer）是所有屏幕缓冲（包括颜色缓冲、深度缓冲、模板缓冲）的集合。在默认情况下，我们的绘制操作都在默认帧缓冲的渲染缓冲上进行，默认帧缓冲由GLFW创建。通过创建帧缓冲，可以获得额外的Render Target。</p>
-<p>使用<code>glGenFramebuffers(int count, unsigned int *FBO)</code>生成帧缓冲对象（Framebuffer Object）。使用<code>glBindFramebuffer(GL_FRAMEBUFFER, unsigned int FBO)</code>绑定FBO对象。</p>
+<p>帧缓冲（Framebuffer）是所有屏幕缓冲（包括颜色缓冲、深度缓冲、模板缓冲）的集合。在默认情况下，我们的绘制操作都在默认帧缓冲的渲染缓冲上进行，默认帧缓冲由GLFW创建。通过创建帧缓冲，可以获得额外的Render
+Target。</p>
+<p>使用<code>glGenFramebuffers(int count, unsigned int *FBO)</code>生成帧缓冲对象（Framebuffer
+Object）。使用<code>glBindFramebuffer(GL_FRAMEBUFFER, unsigned int FBO)</code>绑定FBO对象。</p>
 <p>完成绑定后，所有读取、写入缓冲的操作都会影响当前绑定的帧缓冲。</p>
 <blockquote>
 <p>可以通过绑定到GL_READ_FRAMEBUFFER或GL_DRAW_FRAMEBUFFER绑定到只读/只写的目标上。</p>
 </blockquote>
 <p>只进行生成、绑定操作的帧缓冲是不完整的。我们可以通过布尔表达式<code>glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE</code>检查帧缓冲是否完整。</p>
-<p>视口中的视觉输出对应的帧缓冲永远是默认帧缓冲（0号）。因此，当完成非默认帧缓冲的渲染（离屏渲染，Off-screen Rendering）时，一定要记得重新绑定默认帧缓冲（<code>glBindFramebuffers(GL_FRAMEBUFFER, 0)</code>)，并且把不需要的帧缓冲对象删除（<code>glDeleteFramebuffers(1,&amp;FBO)</code>）。</p>
+<p>视口中的视觉输出对应的帧缓冲永远是默认帧缓冲（0号）。因此，当完成非默认帧缓冲的渲染（离屏渲染，Off-screen
+Rendering）时，一定要记得重新绑定默认帧缓冲（<code>glBindFramebuffers(GL_FRAMEBUFFER, 0)</code>)，并且把不需要的帧缓冲对象删除（<code>glDeleteFramebuffers(1,&amp;FBO)</code>）。</p>
 <p>为了使帧缓冲完整，我们需要给它绑定颜色附件（Attachment）。</p>
 <blockquote>
-<p>附件是一个内存位置，它能作为帧缓冲的一个缓冲，类似于一个图像。附件分为纹理附件（Texture Attachment）和渲染缓冲对象附件（Renderbuffer Object）。</p>
+<p>附件是一个内存位置，它能作为帧缓冲的一个缓冲，类似于一个图像。附件分为纹理附件（Texture
+Attachment）和渲染缓冲对象附件（Renderbuffer Object）。</p>
 <p>也可以这么理解：</p>
 </blockquote>
 <h3 id="纹理附件">纹理附件</h3>
@@ -336,7 +336,9 @@
 <li><code>level</code>：多级渐远纹理的级别。</li>
 </ul>
 <h3 id="渲染缓冲对象附件">渲染缓冲对象附件</h3>
-<p>渲染缓冲对象（Renderbuffer Object，RBO）是真正的缓冲（相对于纹理等通用数据缓冲, General Purpose Data Buffer），它相比于纹理缓冲具有更快的读取速度。</p>
+<p>渲染缓冲对象（Renderbuffer
+Object，RBO）是真正的缓冲（相对于纹理等通用数据缓冲, General Purpose
+Data Buffer），它相比于纹理缓冲具有更快的读取速度。</p>
 <p>渲染缓冲对象是只写的，但可以通过<code>glReadPixels</code>函数来读取当前绑定的帧缓冲中的特定像素。</p>
 <blockquote>
 <p>如何理解上面这句话？</p>
@@ -353,22 +355,22 @@
 <p>流程：创建帧缓冲-&gt;绑定帧缓冲-&gt;创建附件-&gt;配置附件-&gt;绑定附件-&gt;进行渲染操作-&gt;删除附件-&gt;解绑帧缓冲</p>
 </blockquote>
 <h3 id="渲染到纹理">渲染到纹理</h3>
-<ol>
+<ol type="1">
 <li>首先，创建、绑定帧缓冲对象和纹理对象，并将纹理附加到帧缓冲</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>,&amp;texture);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D,texture);<br><span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D,<span class="hljs-number">0</span>,GL_RGB,SCR_WIDTH,SCR_HEIGHT,<span class="hljs-number">0</span>,GL_RGB,GL_UNSIGNED_BYTE,<span class="hljs-literal">NULL</span>);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);<br><span class="hljs-built_in">glFramebufferTexture2D</span>(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,texture,<span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
-<ol start="2">
+<ol start="2" type="1">
 <li>然后，创建、绑定渲染缓冲对象，并附加到帧缓冲，注意帧缓冲对象的解绑</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> RBO;<br><span class="hljs-built_in">glGenRenderbuffers</span>(<span class="hljs-number">1</span>,&amp;RBO);<br><span class="hljs-built_in">glBindRenderbuffer</span>(GL_RENDERBUFFER,RBO);<br><span class="hljs-built_in">glRenderbufferStorage</span>(GL_RENDERBUFFER,GL_DEPTH24_STENCIL8,SCR_WIDTH,SCR_HEIGHT);<br><span class="hljs-built_in">glBindRenderbuffer</span>(GL_RENDERBUFFER,<span class="hljs-number">0</span>);<br><span class="hljs-built_in">glFramebufferRenderbuffer</span>(GL_FRAMEBUFFER,GL_DEPTH_STENCIL_ATTACHMENT,GL_RENDERBUFFER, RBO);<br><span class="hljs-keyword">if</span>(<span class="hljs-built_in">glCheckFramebufferStatus</span>(GL_FRAMEBUFFER)==GL_FRAMEBUFFER_COMPLETE) &#123;<br>    cout&lt;&lt;<span class="hljs-string">&quot;Framebuffer complete!&quot;</span>&lt;&lt;endl;<br>&#125;<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER,<span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
 <blockquote>
 <p>上面两步是渲染循环之前，让帧缓冲对象变完整的过程。</p>
 </blockquote>
-<ol start="3">
+<ol start="3" type="1">
 <li>接着，绑定刚才创建的帧缓冲对象，然后绘制场景。注意绘制完要解绑，回到默认帧缓冲。</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER,framebuffer);<br><span class="hljs-built_in">glClearColor</span>(skyboxColor.x,skyboxColor.y,skyboxColor.z,<span class="hljs-number">1.0f</span>);<br><span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);<br><span class="hljs-built_in">glEnable</span>(GL_DEPTH_TEST);<br><span class="hljs-built_in">DrawScene</span>();<br><span class="hljs-built_in">glBindFramebuffer</span>(GL_FRAMEBUFFER,<span class="hljs-number">0</span>);<br><span class="hljs-built_in">glDisable</span>(GL_DEPTH_TEST); <span class="hljs-comment">//绘制面片无需启用深度测试</span><br></code></pre></td></tr></table></figure>
-<ol start="4">
+<ol start="4" type="1">
 <li>然后，在默认帧缓冲绘制面片。</li>
 </ol>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glClearColor</span>(skyboxColor.x,skyboxColor.y,skyboxColor.z,<span class="hljs-number">1.0f</span>);<br><span class="hljs-built_in">glClear</span>(GL_COLOR_BUFFER_BIT);<br>quadShader.<span class="hljs-built_in">use</span>();<br><span class="hljs-built_in">glBindVertexArray</span>(quadVAO);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D,texture);<br><span class="hljs-built_in">glDrawArrays</span>(GL_TRIANGLES,<span class="hljs-number">0</span>,<span class="hljs-number">6</span>);<br></code></pre></td></tr></table></figure>
@@ -391,16 +393,27 @@
 <p>在对屏幕边缘的像素进行采样时，超出边缘的像素会按环绕方式进行采样。为了避免错误，需要设置为GL_CLAMP_TO_EDGE</p>
 </blockquote>
 <h2 id="立方体贴图">立方体贴图</h2>
-<p>立方体贴图（Cube Map）是包含了六个2D纹理的纹理，通过三维方向向量（立方体中心为原点）进行采样。</p>
-<p><img src="https://learnopengl-cn.github.io/img/04/06/cubemaps_sampling.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>立方体贴图（Cube
+Map）是包含了六个2D纹理的纹理，通过三维方向向量（立方体中心为原点）进行采样。</p>
+<figure>
+<img
+src="https://learnopengl-cn.github.io/img/04/06/cubemaps_sampling.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
 <p>创建、绑定立方体贴图的方法与2D纹理类似，只是目标<code>GL_TEXTURE_2D</code>要更改为<code>GL_TEXTURE_CUBE_MAP</code>。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> textureID;<br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>,&amp;textureID);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_CUBE_MAP,textureID);<br></code></pre></td></tr></table></figure>
-<p>OpenGL并没有专门为Cube Map提供输入数据的函数。但Cube Map本质上是六个2D纹理组成的纹理，所以可以通过调用六次<code>glTexImage2D</code>的方式输入数据。</p>
-<p>Cube Map的每个面都有单独的Target，前缀都为<code>GL_TEXTURE_CUBE_MAP</code>，后缀依次为：<code>POSITIVE_X</code>、<code>NEGATIVE_X</code>、<code>POSITIVE_Y</code>、<code>NEGATIVE_Y</code>、<code>POSITIVE_Z</code>、<code>NEGATIVE_Z</code>，分别对应右、左、上、下、后、前。它们作为unsigned int，依次递增1，因此可以用循环赋值。</p>
+<p>OpenGL并没有专门为Cube Map提供输入数据的函数。但Cube
+Map本质上是六个2D纹理组成的纹理，所以可以通过调用六次<code>glTexImage2D</code>的方式输入数据。</p>
+<p>Cube
+Map的每个面都有单独的Target，前缀都为<code>GL_TEXTURE_CUBE_MAP</code>，后缀依次为：<code>POSITIVE_X</code>、<code>NEGATIVE_X</code>、<code>POSITIVE_Y</code>、<code>NEGATIVE_Y</code>、<code>POSITIVE_Z</code>、<code>NEGATIVE_Z</code>，分别对应右、左、上、下、后、前。它们作为unsigned
+int，依次递增1，因此可以用循环赋值。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">int</span> width, height, nrChannels;<br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *data;  <br><span class="hljs-keyword">for</span>(<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; textures_faces.<span class="hljs-built_in">size</span>(); i++)<br>&#123;<br>    data = <span class="hljs-built_in">stbi_load</span>(textures_faces[i].<span class="hljs-built_in">c_str</span>(), &amp;width, &amp;height, &amp;nrChannels, <span class="hljs-number">0</span>);<br>    <span class="hljs-built_in">glTexImage2D</span>(<br>        GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, <br>        <span class="hljs-number">0</span>, GL_RGB, width, height, <span class="hljs-number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, data<br>    );<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>完成纹理数据输入后，同样需要设置纹理的过滤和环绕方式。与2D纹理不同的是，Cube Map在环绕方式上除了S、T还有R维度。它类似于三维空间中的Z轴，当方向矢量未击中任何面（如接缝处）时，返回边界值。</p>
+<p>完成纹理数据输入后，同样需要设置纹理的过滤和环绕方式。与2D纹理不同的是，Cube
+Map在环绕方式上除了S、T还有R维度。它类似于三维空间中的Z轴，当方向矢量未击中任何面（如接缝处）时，返回边界值。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);<br></code></pre></td></tr></table></figure>
-<p>在GLSL中，<code>samplerCube</code>用于定义一个Cube Map采样器。它使用一个vec3（方向矢量）而非vec2作为采样坐标。</p>
+<p>在GLSL中，<code>samplerCube</code>用于定义一个Cube
+Map采样器。它使用一个vec3（方向矢量）而非vec2作为采样坐标。</p>
 <p><code>FragColor = texture(cubemap, textureDir)</code></p>
 <p>通过将天空盒顶点着色器的<code>gl_Position</code>设置为原本的xyww，即可让顶点z轴，即深度值，始终等于一。并且要把<code>glDepthFunc</code>修改为<code>GL_LEQUAL</code>，让深度值等于1的天空盒片元能够通过测试。</p>
 <blockquote>
@@ -410,38 +423,48 @@
 <p><code>glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));</code></p>
 <h3 id="反射">反射</h3>
 <p>使用视线方向的反射向量作为采样立方体贴图的方向向量。</p>
-<p><img src="https://learnopengl-cn.github.io/img/04/06/cubemaps_reflection_theory.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<figure>
+<img
+src="https://learnopengl-cn.github.io/img/04/06/cubemaps_reflection_theory.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
 <h3 id="折射">折射</h3>
 <p>使用视线方向的折射方向作为采样立方体贴图的方向向量。</p>
-<p><img src="https://learnopengl-cn.github.io/img/04/06/cubemaps_refraction_theory.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<figure>
+<img
+src="https://learnopengl-cn.github.io/img/04/06/cubemaps_refraction_theory.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
 <p>一些材质的折射率：</p>
 <table>
 <thead>
 <tr>
-<th style="text-align:left">材质</th>
-<th style="text-align:left">折射率</th>
+<th style="text-align: left;">材质</th>
+<th style="text-align: left;">折射率</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">空气</td>
-<td style="text-align:left">1.00</td>
+<td style="text-align: left;">空气</td>
+<td style="text-align: left;">1.00</td>
 </tr>
 <tr>
-<td style="text-align:left">水</td>
-<td style="text-align:left">1.33</td>
+<td style="text-align: left;">水</td>
+<td style="text-align: left;">1.33</td>
 </tr>
 <tr>
-<td style="text-align:left">冰</td>
-<td style="text-align:left">1.309</td>
+<td style="text-align: left;">冰</td>
+<td style="text-align: left;">1.309</td>
 </tr>
 <tr>
-<td style="text-align:left">玻璃</td>
-<td style="text-align:left">1.52</td>
+<td style="text-align: left;">玻璃</td>
+<td style="text-align: left;">1.52</td>
 </tr>
 <tr>
-<td style="text-align:left">钻石</td>
-<td style="text-align:left">2.42</td>
+<td style="text-align: left;">钻石</td>
+<td style="text-align: left;">2.42</td>
 </tr>
 </tbody>
 </table>
@@ -473,9 +496,9 @@
       
         <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" class="print-no-link">#图形学</a>
       
-        <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
-      
         <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+        <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
       
     </div>
   

@@ -23,8 +23,6 @@
 <meta property="og:site_name" content="Yoi&#39;s Home">
 <meta property="og:description" content="新领域，新气象。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404271416967.png">
-<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404292040281.png">
 <meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404292143205.png">
 <meta property="og:image" content="https://github.com/vdumoulin/conv_arithmetic/raw/master/gif/dilation.gif">
 <meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202405021536109.png">
@@ -38,7 +36,7 @@
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="Pytorch">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404271416967.png">
+<meta name="twitter:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404292143205.png">
   
   
   
@@ -298,16 +296,15 @@
             
               <div class="markdown-body">
                 
-                <p>新领域，新气象。<br>
-<span id="more"></span></p>
-<h1>PyTorch入门</h1>
+                <p>新领域，新气象。 <span id="more"></span></p>
+<h1 id="pytorch入门">PyTorch入门</h1>
 <h2 id="配置">配置</h2>
 <p>在PyCharm中配置PyTorch时，需要使用本地解释器而非venv虚拟环境中的解释器，否则会出现torch.cuda.is_available()为False的情况。</p>
 <h2 id="常用操作">常用操作</h2>
-<h3 id="torch-reshape">torch.reshape()</h3>
+<h3 id="torch.reshape">torch.reshape()</h3>
 <p><code>torch.reshape(input, shape)</code>：将输入Tensor变为形状为shape的Tensor</p>
 <h2 id="数据加载">数据加载</h2>
-<h3 id="Dataset">Dataset</h3>
+<h3 id="dataset">Dataset</h3>
 <p>用于存储和管理数据的类。</p>
 <p><code>torch.utils.data.Dataset</code>是pytorch提供的抽象类。通过继承此类，可自定义另外的Dataset类。</p>
 <p>通过重写<code>__len()__</code>和<code>__getitem__()</code>方法，可返回数据集的大小和每个数据样本及其Label。</p>
@@ -318,7 +315,7 @@
 <p>通常，<code>__getitem__()</code>方法根据idx从文件路径列表中取出对应的路径，进而根据路径获取数据本身。</p>
 </blockquote>
 <p>通过运算符<code>+</code>，可以将两个Dataset作为一个列表的两个元素，构成一个2D的更大的Dataset。</p>
-<h3 id="Dataloader">Dataloader</h3>
+<h3 id="dataloader">Dataloader</h3>
 <p>用于从Dataset中为模型加载数据的类。</p>
 <p><code>torch.utils.data.DataLoader</code>提供了创建DataLoader对象的方法。</p>
 <p><code>DataLoader(dataset, batch_size, shuffle, sampler, batch_sampler, num_workers, drop_last)</code></p>
@@ -334,45 +331,46 @@
 <p><code>DataLoader</code>实例是一个迭代器，每个item都是一个2元素元组。</p>
 <p>元素0是一个列表，包含了batch_size个数据。</p>
 <p>元素1是一个列表，包含了batch_size个Label。</p>
-<h2 id="TensorBoard">TensorBoard</h2>
-<h3 id="SummaryWriter">SummaryWriter</h3>
+<h2 id="tensorboard">TensorBoard</h2>
+<h3 id="summarywriter">SummaryWriter</h3>
 <p><code>from torch.utils.tensorboard import SummarWriter</code></p>
-<p><code> SummaryWriter(str)</code>实例化了一个存储在<code>str</code>文件夹中的<code> SummaryWriter</code>对象。</p>
-<p><code> SummaryWriter</code>类用于在训练过程中向文件写入各类信息。这类信息可以被TensorBoard解析并以可视化的方式呈现。</p>
-<h4 id="add-scalar">add_scalar()</h4>
+<p><code>SummaryWriter(str)</code>实例化了一个存储在<code>str</code>文件夹中的<code>SummaryWriter</code>对象。</p>
+<p><code>SummaryWriter</code>类用于在训练过程中向文件写入各类信息。这类信息可以被TensorBoard解析并以可视化的方式呈现。</p>
+<h4 id="add_scalar">add_scalar()</h4>
 <p><code>def add_scalar(self, tag, scalar_value, global_step=None, walltime=None)</code></p>
 <blockquote>
 <p><code>tag</code>是对数据的标识符。</p>
 <p><code>scalar_value</code>是要添加的数据。</p>
 <p><code>global_step</code>是当前训练的步数。</p>
 </blockquote>
-<h4 id="add-image">add_image()</h4>
+<h4 id="add_image">add_image()</h4>
 <p><code>def add_image(self, tag, img_tensor, global_step=None, walltime=None, dataformats=‘CHW’)</code></p>
 <blockquote>
 <p><code>tag</code>是对图片数据的标识符。</p>
 <p><code>img_tensor</code>是图片数据。可以为<code>Tensor</code>、<code>ndarray</code>或<code>string</code>。</p>
 <p>使用<code>np.array(PIL.JpegImageFile)</code>即可将PIL图片转换为<code>ndarray</code>。</p>
 <blockquote>
-<p>此种方式转换的ndarray的shape为（H, W, C），即三个维度分别对应高度、宽度和通道。</p>
+<p>此种方式转换的ndarray的shape为（H, W,
+C），即三个维度分别对应高度、宽度和通道。</p>
 <p>因此，此时add_image的dataformats参数应当为‘HWC’。</p>
 </blockquote>
 <p>也可用torchvision.transforms.ToTensor()将PIL图片转化为Tensor。</p>
 <p>也可用cv.imread将PIL图片转化为CHW的ndarray。</p>
 </blockquote>
-<h4 id="add-graph">add_graph()</h4>
+<h4 id="add_graph">add_graph()</h4>
 <p><code>add_graph(model, input_to_model=None, verbose=False)</code></p>
-<h2 id="Transforms">Transforms</h2>
+<h2 id="transforms">Transforms</h2>
 <p><code>from torchvision import transforms</code></p>
 <p><code>transforms</code>用于对图片数据进行变换。该模块内置了若干工具类，</p>
-<h3 id="Compose"><code>Compose()</code></h3>
+<h3 id="compose"><code>Compose()</code></h3>
 <p><code>Compose(list of transforms object)</code>用于组合多个transforms对象。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">operation = transforms.Compose([transforms.CenterCrop(<span class="hljs-number">10</span>), transforms.ToTensor()])<br><span class="hljs-comment"># 对图片进行operation操作时，先将其中心裁剪，再将其转换为Tensor对象</span><br></code></pre></td></tr></table></figure>
-<h3 id="ToTensor"><code>ToTensor()</code></h3>
+<h3 id="totensor"><code>ToTensor()</code></h3>
 <p><code>ToTensor()</code>用于将对象转换为<code>Tensor</code>对象。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 使用PIL打开本地图片，使用ToTensor转换为Tensor对象，再用Tensorboard写入事件文件。</span><br><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image<br><span class="hljs-keyword">from</span> torchvision <span class="hljs-keyword">import</span> transforms<br><span class="hljs-keyword">from</span> torch.utils.tensorboard <span class="hljs-keyword">import</span> SummaryWriter<br><br>img = Image.<span class="hljs-built_in">open</span>(<span class="hljs-string">r&quot;data/img/1.jpg&quot;</span>)<br>totensor_operation = transforms.ToTensor()<br>img_tensor = totensor_operation(img)<br>writer = SummaryWriter(<span class="hljs-string">&quot;test&quot;</span>)<br>writer.add_image(<span class="hljs-string">&quot;测试图片&quot;</span>,img_tensor)<br>writer.close()<br></code></pre></td></tr></table></figure>
-<h3 id="ToPILImage"><code>ToPILImage()</code></h3>
+<h3 id="topilimage"><code>ToPILImage()</code></h3>
 <p>将<code>ndarray</code>或<code>Tensor</code>对象转换为PILImage。</p>
-<h3 id="Normalize"><code>Normalize()</code></h3>
+<h3 id="normalize"><code>Normalize()</code></h3>
 <p>使用z-score法将Tensor对象标准化。</p>
 <p><code>transforms.Normalize(mean=list, std=list)</code></p>
 <blockquote>
@@ -381,8 +379,13 @@
 </blockquote>
 <p>输出：(原始值-均值)/标准差</p>
 <p>作用：将图像的数据分布转换为标准正态分布。</p>
-<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404271416967.png" srcset="/img/loading.gif" lazyload alt="image-20240427141609922"></p>
-<h3 id="Resize"><code>Resize()</code></h3>
+<figure>
+<img
+src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404271416967.png" srcset="/img/loading.gif" lazyload
+alt="image-20240427141609922" />
+<figcaption aria-hidden="true">image-20240427141609922</figcaption>
+</figure>
+<h3 id="resize"><code>Resize()</code></h3>
 <p>将给定的PILImage变换至指定尺寸。</p>
 <p><code>transforms.Resize(size)</code>实例化了一个Resize操作对象。</p>
 <blockquote>
@@ -390,7 +393,7 @@
 <p>当size为int时，图片更小的边将被缩放至int。</p>
 </blockquote>
 <p><code>transforms.Resize(img)</code>用于将已实例化的缩放操作应用于PILImage。接收的参数可为PILImage，也可为Tensor。</p>
-<h3 id="RandomCrop"><code>RandomCrop()</code></h3>
+<h3 id="randomcrop"><code>RandomCrop()</code></h3>
 <p>根据给定的size随机裁剪原图片。</p>
 <p><code>transforms.RandomCrop(size)</code>实例化了一个RandomCrop对象。</p>
 <blockquote>
@@ -401,7 +404,8 @@
 <li>在图片上下左右分别添加[0]、[1]、[2]、[3]像素间隔。</li>
 </ul>
 <p>pad_if_needed：布尔值，当裁剪大小大于图片大小时，自动添加padding。</p>
-<p>fill：int或3元素列表，用于填充padding的像素色。分别对应：RGB（int, int, int）和RGB（r, g, b)</p>
+<p>fill：int或3元素列表，用于填充padding的像素色。分别对应：RGB（int,
+int, int）和RGB（r, g, b)</p>
 </blockquote>
 <p><code>transforms.RandomCrop(img)</code>用于执行裁剪操作。</p>
 <h2 id="torchvision数据集">torchvision数据集</h2>
@@ -412,7 +416,7 @@
 <p><code>transform</code>属性：可传入<code>transforms</code>函数，对数据进行预处理。</p>
 </blockquote>
 <h2 id="神经网络">神经网络</h2>
-<h2 id="nn-Module"><code>nn.Module</code></h2>
+<h2 id="nn.module"><code>nn.Module</code></h2>
 <p><code>nn.Module</code>是所有神经网络的基类。</p>
 <p>自定义一个神经网络类，首先要做的便是继承<code>nn.Module</code>，随后实现<code>__init__()</code>和<code>forward()</code>函数。</p>
 <p>实现<code>__init__()</code>函数时，首先要调用<code>super().__init__()</code>。其中classname为自定义类的类名。</p>
@@ -420,7 +424,7 @@
 <blockquote>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch<br><span class="hljs-keyword">from</span> torch <span class="hljs-keyword">import</span> nn<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyNetwork</span>(nn.Module):<br> <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>     <span class="hljs-built_in">super</span>(MyNetwork, self).__init__()<br>     <span class="hljs-comment"># 将各层操作作为变量存储</span><br>     self.layerfunction1 = nn.Conv2d(...)<br>     ...<br><br> <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):<br>     output = self.xxxfunction(x)<br>     <span class="hljs-keyword">return</span> output<br></code></pre></td></tr></table></figure>
 </blockquote>
-<h2 id="nn-Sequential"><code>nn.Sequential</code></h2>
+<h2 id="nn.sequential"><code>nn.Sequential</code></h2>
 <p><code>Sequential</code>用于保存一系列层操作，如卷积、非线性激活、池化等。类似于Transforms的Compose。</p>
 <p><code>model = nn.Sequential(nn.Conv2d(1,20,5),nn.ReLU(),nn.Conv2d(20,64,5),nn.ReLu)</code></p>
 <blockquote>
@@ -428,7 +432,12 @@
 </blockquote>
 <h2 id="卷积">卷积</h2>
 <p>卷积（Convolution）是让两个函数经过变换得到第三个函数的过程。</p>
-<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404292040281.png" srcset="/img/loading.gif" lazyload alt="image-20240429204022080"></p>
+<figure>
+<img
+src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404292040281.png" srcset="/img/loading.gif" lazyload
+alt="image-20240429204022080" />
+<figcaption aria-hidden="true">image-20240429204022080</figcaption>
+</figure>
 <p><code>torch.nn.function</code>模块中，提供了从1D到3D数据的卷积函数：<code>conv1d()</code>、<code>conv2d</code>和<code>conv3d</code>。</p>
 <p>以<code>conv2d()</code>为例：</p>
 <p><code>conv2d(input, weight, bias=None, stride=1, padding=0, dilation=1, groups=1) -&gt; Tensor</code></p>
@@ -442,7 +451,7 @@
 </blockquote>
 <p><code>weight</code>权重，又叫卷积核。</p>
 <blockquote>
-<img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404292143205.png" srcset="/img/loading.gif" lazyload alt="image-20240429214304139" style="zoom:50%;" />
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202404292143205.png" srcset="/img/loading.gif" lazyload alt="image-20240429214304139" style="zoom:50%;" /></p>
 <p>卷积核就像一个遮罩，对输入图像的局部进行处理。卷积核上元素值的不同，卷积结果就不同。元素值就是一个个权重。</p>
 <p>权重的形状必须满足<code>(out_channels, in_channels/groups, kH, kW)</code></p>
 <p><code>out_channels</code>是输出图片的通道数。</p>
@@ -450,22 +459,26 @@
 <p><code>bias</code>偏置。</p>
 <p><code>stride</code>步进。直观来讲，步进是卷积核在输入图像上方每次移动的像素数。</p>
 <blockquote>
-<p>步进既可以是一个数，也可以是元组(sH, sW)。前者是横向移动的元素数，后者是纵向移动的元素数。</p>
+<p>步进既可以是一个数，也可以是元组(sH,
+sW)。前者是横向移动的元素数，后者是纵向移动的元素数。</p>
 </blockquote>
 <p><code>padding</code>间隔。直观来讲，对输入图片的边缘进行填充，便于对边缘像素进行卷积处理。</p>
 <blockquote>
-<p>间隔既可以是一个数，也可以是元组(padH, padW)。前者是横向填充的元素数，后者是纵向填充的元素数。</p>
+<p>间隔既可以是一个数，也可以是元组(padH,
+padW)。前者是横向填充的元素数，后者是纵向填充的元素数。</p>
 </blockquote>
 <p><code>dilation</code></p>
 <p><code>groups</code></p>
 </blockquote>
-<h2 id="结构-层">结构/层</h2>
+<h2 id="结构层">结构/层</h2>
 <p>可以把每个函数看作一个层。</p>
-<h3 id="卷积层（Convolution-Layer）">卷积层（Convolution Layer）</h3>
+<h3 id="卷积层convolution-layer">卷积层（Convolution Layer）</h3>
 <p><code>torch.nn</code>提供了<code>torch.nn.function</code>中各功能的简化版本。</p>
 <p><code>Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True, padding_mode=‘zeros’)</code></p>
 <blockquote>
-<p><a target="_blank" rel="noopener" href="https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md">conv_arithmetic/README.md at master · vdumoulin/conv_arithmetic (github.com)</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md">conv_arithmetic/README.md
+at master · vdumoulin/conv_arithmetic (github.com)</a></p>
 <p>in_channels：输入通道数</p>
 <p>out_channels：输出通道数</p>
 <blockquote>
@@ -476,17 +489,18 @@
 <p>padding：边缘补充</p>
 <p>dilation：让卷积核的各元素之间间隔一定距离。用于空洞卷积。</p>
 <blockquote>
- <img src="https://github.com/vdumoulin/conv_arithmetic/raw/master/gif/dilation.gif" srcset="/img/loading.gif" lazyload alt="img" style="zoom: 33%;" />
+<p><img src="https://github.com/vdumoulin/conv_arithmetic/raw/master/gif/dilation.gif" srcset="/img/loading.gif" lazyload alt="img" style="zoom: 33%;" /></p>
 </blockquote>
 <p>groups：用于分组卷积</p>
 <p>bias：偏置。</p>
 </blockquote>
-<h3 id="池化层（Pooling-Layer）">池化层（Pooling Layer）</h3>
+<h3 id="池化层pooling-layer">池化层（Pooling Layer）</h3>
 <p>池化层将一个窗口内的所有信息浓缩为一个输出。它一般在卷积后进行，输入和输出的通道相同，不可改变。因此，输出尺寸会减小，参数减小，助于减少过拟合、提高性能。</p>
 <blockquote>
 <p>卷积核平移的过程，可看作滑动窗口过程。卷积核就是窗口。</p>
 </blockquote>
-<p>对于最大池化（Max Pooling）操作，它取一个窗口内最大的值输出，然后步进。</p>
+<p>对于最大池化（Max
+Pooling）操作，它取一个窗口内最大的值输出，然后步进。</p>
 <p><code>MaxPool2d(kernel_size, stride=None, padding=0*, dilation=1*, return_indices=False*, ceil_mode=False)</code></p>
 <blockquote>
 <p>return_indices：</p>
@@ -494,19 +508,22 @@
 <p>stride：<strong>池化核的步长默认为核大小</strong></p>
 </blockquote>
 <p>平均池化（Mean Pooling）操作计算窗口内平均值输出，然后步进。</p>
-<h3 id="填充层（Padding-Layer）">填充层（Padding Layer）</h3>
+<h3 id="填充层padding-layer">填充层（Padding Layer）</h3>
 <p>类似于卷积和池化操作中的<code>Padding</code>参数。不同的是，<code>Padding</code>只能填充0，而填充层可以填充其他常数。</p>
-<h3 id="非线性激活（Non-linear-Activations）">非线性激活（Non-linear Activations）</h3>
-<h4 id="线性整流函数（ReLU）">线性整流函数（ReLU）</h4>
+<h3 id="非线性激活non-linear-activations">非线性激活（Non-linear
+Activations）</h3>
+<h4 id="线性整流函数relu">线性整流函数（ReLU）</h4>
 <p><code>torch.nn.ReLU(x)</code>：等效于<code>max(0,x)</code>。</p>
 <blockquote>
 <p><code>inplace</code>参数（bool）：为True则修改传入值；否则传出新值，传入值不变。</p>
 </blockquote>
-<h4 id="Sigmoid函数">Sigmoid函数</h4>
+<h4 id="sigmoid函数">Sigmoid函数</h4>
 <p><code>torch.nn.Sigmoid(x)</code>：等效于：<code>1/(1+exp(-x))</code>。</p>
-<h3 id="正则化层（Normalization-Layer）">正则化层（Normalization Layer）</h3>
+<h3 id="正则化层normalization-layer">正则化层（Normalization
+Layer）</h3>
 <p>用于提高网络性能。</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41915623/article/details/125984629">pytorch中对BatchNorm2d()函数的理解-CSDN博客</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41915623/article/details/125984629">pytorch中对BatchNorm2d()函数的理解-CSDN博客</a></p>
 <p><code>torch.nn.BatchNorm2d(num_features, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True, device=None, dtype=None)</code></p>
 <blockquote>
 <p>num_features：通道数。</p>
@@ -514,7 +531,7 @@
 <p>momentum：将历史batch的均值与方差的影响延续到当前batch。</p>
 <p>affine：True时，给定可以学习的系数矩阵Gamma和Beta。</p>
 </blockquote>
-<h3 id="线性层（Linear-Layer）">线性层（Linear Layer）</h3>
+<h3 id="线性层linear-layer">线性层（Linear Layer）</h3>
 <p><code>torch.nn.Linear(in_features, out_features, bias=True)</code></p>
 <p>对输入施加线性变换：<img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202405021536109.png" srcset="/img/loading.gif" lazyload alt="image-20240502153650043" style="zoom:50%;" /></p>
 <blockquote>
@@ -522,57 +539,59 @@
 <p>在神经网络中，in_features指的是输入的数组。out_features则反之。</p>
 <p>在Linear函数中，前两个参数分别是输入数组的元素个数和输出数组的元素个数。</p>
 </blockquote>
-<h3 id="丢弃层（Dropout-Layer）">丢弃层（Dropout Layer）</h3>
+<h3 id="丢弃层dropout-layer">丢弃层（Dropout Layer）</h3>
 <p>防止过拟合。</p>
 <p><code>torch.nn.Dropout2d(p=0.5, inplace=False)</code></p>
 <p>随机将某些元素按p的概率设为0。</p>
-<h3 id="嵌入层（Embedding-Layer）">嵌入层（Embedding Layer）</h3>
+<h3 id="嵌入层embedding-layer">嵌入层（Embedding Layer）</h3>
 <h2 id="损失函数">损失函数</h2>
-<p>损失函数（Loss Function）用于衡量实际输出与预期输出之间的差距，并用误差值指导模型进行进一步训练学习（即反向传播）。</p>
-<h3 id="L1Loss"><code>L1Loss()</code></h3>
+<p>损失函数（Loss
+Function）用于衡量实际输出与预期输出之间的差距，并用误差值指导模型进行进一步训练学习（即反向传播）。</p>
+<h3 id="l1loss"><code>L1Loss()</code></h3>
 <p><code>torch.nn.L1Loss(input, tartget, reduction='mean')</code></p>
 <blockquote>
-<p>input和target的形状为（*, *)。输出一个标量。</p>
+<p>input和target的形状为（<em>, </em>)。输出一个标量。</p>
 <p>reduction：处理方式。‘mean’则将每个元素的MAE相加并处以元素数量。‘sum’只相加。</p>
 </blockquote>
 <p>比较每个元素的平均绝对误差（Mean Absolute Error, MAE）。</p>
 <blockquote>
-<p>output = (|x - x’|+|y - y’| + …)/N</p>
+<p>output = (|x - x’|+|y - y’| + ...)/N</p>
 </blockquote>
-<h3 id="SmoothL1Loss"><code>SmoothL1Loss()</code></h3>
-<img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202405031327320.png" srcset="/img/loading.gif" lazyload alt="image-20240503132740254" style="zoom: 67%;" />
+<h3 id="smoothl1loss"><code>SmoothL1Loss()</code></h3>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202405031327320.png" srcset="/img/loading.gif" lazyload alt="image-20240503132740254" style="zoom: 67%;" /></p>
 <p><code>torch.nn.SmoothL1Loss(reduction='mean', beta=1.0)</code></p>
 <p>平滑版的L1Loss。</p>
 <p>当MAE小于1时，返回MSE的0.5倍；否则返回MAE-0.5。结合了L1和MSE的部分优点，适合多数情况。</p>
-<h3 id="MSELoss"><code>MSELoss()</code></h3>
+<h3 id="mseloss"><code>MSELoss()</code></h3>
 <p><code>torch.nn.MSELoss(reduction='mean')</code></p>
 <blockquote>
-<p>input和target的形状为（*, *)。输出一个标量。</p>
+<p>input和target的形状为（<em>, </em>)。输出一个标量。</p>
 </blockquote>
 <p>比较每个元素的均方差。</p>
 <blockquote>
-<p>output = (|x - x’|^2+|y - y’|^2 + …)/N</p>
+<p>output = (|x - x’|^2+|y - y’|^2 + ...)/N</p>
 </blockquote>
-<h3 id="CrossEntropyLoss"><code>CrossEntropyLoss()</code></h3>
+<h3 id="crossentropyloss"><code>CrossEntropyLoss()</code></h3>
 <p><code>torch.nn.CrossEntropyLoss(weight=None, ignore_index=-100, reduction='mean', label_smoothing=0.0)</code></p>
 <p>比较预期输出和实际输出的交叉熵。在分类问题中常用。</p>
-<img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202405031400362.png" srcset="/img/loading.gif" lazyload alt="image-20240503140023311" style="zoom:50%;" />
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202405031400362.png" srcset="/img/loading.gif" lazyload alt="image-20240503140023311" style="zoom:50%;" /></p>
 <blockquote>
-<p>input的形状需要是（N, C）或(C, C)，其中N为batch_size，C为分类的类别数。</p>
+<p>input的形状需要是（N, C）或(C,
+C)，其中N为batch_size，C为分类的类别数。</p>
 </blockquote>
 <h2 id="反向传播">反向传播</h2>
 <p>对损失函数的结果调用<code>backward()</code>子方法即可。</p>
 <p>反向传播用于计算损失函数梯度。得到梯度以后，使用优化器对参数进行更新。</p>
 <h2 id="优化器">优化器</h2>
-<p><a target="_blank" rel="noopener" href="https://pytorch.org/docs/main/optim.html">torch.optim — PyTorch main documentation</a></p>
+<p><a target="_blank" rel="noopener" href="https://pytorch.org/docs/main/optim.html">torch.optim —
+PyTorch main documentation</a></p>
 <p>以<code>torch.optim.SGD()</code>为例：</p>
 <ul>
 <li>实例化优化器对象：<code>optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)</code>
 <ul>
 <li>model.parameters()：nn.Module的parameters()函数。</li>
 <li>lr：学习速率。一般训练前期设置为大数值，训练后期设置为小数值。</li>
-</ul>
-</li>
+</ul></li>
 <li>每次取数据都要设置<code>optimizer.zero_grad()</code>。</li>
 <li>进行反向传播后，调用<code>optimizer.step()</code></li>
 </ul>
@@ -596,7 +615,7 @@
 <h3 id="训练">训练</h3>
 <h4 id="定义网络结构">定义网络结构</h4>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># Network.py</span><br><span class="hljs-keyword">import</span> torchvision<br><span class="hljs-keyword">from</span> torch <span class="hljs-keyword">import</span> nn<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyNetwork</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">super</span>(MyNetwork, self).__init__()<br>        self.model_layers = nn.Sequential(<br>        	nn.XXX(...)<br>        	nn.XXX(...)<br>            ...<br>        )<br>    <br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, <span class="hljs-built_in">input</span></span>):<br>        output = self.model_layers(<span class="hljs-built_in">input</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">input</span><br>    <br>    <br><span class="hljs-keyword">if</span>(__name__ == <span class="hljs-string">&quot;__main__&quot;</span>):<br>    mynetwork = MyNetwork()<br>    <span class="hljs-built_in">input</span> = xxx<br>    output = mynetwork(<span class="hljs-built_in">input</span>)<br>    <span class="hljs-built_in">print</span>(output.shape)<br></code></pre></td></tr></table></figure>
-<h4 id="获取、读取数据集-训练">获取、读取数据集 | 训练</h4>
+<h4 id="获取读取数据集-训练">获取、读取数据集 | 训练</h4>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> torchvision <span class="hljs-keyword">import</span> datasets, transforms<br><span class="hljs-keyword">from</span> torch <span class="hljs-keyword">import</span> nn, optim<br><span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> DataLoader<br><span class="hljs-keyword">from</span> Network <span class="hljs-keyword">import</span> *<br><br><span class="hljs-comment"># 获取数据集并读取</span><br>train_dataset = datasets.CIFAR10(root=<span class="hljs-string">&quot;dataset_root&quot;</span>, train=<span class="hljs-literal">True</span>, transform=transforms.ToTensor(), download=<span class="hljs-literal">True</span>)<br>loader = DataLoader(train_dataset, shuffle=<span class="hljs-literal">True</span>, batch_size = <span class="hljs-number">64</span>, drop_last=<span class="hljs-literal">False</span>)<br>test_dataset = datasets.CIFAR10(root=<span class="hljs-string">&quot;dataset_root&quot;</span>, download=<span class="hljs-literal">True</span>, train=<span class="hljs-literal">False</span>, 		transform=transforms.ToTensor())<br>test_dataset_len = <span class="hljs-built_in">len</span>(test_dataset)<br>test_loader = DataLoader(test_dataset, shuffle=<span class="hljs-literal">True</span>, drop_last=<span class="hljs-literal">False</span>)<br>total_test_loss = <span class="hljs-number">0</span><br><span class="hljs-comment"># 实例化网络</span><br>network = MyNetwork()<br>loss = nn.CrossEntropyLoss()<br>optimizer = optim.SGD(network.parameters(), lr=<span class="hljs-number">0.01</span>)<br><span class="hljs-comment"># 定义训练参数</span><br>total_train_step = <span class="hljs-number">0</span><br>epoch = <span class="hljs-number">20</span><br>total_test_step = <span class="hljs-number">0</span><br><span class="hljs-comment"># 开始训练</span><br>mynetwork.train()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(epoch):<br>    running_loss = <span class="hljs-number">0</span><br>	<span class="hljs-keyword">for</span> imgs, targets <span class="hljs-keyword">in</span> loader:<br>    	optimizer.zero_grad()<br>    	output = network(imgs)<br>    	loss_val = loss(output, targets) <br>    	loss_val.backward()<br>    	optimizer.step()<br>     	total_train_step += <span class="hljs-number">1</span><br>        <span class="hljs-keyword">if</span>(total_train_step % <span class="hljs-number">100</span> == <span class="hljs-number">0</span>):<br>        	<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;当前训练次数：&#123;&#125; | 总训练次数：&#123;&#125; | 本次训练损失值：&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(i, total_train_step, loss_val))<br></code></pre></td></tr></table></figure>
 <h4 id="测试">测试</h4>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 接上文</span><br>    mynetwork.<span class="hljs-built_in">eval</span>()<br>    correct_num = <span class="hljs-number">0</span><br>	<span class="hljs-keyword">with</span> torch.nograd():<br>   		<span class="hljs-keyword">for</span> imgs, targets <span class="hljs-keyword">in</span> test_loader:<br>        	output = mynetwork(imgs)<br>           	correct_num += (targets == output.argmax(<span class="hljs-number">1</span>)).<span class="hljs-built_in">sum</span>()<br>            correct_num = correct_num.item()<br>        	loss_val = loss(output, targets)<br>        	total_test_loss += loss_val<br>	<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;整体损失率：&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(total_test_loss))<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;整体正确率：&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(<span class="hljs-built_in">float</span>(correct_num/test_dataset_len)))<br>    torch.save(mynetwork, <span class="hljs-string">&quot;network&#123;&#125;.pth&quot;</span>.<span class="hljs-built_in">format</span>(i))<br></code></pre></td></tr></table></figure>

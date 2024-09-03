@@ -16,24 +16,23 @@
   <meta name="author" content="Yoi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="逐渐理解一切…">
+    <meta name="description" content="逐渐理解一切...">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LearnOpenGL学习笔记（四） - 摄像机与入门知识点总结">
 <meta property="og:url" content="http://example.com/2024/07/14/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89%20-%20%E6%91%84%E5%83%8F%E6%9C%BA%E4%B8%8E%E5%85%A5%E9%97%A8%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="Yoi&#39;s Home">
-<meta property="og:description" content="逐渐理解一切…">
+<meta property="og:description" content="逐渐理解一切...">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202407141120521.png">
 <meta property="og:image" content="https://learnopengl-cn.github.io/img/01/09/camera_pitch.png">
 <meta property="og:image" content="https://learnopengl-cn.github.io/img/01/09/camera_yaw.png">
 <meta property="article:published_time" content="2024-07-14T08:38:51.000Z">
 <meta property="article:modified_time" content="2024-07-15T13:34:43.810Z">
 <meta property="article:author" content="Yoi">
 <meta property="article:tag" content="图形学">
-<meta property="article:tag" content="OpenGL">
 <meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="OpenGL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202407141120521.png">
+<meta name="twitter:image" content="https://learnopengl-cn.github.io/img/01/09/camera_pitch.png">
   
   
   
@@ -293,40 +292,36 @@
             
               <div class="markdown-body">
                 
-                <p>逐渐理解一切…<br>
-<span id="more"></span></p>
-<h1>摄像机</h1>
+                <p>逐渐理解一切... <span id="more"></span></p>
+<h1 id="摄像机">摄像机</h1>
 <p>定义一个摄像机，需要获取其世界坐标、观察方向、指向其右侧与上方的方向向量。</p>
 <ul>
-<li>
-<p>世界坐标：与观察矩阵所使用的变换相同。</p>
+<li><p>世界坐标：与观察矩阵所使用的变换相同。</p>
 <ul>
 <li><code>glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f)</code></li>
-</ul>
-</li>
-<li>
-<p>观察方向：借助矢量相减，获取摄像机位置与世界原点之间的方向向量。</p>
+</ul></li>
+<li><p>观察方向：借助矢量相减，获取摄像机位置与世界原点之间的方向向量。</p>
 <ul>
 <li><code>glm::vec3 cameraDir = glm::normalize(cameraPos - vec3(0.0f,0.0f,0.0f))</code></li>
 <li><strong>这样得到的实际上是观察方向的反方向。</strong></li>
-</ul>
-</li>
-<li>
-<p>右轴：将上向量与观察方向叉乘。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++">glm::vec3 up = glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0f</span>,<span class="hljs-number">1.0f</span>,<span class="hljs-number">0.0f</span>);<br>glm::vec3 cameraRight = glm::<span class="hljs-built_in">normalize</span>(glm::<span class="hljs-built_in">cross</span>(up,cameraDir));<br></code></pre></td></tr></table></figure>
-</li>
-<li>
-<p>上轴：将右轴与观察方向叉乘。</p>
-</li>
+</ul></li>
+<li><p>右轴：将上向量与观察方向叉乘。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++">glm::vec3 up = glm::<span class="hljs-built_in">vec3</span>(<span class="hljs-number">0.0f</span>,<span class="hljs-number">1.0f</span>,<span class="hljs-number">0.0f</span>);<br>glm::vec3 cameraRight = glm::<span class="hljs-built_in">normalize</span>(glm::<span class="hljs-built_in">cross</span>(up,cameraDir));<br></code></pre></td></tr></table></figure></li>
+<li><p>上轴：将右轴与观察方向叉乘。</p></li>
 </ul>
 <p><code>glm::vec3 cameraUp = glm::normalize(glm::cross(cameraRight,cameraDir))</code></p>
 <blockquote>
 <p>上面的操作定义了一个额外的坐标空间。</p>
 <p>这个操作被称为格拉姆-施密特正交化（Gram-Schmidt Process）</p>
 </blockquote>
-<h2 id="LookAt矩阵">LookAt矩阵</h2>
+<h2 id="lookat矩阵">LookAt矩阵</h2>
 <p>坐标空间被定义后，便可以创建一个矩阵。把这个矩阵乘以任意向量，便可以把这个向量变换到我们定义的坐标空间。在摄像机空间中，这个矩阵被称为<code>LookAt</code>矩阵。</p>
-<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202407141120521.png" srcset="/img/loading.gif" lazyload alt="image-20240714112018261"></p>
+<figure>
+<img
+src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202407141120521.png" srcset="/img/loading.gif" lazyload
+alt="image-20240714112018261" />
+<figcaption aria-hidden="true">image-20240714112018261</figcaption>
+</figure>
 <blockquote>
 <p>其中，R为相机右轴，U为相机上轴，D为摄像机方向向量（相反，由原点指向相机），P为摄像机位置。</p>
 </blockquote>
@@ -337,7 +332,7 @@
 <blockquote>
 <p>对于任何仅表示方向的向量，都应该做正交化处理。</p>
 </blockquote>
-<h2 id="Deltatime">Deltatime</h2>
+<h2 id="deltatime">Deltatime</h2>
 <p>Deltatime变量存储了渲染上一帧需要的时间。将该变量引入移动速度的计算，就可以做到每帧的移动速度在各种设备上相对平衡。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">float</span> currentFrame = <span class="hljs-built_in">glfwGetTime</span>();<br>deltaTime = currentFrame - lastFrame;<br>lastFrame = currentFrame;<br></code></pre></td></tr></table></figure>
 <h2 id="视角旋转">视角旋转</h2>
@@ -351,10 +346,18 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++">direction.x = <span class="hljs-built_in">cos</span>(glm::<span class="hljs-built_in">radians</span>(pitch)) * <span class="hljs-built_in">cos</span>(glm::<span class="hljs-built_in">radians</span>(yaw)); <span class="hljs-comment">// 译注：direction代表摄像机的前轴(Front)，这个前轴是和本文第一幅图片的第二个摄像机的方向向量是相反的</span><br>direction.y = <span class="hljs-built_in">sin</span>(glm::<span class="hljs-built_in">radians</span>(pitch));<br>direction.z = <span class="hljs-built_in">cos</span>(glm::<span class="hljs-built_in">radians</span>(pitch)) * <span class="hljs-built_in">sin</span>(glm::<span class="hljs-built_in">radians</span>(yaw));<br></code></pre></td></tr></table></figure>
 <blockquote>
 <p>理解上面的算法：</p>
-<p><img src="https://learnopengl-cn.github.io/img/01/09/camera_pitch.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<figure>
+<img src="https://learnopengl-cn.github.io/img/01/09/camera_pitch.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
 <p>在x/z平面，可以计算水平距离和垂直距离。水平距离是cos(pitch)，垂直距离（即最终的y分量）是sin(pitch)。</p>
 <p>完成水平距离计算后，还要计算x分量和z分量。从上往下看x/z平面：</p>
-<p><img src="https://learnopengl-cn.github.io/img/01/09/camera_yaw.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<figure>
+<img src="https://learnopengl-cn.github.io/img/01/09/camera_yaw.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
 <p>可以知道x分量是cos(yaw)，z分量是sin(yaw)</p>
 </blockquote>
 <p>对于鼠标输入，其水平移动影响Yaw角，竖直移动影响Pitch角。通过计算每一帧鼠标在垂直和水平方向与上一帧的插值，就可以得到具体的pitch和raw角。</p>
@@ -377,8 +380,7 @@
 <li>LookAt矩阵与观察矩阵：<code>view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp)</code>
 <ul>
 <li>此处<code>cameraFront</code>为相机指向目标的向量</li>
-</ul>
-</li>
+</ul></li>
 <li>Deltatime控制速度</li>
 </ul>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++">direction.x = <span class="hljs-built_in">cos</span>(glm::<span class="hljs-built_in">radians</span>(pitch)) * <span class="hljs-built_in">cos</span>(glm::<span class="hljs-built_in">radians</span>(yaw));<br>direction.y = <span class="hljs-built_in">sin</span>(glm::<span class="hljs-built_in">radians</span>(pitch));<br>direction.z = <span class="hljs-built_in">cos</span>(glm::<span class="hljs-built_in">radians</span>(pitch)) * <span class="hljs-built_in">sin</span>(glm::<span class="hljs-built_in">radians</span>(yaw));<br></code></pre></td></tr></table></figure>
@@ -389,18 +391,20 @@
 <li><code>glfwSetCursorPosCallback(window, mouse_callback)</code></li>
 <li><code>pitch</code>角的限制，注意弧度转换</li>
 <li>初次鼠标进入时的判断</li>
-</ul>
-</li>
+</ul></li>
 <li>滚轮、FOV与投影矩阵</li>
 </ul>
-<h1>复习</h1>
+<h1 id="复习">复习</h1>
 <ul>
-<li><strong>OpenGL</strong>： 一个定义了函数布局和输出的图形API的正式规范。</li>
+<li><strong>OpenGL</strong>：
+一个定义了函数布局和输出的图形API的正式规范。</li>
 </ul>
-<p>除OpenGL外，还有DirectX 11，DirectX 12，Metal，Vulkan等图形API。在教程中，我们使用的OpenGL版本是3.3。</p>
+<p>除OpenGL外，还有DirectX 11，DirectX
+12，Metal，Vulkan等图形API。在教程中，我们使用的OpenGL版本是3.3。</p>
 <p>我们使用GLFW管理窗口相关的API。</p>
 <ul>
-<li><strong>GLAD</strong>： 一个扩展加载库，用来为我们加载并设定所有OpenGL函数指针，从而让我们能够使用所有（现代）OpenGL函数。</li>
+<li><strong>GLAD</strong>：
+一个扩展加载库，用来为我们加载并设定所有OpenGL函数指针，从而让我们能够使用所有（现代）OpenGL函数。</li>
 </ul>
 <p>在OpenGL中，所有函数都是运行时动态确定的，因此，IDE没办法给我们提供编译时语法检查和代码补全。为了解决这一问题，我们引入GLAD库，让上述功能成为可能。</p>
 <p><code>gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)</code>用来加载所有OpenGL函数指针。</p>
@@ -409,36 +413,46 @@
 </ul>
 <p>视口与窗口是不同的概念。视口指的是渲染范围，是最终裁剪变换处理的区域。使用<code>glViewport(x,y,width,height)</code>初始化并配置视口。</p>
 <ul>
-<li><strong>图形管线(Graphics Pipeline)</strong>： 一个顶点在呈现为像素之前经过的全部过程。</li>
+<li><strong>图形管线(Graphics Pipeline)</strong>：
+一个顶点在呈现为像素之前经过的全部过程。</li>
 </ul>
 <p>基本的图形管线可以定义为：顶点数据-&gt;顶点着色器-&gt;几何着色器-&gt;形状装配-&gt;光栅化-&gt;片段着色器-&gt;测试与混合-&gt;输出</p>
 <ul>
-<li><strong>着色器(Shader)</strong>： 一个运行在显卡上的小型程序。很多阶段的图形管道都可以使用自定义的着色器来代替原有的功能。</li>
-<li><strong>标准化设备坐标(Normalized Device Coordinates, NDC)</strong>： 顶点在通过在剪裁坐标系中剪裁与透视除法后最终呈现在的坐标系。所有位置在NDC下-1.0到1.0的顶点将不会被丢弃并且可见。</li>
+<li><strong>着色器(Shader)</strong>：
+一个运行在显卡上的小型程序。很多阶段的图形管道都可以使用自定义的着色器来代替原有的功能。</li>
+<li><strong>标准化设备坐标(Normalized Device Coordinates,
+NDC)</strong>：
+顶点在通过在剪裁坐标系中剪裁与透视除法后最终呈现在的坐标系。所有位置在NDC下-1.0到1.0的顶点将不会被丢弃并且可见。</li>
 </ul>
 <p>经过顶点着色器处理的坐标必定处于NDC范围内。</p>
 <ul>
-<li><strong>顶点缓冲对象(Vertex Buffer Object)</strong>： 一个调用显存并存储所有顶点数据供显卡使用的缓冲对象。</li>
+<li><strong>顶点缓冲对象(Vertex Buffer Object)</strong>：
+一个调用显存并存储所有顶点数据供显卡使用的缓冲对象。</li>
 </ul>
 <p><code>glDrawArray</code>函数直接使用VBO内的数据进行绘制。</p>
 <ul>
-<li><strong>顶点数组对象(Vertex Array Object)</strong>： 存储缓冲区和顶点属性状态</li>
+<li><strong>顶点数组对象(Vertex Array Object)</strong>：
+存储缓冲区和顶点属性状态</li>
 </ul>
 <p>在不使用VAO时，我们每次想绘制一个物体，都需要手动绑定对应的VBO，设置顶点属性指针。</p>
 <p>VAO可以把这些操作保存，并生成一个VAO对象。之后每次想要绘制这个物体，绑定对应的VAO即可。</p>
 <ul>
-<li><strong>元素缓冲对象(Element Buffer Object，EBO)，也叫索引缓冲对象(Index Buffer Object，IBO)</strong>： 一个存储元素索引供索引化绘制使用的缓冲对象。</li>
+<li><strong>元素缓冲对象(Element Buffer
+Object，EBO)，也叫索引缓冲对象(Index Buffer Object，IBO)</strong>：
+一个存储元素索引供索引化绘制使用的缓冲对象。</li>
 </ul>
 <p>通常，输入的顶点数据不会包含重复的顶点。但对于一些图元来说，它们是共用顶点的。为了简化输入顶点数据，我们使用EBO记录绘制对象所使用的顶点序号。</p>
 <ul>
-<li><strong>Uniform</strong>： 一个特殊类型的GLSL变量。它是全局的（在一个着色器程序中每一个着色器都能够访问uniform变量），并且只需要被设定一次。</li>
+<li><strong>Uniform</strong>：
+一个特殊类型的GLSL变量。它是全局的（在一个着色器程序中每一个着色器都能够访问uniform变量），并且只需要被设定一次。</li>
 </ul>
 <p>使用<code>glUniformnx(Location, value)</code>向某着色器的某个uniform传递值。</p>
 <p>location使用<code>glGetUniformLocation(shaderProgram, nameofuniform)</code>获取。</p>
 <p><code>n</code>代表参数个数，<code>x</code>代表数据类型，可以是fv（float数组）、4i（ivec4）等。</p>
 <p>向Uniform传值之前，对应的着色器程序必须被use。</p>
 <ul>
-<li><strong>纹理(Texture)</strong>： 一种包裹着物体的特殊类型图像，给物体精细的视觉效果。</li>
+<li><strong>纹理(Texture)</strong>：
+一种包裹着物体的特殊类型图像，给物体精细的视觉效果。</li>
 </ul>
 <p><code>glGenTexture(cnt, addr)</code>用于创建纹理对象。</p>
 <p><code>glBindTexture(GL_TEXTURE_2D, textureObj)</code>用于绑定对象到纹理上下文。</p>
@@ -450,47 +464,40 @@
 <p>Active操作以后要Bind。</p>
 </blockquote>
 <ul>
-<li>
-<p><strong>纹理环绕(Texture Wrapping)</strong>： 定义了一种当纹理顶点超出范围(0, 1)时指定OpenGL如何采样纹理的模式。</p>
-</li>
-<li>
-<p><strong>纹理过滤(Texture Filtering)</strong>： 定义了一种当有多种纹素选择时指定OpenGL如何采样纹理的模式。这通常在纹理被放大情况下发生。</p>
-</li>
-<li>
-<p><strong>多级渐远纹理(Mipmaps)</strong>： 被存储的材质的一些缩小版本，根据距观察者的距离会使用材质的合适大小。</p>
-</li>
-<li>
-<p><strong>stb_image.h</strong>： 图像加载库。</p>
-</li>
+<li><p><strong>纹理环绕(Texture Wrapping)</strong>：
+定义了一种当纹理顶点超出范围(0,
+1)时指定OpenGL如何采样纹理的模式。</p></li>
+<li><p><strong>纹理过滤(Texture Filtering)</strong>：
+定义了一种当有多种纹素选择时指定OpenGL如何采样纹理的模式。这通常在纹理被放大情况下发生。</p></li>
+<li><p><strong>多级渐远纹理(Mipmaps)</strong>：
+被存储的材质的一些缩小版本，根据距观察者的距离会使用材质的合适大小。</p></li>
+<li><p><strong>stb_image.h</strong>： 图像加载库。</p></li>
 </ul>
 <p><code>stbi_load(path, &amp;width, &amp;height,&amp;channels,0)</code></p>
 <ul>
-<li><strong>纹理单元(Texture Units)</strong>： 通过绑定纹理到不同纹理单元从而允许多个纹理在同一对象上渲染。</li>
-<li><strong>向量(Vector)</strong>： 一个定义了在空间中方向和/或位置的数学实体。</li>
+<li><strong>纹理单元(Texture Units)</strong>：
+通过绑定纹理到不同纹理单元从而允许多个纹理在同一对象上渲染。</li>
+<li><strong>向量(Vector)</strong>：
+一个定义了在空间中方向和/或位置的数学实体。</li>
 <li><strong>矩阵(Matrix)</strong>： 一个矩形阵列的数学表达式。</li>
 <li><strong>GLM</strong>： 一个为OpenGL打造的数学库。</li>
-<li><strong>局部空间(Local Space)</strong>： 一个物体的初始空间。所有的坐标都是相对于物体的原点的。</li>
+<li><strong>局部空间(Local Space)</strong>：
+一个物体的初始空间。所有的坐标都是相对于物体的原点的。</li>
 </ul>
 <p>局部空间类似于Unity的Transform属性的参数。</p>
 <ul>
-<li>
-<p><strong>世界空间(World Space)</strong>： 所有的坐标都相对于全局原点。</p>
-</li>
-<li>
-<p><strong>观察空间(View Space)</strong>： 所有的坐标都是从摄像机的视角观察的。</p>
-</li>
-<li>
-<p><strong>裁剪空间(Clip Space)</strong>： 所有的坐标都是从摄像机视角观察的，但是该空间应用了投影。这个空间应该是一个顶点坐标最终的空间，作为顶点着色器的输出。OpenGL负责处理剩下的事情（裁剪/透视除法）。</p>
-</li>
-<li>
-<p><strong>屏幕空间(Screen Space)</strong>： 所有的坐标都由屏幕视角来观察。坐标的范围是从0到屏幕的宽/高。</p>
-</li>
-<li>
-<p><strong>LookAt矩阵</strong>： 一种特殊类型的观察矩阵，它创建了一个坐标系，其中所有坐标都根据从一个位置正在观察目标的用户旋转或者平移。</p>
-</li>
-<li>
-<p><strong>欧拉角(Euler Angles)</strong>： 被定义为偏航角(Yaw)，俯仰角(Pitch)，和滚转角(Roll)从而允许我们通过这三个值构造任何3D方向。</p>
-</li>
+<li><p><strong>世界空间(World Space)</strong>：
+所有的坐标都相对于全局原点。</p></li>
+<li><p><strong>观察空间(View Space)</strong>：
+所有的坐标都是从摄像机的视角观察的。</p></li>
+<li><p><strong>裁剪空间(Clip Space)</strong>：
+所有的坐标都是从摄像机视角观察的，但是该空间应用了投影。这个空间应该是一个顶点坐标最终的空间，作为顶点着色器的输出。OpenGL负责处理剩下的事情（裁剪/透视除法）。</p></li>
+<li><p><strong>屏幕空间(Screen Space)</strong>：
+所有的坐标都由屏幕视角来观察。坐标的范围是从0到屏幕的宽/高。</p></li>
+<li><p><strong>LookAt矩阵</strong>：
+一种特殊类型的观察矩阵，它创建了一个坐标系，其中所有坐标都根据从一个位置正在观察目标的用户旋转或者平移。</p></li>
+<li><p><strong>欧拉角(Euler Angles)</strong>：
+被定义为偏航角(Yaw)，俯仰角(Pitch)，和滚转角(Roll)从而允许我们通过这三个值构造任何3D方向。</p></li>
 </ul>
 
                 
@@ -506,9 +513,9 @@
       
         <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" class="print-no-link">#图形学</a>
       
-        <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
-      
         <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+        <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
       
     </div>
   

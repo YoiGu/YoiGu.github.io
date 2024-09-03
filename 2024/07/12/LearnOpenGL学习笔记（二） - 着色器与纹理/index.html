@@ -23,16 +23,15 @@
 <meta property="og:site_name" content="Yoi&#39;s Home">
 <meta property="og:description" content="喘口气。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://learnopengl-cn.github.io/img/01/06/texture_wrapping.png">
 <meta property="og:image" content="https://learnopengl-cn.github.io/img/01/06/mipmaps.png">
 <meta property="article:published_time" content="2024-07-12T11:22:59.000Z">
 <meta property="article:modified_time" content="2024-07-15T13:34:02.219Z">
 <meta property="article:author" content="Yoi">
 <meta property="article:tag" content="图形学">
-<meta property="article:tag" content="OpenGL">
 <meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="OpenGL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://learnopengl-cn.github.io/img/01/06/texture_wrapping.png">
+<meta name="twitter:image" content="https://learnopengl-cn.github.io/img/01/06/mipmaps.png">
   
   
   
@@ -292,14 +291,15 @@
             
               <div class="markdown-body">
                 
-                <p>喘口气。<br>
-<span id="more"></span></p>
-<h1>着色器</h1>
-<h2 id="GLSL">GLSL</h2>
+                <p>喘口气。 <span id="more"></span></p>
+<h1 id="着色器">着色器</h1>
+<h2 id="glsl">GLSL</h2>
 <p>典型着色器程序的结构如下：</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs glsl"><span class="hljs-meta">#version version_number</span><br><span class="hljs-keyword">in</span> type in_variable_name;<br><span class="hljs-keyword">in</span> type in_variable_name;<br><span class="hljs-keyword">out</span> type out_variable_name;<br><span class="hljs-keyword">uniform</span> type uniform_name;<br><span class="hljs-type">int</span> main()<br>&#123;<br>  <span class="hljs-comment">// 处理输入并进行一些图形操作</span><br>  ...<br>  <span class="hljs-comment">// 输出处理过的结果到输出变量</span><br>  out_variable_name = weird_stuff_we_processed;<br>&#125;<br></code></pre></td></tr></table></figure>
 <blockquote>
-<p>对于Vertex Shader，输入变量被称为Vertex Attribute。在OpenGL中一般至少能声明16个Vertex Attribute，每个含4个分量。</p>
+<p>对于Vertex Shader，输入变量被称为Vertex
+Attribute。在OpenGL中一般至少能声明16个Vertex
+Attribute，每个含4个分量。</p>
 </blockquote>
 <h3 id="向量">向量</h3>
 <p>向量是GLSL中最常用的数据类型。包含<code>vecn</code>、<code>bvecn</code>、<code>ivecn</code>、<code>uvecn</code>、<code>dvecn</code>。前缀代表分量的基本类型，后缀n代表维度数。一般使用<code>vecn</code>。</p>
@@ -309,10 +309,13 @@
 <p>与此同时，还可以使用向量构造函数直接给向量变量复制，如<code>vec2 vect = vec2(0.5, 0.7)</code></p>
 <h3 id="输入输出">输入输出</h3>
 <p><code>in</code>和<code>out</code>关键字用于定义着色器的输入和输出。只要一个输出变量与下一个着色器阶段的输入匹配，它就会传递下去（前一阶段的输出变量的变量名，应当与后阶段的输入变量的变量名相同）。但在顶点和片段着色器中会有点不同。</p>
-<p>对于Vertex Shader，其特殊点在于<code>location</code>关键字。<code>location</code>定义了着色器从顶点数据的哪一部分接收数据。例如，在Vertex Shader中，我定义了两个<code>vec4</code>，第一个是位置数据aPos，它的<code>location</code>是0；第二个是颜色数据<code>aCol</code>，它的<code>location</code>是1。</p>
+<p>对于Vertex
+Shader，其特殊点在于<code>location</code>关键字。<code>location</code>定义了着色器从顶点数据的哪一部分接收数据。例如，在Vertex
+Shader中，我定义了两个<code>vec4</code>，第一个是位置数据aPos，它的<code>location</code>是0；第二个是颜色数据<code>aCol</code>，它的<code>location</code>是1。</p>
 <p>使用<code>layout (location = 0)</code>定义某输入变量的<code>location</code>。</p>
-<p>对于Fragment Shader，应当始终保证存在一个<code>vec4</code>型输出变量，用于输出最终颜色。</p>
-<h3 id="Uniform">Uniform</h3>
+<p>对于Fragment
+Shader，应当始终保证存在一个<code>vec4</code>型输出变量，用于输出最终颜色。</p>
+<h3 id="uniform">Uniform</h3>
 <p><code>Uniform</code>用于在cpp程序中向着色器输入数据，改变其表现。</p>
 <p>如其名，<code>Uniform</code>在每个着色器程序中都是独一无二的。在这个Program链接的所有Shader中，只能存在一个相同名称的<code>Uniform</code>。</p>
 <p>使用<code>uniform</code>关键字定义<code>Uniform</code>变量。</p>
@@ -321,7 +324,8 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">float</span> timeValue = <span class="hljs-built_in">glfwGetTime</span>(); <span class="hljs-comment">//获取当前程序运行的秒数</span><br><span class="hljs-type">float</span> greenValue = (<span class="hljs-built_in">sin</span>(timeValue) / <span class="hljs-number">2.0f</span>) + <span class="hljs-number">0.5f</span>;<br><span class="hljs-comment">//使用glGetUniformLocation函数，在shaderProgram程序中获取名为&quot;outColor&quot;的Uniform变量位置</span><br><span class="hljs-type">int</span> vertexColorLocation = <span class="hljs-built_in">glGetUniformLocation</span>(shaderProgram, <span class="hljs-string">&quot;ourColor&quot;</span>);<br><span class="hljs-built_in">glUseProgram</span>(shaderProgram);<br><span class="hljs-comment">//获取位置后，使用glUniform4f函数，以之前获取的位置为参数，设置它的值。</span><br><span class="hljs-built_in">glUniform4f</span>(vertexColorLocation, <span class="hljs-number">0.0f</span>, greenValue, <span class="hljs-number">0.0f</span>, <span class="hljs-number">1.0f</span>);<br></code></pre></td></tr></table></figure>
 <blockquote>
 <p>更新uniform值时，必须Use它所在的Program，否则更新无效。</p>
-<p>除glUniform4f外，还有glUniform3i（ivec3)、glUniformfv（float[]或vecn）、glUniformui(unsigned int)等。</p>
+<p>除glUniform4f外，还有glUniform3i（ivec3)、glUniformfv（float[]或vecn）、glUniformui(unsigned
+int)等。</p>
 </blockquote>
 <h2 id="多顶点属性">多顶点属性</h2>
 <p>考虑如下顶点数据：</p>
@@ -333,42 +337,53 @@
 <blockquote>
 <p>Shader对象的构造必须要在加载完GLAD proc以后，否则报错。</p>
 </blockquote>
-<h1>纹理</h1>
+<h1 id="纹理">纹理</h1>
 <h2 id="简介">简介</h2>
 <p>纹理（Texture）用于在不增加顶点数量的情况下添加物体的细节。它就像一层贴纸一样贴在几何体上。</p>
 <blockquote>
 <p>纹理也可以用来存储数据。</p>
 </blockquote>
-<p>纹理“贴”到几何体上的过程被称为映射（Map）。纹理坐标（Texture Coordinate）用于指定某个顶点该从纹理的哪个位置采样（Sample，采集Fragment颜色）。非顶点的几何体区域通过片段插值（Fragment Interpolation）采样。</p>
+<p>纹理“贴”到几何体上的过程被称为映射（Map）。纹理坐标（Texture
+Coordinate）用于指定某个顶点该从纹理的哪个位置采样（Sample，采集Fragment颜色）。非顶点的几何体区域通过片段插值（Fragment
+Interpolation）采样。</p>
 <p>纹理坐标以左下角为原点，右上角为（1, 1）点。</p>
 <p>对于超出[0, 1]范围的纹理坐标，可以指定纹理环绕方式来处理。</p>
 <table>
+
 <thead>
 <tr>
-<th style="text-align:left">环绕方式</th>
-<th style="text-align:left">描述</th>
+<th style="text-align: left;">环绕方式</th>
+<th style="text-align: left;">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">GL_REPEAT</td>
-<td style="text-align:left">对纹理的默认行为。重复纹理图像。(用于二方连续纹理)</td>
+<td style="text-align: left;">GL_REPEAT</td>
+<td
+style="text-align: left;">对纹理的默认行为。重复纹理图像。(用于二方连续纹理)</td>
 </tr>
 <tr>
-<td style="text-align:left">GL_MIRRORED_REPEAT</td>
-<td style="text-align:left">和GL_REPEAT一样，但每次重复图片是镜像放置的。</td>
+<td style="text-align: left;">GL_MIRRORED_REPEAT</td>
+<td
+style="text-align: left;">和GL_REPEAT一样，但每次重复图片是镜像放置的。</td>
 </tr>
 <tr>
-<td style="text-align:left">GL_CLAMP_TO_EDGE</td>
-<td style="text-align:left">纹理坐标会被约束在0到1之间，超出的部分会重复纹理坐标的边缘，产生一种边缘被拉伸的效果。（Unity中默认模式）</td>
+<td style="text-align: left;">GL_CLAMP_TO_EDGE</td>
+<td
+style="text-align: left;">纹理坐标会被约束在0到1之间，超出的部分会重复纹理坐标的边缘，产生一种边缘被拉伸的效果。（Unity中默认模式）</td>
 </tr>
 <tr>
-<td style="text-align:left">GL_CLAMP_TO_BORDER</td>
-<td style="text-align:left">超出的坐标为用户指定的边缘颜色。</td>
+<td style="text-align: left;">GL_CLAMP_TO_BORDER</td>
+<td style="text-align: left;">超出的坐标为用户指定的边缘颜色。</td>
 </tr>
 </tbody>
 </table>
-<p><img src="https://learnopengl-cn.github.io/img/01/06/texture_wrapping.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<figure>
+<img
+src="https://learnopengl-cn.github.io/img/01/06/texture_wrapping.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
 <p>使用<code>glTexParameterx</code>函数对特定坐标轴设置环绕方式。其中的‘x’代表数据类型，如i（int）、fv（float[]）等。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">//参数一指定纹理目标</span><br><span class="hljs-comment">//参数二指定参数选项以及坐标轴。S轴（x轴）T轴（y轴）</span><br><span class="hljs-comment">//参数三指定环绕方式</span><br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);<br></code></pre></td></tr></table></figure>
 <p>选择GL_CLAMP_TO_BORDER时，使用float数组传入颜色数据。</p>
@@ -381,33 +396,42 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);<br></code></pre></td></tr></table></figure>
 <h2 id="多级渐远纹理">多级渐远纹理</h2>
 <p>在我们当前的理解中，无论物体远近，其被映射的纹理的分辨率是不变的。对于非常远的物体，它们只会产生很少的Fragment。而OpenGL需要在如此高分辨率的纹理上拾取区区几个像素，是非常困难，并且效果不好的。为了解决这一问题，OpenGL引入了多级渐远纹理（Mipmap）。</p>
-<p><img src="https://learnopengl-cn.github.io/img/01/06/mipmaps.png" srcset="/img/loading.gif" lazyload alt="img"></p>
+<figure>
+<img src="https://learnopengl-cn.github.io/img/01/06/mipmaps.png" srcset="/img/loading.gif" lazyload
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
 <p>Mipmap中，每个纹理的大小是前一个纹理的二分之一。当物体与相机的距离超过一定阈值后，OpenGL会采用小一级的纹理进行采样。</p>
 <p>通过<code>glGenerateMipmap</code>函数创建Mipmap。</p>
 <p>与纹理过滤选项类似，OpenGL提供了多种Mipmap匹配选项，用于缓解阈值附近Mipmap切换突兀的问题。</p>
 <table>
+
 <thead>
 <tr>
-<th style="text-align:left">过滤方式</th>
-<th style="text-align:left">描述</th>
+<th style="text-align: left;">过滤方式</th>
+<th style="text-align: left;">描述</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">GL_NEAREST_MIPMAP_NEAREST</td>
-<td style="text-align:left">使用最邻近的多级渐远纹理来匹配像素大小，并使用邻近插值进行纹理采样</td>
+<td style="text-align: left;">GL_NEAREST_MIPMAP_NEAREST</td>
+<td
+style="text-align: left;">使用最邻近的多级渐远纹理来匹配像素大小，并使用邻近插值进行纹理采样</td>
 </tr>
 <tr>
-<td style="text-align:left">GL_LINEAR_MIPMAP_NEAREST</td>
-<td style="text-align:left">使用最邻近的多级渐远纹理级别，并使用线性插值进行采样</td>
+<td style="text-align: left;">GL_LINEAR_MIPMAP_NEAREST</td>
+<td
+style="text-align: left;">使用最邻近的多级渐远纹理级别，并使用线性插值进行采样</td>
 </tr>
 <tr>
-<td style="text-align:left">GL_NEAREST_MIPMAP_LINEAR</td>
-<td style="text-align:left">在两个最匹配像素大小的多级渐远纹理之间进行线性插值，使用邻近插值进行采样</td>
+<td style="text-align: left;">GL_NEAREST_MIPMAP_LINEAR</td>
+<td
+style="text-align: left;">在两个最匹配像素大小的多级渐远纹理之间进行线性插值，使用邻近插值进行采样</td>
 </tr>
 <tr>
-<td style="text-align:left">GL_LINEAR_MIPMAP_LINEAR</td>
-<td style="text-align:left">在两个邻近的多级渐远纹理之间使用线性插值，并使用线性插值进行采样</td>
+<td style="text-align: left;">GL_LINEAR_MIPMAP_LINEAR</td>
+<td
+style="text-align: left;">在两个邻近的多级渐远纹理之间使用线性插值，并使用线性插值进行采样</td>
 </tr>
 </tbody>
 </table>
@@ -427,8 +451,10 @@
 <p>完整的生成纹理过程如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> texture;<br><span class="hljs-built_in">glGenTextures</span>(<span class="hljs-number">1</span>, &amp;texture);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, texture);<br><span class="hljs-comment">// 为当前绑定的纹理对象设置环绕、过滤方式</span><br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);   <br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);<br><span class="hljs-built_in">glTexParameteri</span>(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);<br><span class="hljs-comment">// 加载并生成纹理</span><br><span class="hljs-type">int</span> width, height, nrChannels;<br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *data = <span class="hljs-built_in">stbi_load</span>(<span class="hljs-string">&quot;container.jpg&quot;</span>, &amp;width, &amp;height, &amp;nrChannels, <span class="hljs-number">0</span>);<br><span class="hljs-keyword">if</span> (data)<br>&#123;<br>    <span class="hljs-built_in">glTexImage2D</span>(GL_TEXTURE_2D, <span class="hljs-number">0</span>, GL_RGB, width, height, <span class="hljs-number">0</span>, GL_RGB, GL_UNSIGNED_BYTE, data);<br>    <span class="hljs-built_in">glGenerateMipmap</span>(GL_TEXTURE_2D);<br>&#125;<br><span class="hljs-keyword">else</span><br>&#123;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Failed to load texture&quot;</span> &lt;&lt; std::endl;<br>&#125;<br><span class="hljs-built_in">stbi_image_free</span>(data);<br></code></pre></td></tr></table></figure>
 <h2 id="纹理单元">纹理单元</h2>
-<p><code>sample2d</code>类型uniform无需使用<code>glUniform</code>赋值。但<code>glUniform</code>可以设置<code>sampler2d</code>的位置值，这样我们就能给着色器设置多个纹理。一个纹理的位置值称为一个纹理单元（Texture Unit），其默认值为0。</p>
-<p>使用<code>glActiveTexture(GL_TEXTUREX)</code>激活X号纹理单元， 随后使用<code>glBindTexture</code>为该位置值的纹理单元绑定纹理对象。</p>
+<p><code>sample2d</code>类型uniform无需使用<code>glUniform</code>赋值。但<code>glUniform</code>可以设置<code>sampler2d</code>的位置值，这样我们就能给着色器设置多个纹理。一个纹理的位置值称为一个纹理单元（Texture
+Unit），其默认值为0。</p>
+<p>使用<code>glActiveTexture(GL_TEXTUREX)</code>激活X号纹理单元，
+随后使用<code>glBindTexture</code>为该位置值的纹理单元绑定纹理对象。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE0);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, texture1);<br><span class="hljs-built_in">glActiveTexture</span>(GL_TEXTURE1);<br><span class="hljs-built_in">glBindTexture</span>(GL_TEXTURE_2D, texture2);<br></code></pre></td></tr></table></figure>
 <p>使用自定义着色器类的<code>setInt</code>函数设置纹理单元位置值。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c++">ourShader.<span class="hljs-built_in">setInt</span>(<span class="hljs-string">&quot;texture2&quot;</span>, <span class="hljs-number">1</span>);<br></code></pre></td></tr></table></figure>
@@ -452,9 +478,9 @@
       
         <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" class="print-no-link">#图形学</a>
       
-        <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
-      
         <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+        <a href="/tags/OpenGL/" class="print-no-link">#OpenGL</a>
       
     </div>
   
