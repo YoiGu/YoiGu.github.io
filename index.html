@@ -230,6 +230,94 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2025/02/10/Unity-Shader%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89-%E5%99%AA%E5%A3%B0%E3%80%81%E4%BC%98%E5%8C%96%E4%B8%8EPBS%E5%B7%A5%E4%BD%9C%E6%B5%81/" target="_self">
+          Unity Shader学习笔记（五） - 噪声、优化与PBS工作流
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/02/10/Unity-Shader%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89-%E5%99%AA%E5%A3%B0%E3%80%81%E4%BC%98%E5%8C%96%E4%B8%8EPBS%E5%B7%A5%E4%BD%9C%E6%B5%81/" target="_self">
+        <div>
+          噪声  消融 略  水波 水面的流动一般使用时间变量+噪声采样+改变法线方向的方式实现。除此之外，要想模拟较好的水波效果，还需要进行反射、折射的计算。其中，反射还涉及到菲涅尔反射（fresnel=pow(1-max(0, v·n),4)），因为视线与水面越平行，反射率就越高。此处，反射、折射使用CubeMap作为采样源。 Shader如下： 123456789101112131415161718
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-02-10 16:37" pubdate>
+              2025-02-10
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Unity/">#Unity</a>
+            
+              <a href="/tags/Shader/">#Shader</a>
+            
+              <a href="/tags/%E6%8A%80%E6%9C%AF%E7%BE%8E%E6%9C%AF/">#技术美术</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/02/10/Unity-Shader%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89-%E5%90%8E%E5%A4%84%E7%90%86%E4%B8%8ENPR/" target="_self">
+          Unity Shader学习笔记（四） - 后处理与NPR
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/02/10/Unity-Shader%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89-%E5%90%8E%E5%A4%84%E7%90%86%E4%B8%8ENPR/" target="_self">
+        <div>
+          屏幕后处理 MonoBehavior有这样一个函数：OnRenderImage(RenderTexture src, RenderTexture dest)，在每帧渲染完成后调用。其中，第一个参数为当前完成渲染的图像，第二个参数为最终输出到屏幕上的图像。该函数默认在完成所有步透明、半透明物体的渲染后调用。如果想更改该函数的生效次序，使其在不透明物体渲染完毕后，半透明物体渲染前执行，则为其添加[I
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-02-10 16:36" pubdate>
+              2025-02-10
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Unity/">#Unity</a>
+            
+              <a href="/tags/Shader/">#Shader</a>
+            
+              <a href="/tags/%E6%8A%80%E6%9C%AF%E7%BE%8E%E6%9C%AF/">#技术美术</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2025/02/02/Unity-Shader%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89-%E5%85%89%E7%85%A7%E3%80%81%E9%AB%98%E7%BA%A7%E7%BA%B9%E7%90%86%E4%B8%8E%E6%97%B6%E9%97%B4%E5%8A%A8%E7%94%BB/" target="_self">
           Unity Shader学习笔记（三） - 光照、高级纹理与时间动画
         </a>
@@ -569,94 +657,6 @@
               <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">#学习笔记</a>
             
               <a href="/tags/GAMES101/">#GAMES101</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/08/24/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89-HDR%E3%80%81%E6%B3%9B%E5%85%89%E3%80%81%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93%E4%B8%8ESSAO/" target="_self">
-          LearnOpenGL学习笔记（十三） - HDR、泛光、延迟渲染与SSAO
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/24/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89-HDR%E3%80%81%E6%B3%9B%E5%85%89%E3%80%81%E5%BB%B6%E8%BF%9F%E6%B8%B2%E6%9F%93%E4%B8%8ESSAO/" target="_self">
-        <div>
-          冲刺。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-08-24 18:34" pubdate>
-              2024-08-24
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/">#图形学</a>
-            
-              <a href="/tags/OpenGL/">#OpenGL</a>
-            
-              <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">#学习笔记</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/08/24/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%BA%8C%EF%BC%89-%E4%B8%87%E5%90%91%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE%E3%80%81%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE%E4%B8%8E%E8%A7%86%E5%B7%AE%E8%B4%B4%E5%9B%BE/" target="_self">
-          LearnOpenGL学习笔记（十二） - 万向阴影贴图、法线贴图与视差贴图
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/08/24/LearnOpenGL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%8D%81%E4%BA%8C%EF%BC%89-%E4%B8%87%E5%90%91%E9%98%B4%E5%BD%B1%E8%B4%B4%E5%9B%BE%E3%80%81%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE%E4%B8%8E%E8%A7%86%E5%B7%AE%E8%B4%B4%E5%9B%BE/" target="_self">
-        <div>
-          快速过一遍。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-08-24 18:34" pubdate>
-              2024-08-24
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/">#图形学</a>
-            
-              <a href="/tags/OpenGL/">#OpenGL</a>
-            
-              <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">#学习笔记</a>
             
           </div>
         

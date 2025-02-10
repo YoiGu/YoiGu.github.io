@@ -1,0 +1,806 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/tagIcon.png">
+  <link rel="icon" href="/img/tagIcon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yoi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="噪声  消融 略  水波 水面的流动一般使用时间变量+噪声采样+改变法线方向的方式实现。除此之外，要想模拟较好的水波效果，还需要进行反射、折射的计算。其中，反射还涉及到菲涅尔反射（fresnel&#x3D;pow(1-max(0, v·n),4)），因为视线与水面越平行，反射率就越高。此处，反射、折射使用CubeMap作为采样源。 Shader如下： 123456789101112131415161718">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity Shader学习笔记（五） - 噪声、优化与PBS工作流">
+<meta property="og:url" content="http://example.com/2025/02/10/Unity-Shader%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89-%E5%99%AA%E5%A3%B0%E3%80%81%E4%BC%98%E5%8C%96%E4%B8%8EPBS%E5%B7%A5%E4%BD%9C%E6%B5%81/index.html">
+<meta property="og:site_name" content="Yoi&#39;s Home">
+<meta property="og:description" content="噪声  消融 略  水波 水面的流动一般使用时间变量+噪声采样+改变法线方向的方式实现。除此之外，要想模拟较好的水波效果，还需要进行反射、折射的计算。其中，反射还涉及到菲涅尔反射（fresnel&#x3D;pow(1-max(0, v·n),4)），因为视线与水面越平行，反射率就越高。此处，反射、折射使用CubeMap作为采样源。 Shader如下： 123456789101112131415161718">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-10T08:37:53.000Z">
+<meta property="article:modified_time" content="2025-02-10T08:38:16.336Z">
+<meta property="article:author" content="Yoi">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="技术美术">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Unity Shader学习笔记（五） - 噪声、优化与PBS工作流 - Yoi&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>攸一的文书档案</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202401261945400.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Unity Shader学习笔记（五） - 噪声、优化与PBS工作流"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-10 16:37" pubdate>
+          2025年2月10日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          37 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Unity Shader学习笔记（五） - 噪声、优化与PBS工作流</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2025年2月10日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="噪声"><a class="markdownIt-Anchor" href="#噪声"></a> 噪声</h2>
+<h3 id="消融"><a class="markdownIt-Anchor" href="#消融"></a> 消融</h3>
+<p>略</p>
+<h3 id="水波"><a class="markdownIt-Anchor" href="#水波"></a> 水波</h3>
+<p>水面的流动一般使用时间变量+噪声采样+改变法线方向的方式实现。除此之外，要想模拟较好的水波效果，还需要进行反射、折射的计算。其中，反射还涉及到菲涅尔反射（<code>fresnel=pow(1-max(0, v·n),4)</code>），因为视线与水面越平行，反射率就越高。此处，反射、折射使用CubeMap作为采样源。</p>
+<p>Shader如下：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><code class="hljs glsl">struct v2f&#123;<br>    float4 pos : SV_POSITION;<br>    float4 scrPos : TEXCOORD0;<br>    float4 uv : TEXCOORD1; <span class="hljs-comment">// 此处UV需要存储两个float2，所以时float4</span><br>    float4 TtoW0 : TEXCOORD2;<br>    float4 TtoW1 : TEXCOORD3;<br>    float4 TtoW2 : TEXCOORD4; <span class="hljs-comment">// TBN矩阵，用于将法线从切线空间变换到世界空间</span><br>&#125;;<br>v2f vert(a2v v)&#123;<br>    v2f o;<br>    o.pos = mul(UNITY_MATRIX_MVP, v.vertex);<br>    o.scrPos = ComputeGrabScreenPos(o.pos); <span class="hljs-comment">// 计算顶点在被Grab的图像中的“屏幕位置”。</span><br>    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);<br>    o.uv.zw = TRANSFORM_TEX(v.texcoord, _WaveMap); <span class="hljs-comment">// _WaveMap是由噪声生成的法线纹理</span><br>    float3 worldPos = mul(_Object2World, v.vertex).xyz;<br>    fixed3 worldNormal = UnityObjectToWorldNormal(v.normal); <span class="hljs-comment">// 法线不能直接通过M矩阵变换，而是用M矩阵的逆转置矩阵</span><br>    fixed3 worldTangent = UnityObjectToWorldDir(v.tangent.xyz);<br>    fixed3 worldBinormal = <span class="hljs-built_in">cross</span>(worldNormal, worldTangent) * v.tangent.w;<br>    o.TtoW0 = float4(worldTangent.x, worldBinormal.x, worldNormal.x, worldPos.x);<br>    o.TtoW1 = float4(worldTangent.y, worldBinormal.y, worldNormal.y, worldPos.y);<br>    o.TtoW2 = float4(worldTangent.z, worldBinormal.z, worldNormal.z, worldPos.z);<br>    <span class="hljs-keyword">return</span> o;<br>&#125;<br>fixed4 frag(v2f i) : SV_Target&#123;<br>    float3 worldPos = float3(i.TtoW0.w, i.TtoW1.w, i.TtoW2.w); <span class="hljs-comment">// 节省一个寄存器</span><br>    fixed3 viewDir = <span class="hljs-built_in">normalize</span>(UnityWorldSpaceViewDir(worldPos));<br>    float2 speed = _Time.y * float2(_WaveXSpeed, _WaveYSpeed); <span class="hljs-comment">// _Time.y为t本身</span><br>    fixed3 bump1 = UnpackNormal(_tex2D(_WaveMap, i.uv.zw + speed)).rgb; <span class="hljs-comment">// UnpackNormal用于解码采样法线值</span><br>    fixed3 bump2 = UnpackNormal(_tex2D(_WaveMap, i.uv.zw - speed)).rgb;<br>    fixed3 bump = <span class="hljs-built_in">normalize</span>(bump1+bump2); <span class="hljs-comment">// 模拟两层交叉水面的波动效果。否则水波只向一个方向流动，不太真实</span><br>    float2 <span class="hljs-keyword">offset</span> = bump.xy * _Distortion * _RefractionTex_TexelSize.xy; <span class="hljs-comment">// _RefractionTex是Grab得到的屏幕图像。struct v2f&#123;</span><br>    float4 pos : SV_POSITION;<br>    float4 scrPos : TEXCOORD0;<br>    float4 uv : TEXCOORD1; <span class="hljs-comment">// 此处UV需要存储两个float2，所以时float4</span><br>    float4 TtoW0 : TEXCOORD2;<br>    float4 TtoW1 : TEXCOORD3;<br>    float4 TtoW2 : TEXCOORD4; <span class="hljs-comment">// TBN矩阵，用于将法线从切线空间变换到世界空间</span><br>&#125;;<br>v2f vert(a2v v)&#123;<br>    v2f o;<br>    o.pos = mul(UNITY_MATRIX_MVP, v.vertex);<br>    o.scrPos = ComputeGrabScreenPos(o.pos); <span class="hljs-comment">// 计算顶点在被Grab的图像中的“屏幕位置”。</span><br>    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);<br>    o.uv.zw = TRANSFORM_TEX(v.texcoord, _WaveMap); <span class="hljs-comment">// _WaveMap是由噪声生成的法线纹理</span><br>    float3 worldPos = mul(_Object2World, v.vertex).xyz;<br>    fixed3 worldNormal = UnityObjectToWorldNormal(v.normal); <span class="hljs-comment">// 法线不能直接通过M矩阵变换，而是用M矩阵的逆转置矩阵</span><br>    fixed3 worldTangent = UnityObjectToWorldDir(v.tangent.xyz);<br>    fixed3 worldBinormal = <span class="hljs-built_in">cross</span>(worldNormal, worldTangent) * v.tangent.w;<br>    o.TtoW0 = float4(worldTangent.x, worldBinormal.x, worldNormal.x, worldPos.x);<br>    o.TtoW1 = float4(worldTangent.y, worldBinormal.y, worldNormal.y, worldPos.y);<br>    o.TtoW2 = float4(worldTangent.z, worldBinormal.z, worldNormal.z, worldPos.z);<br>    <span class="hljs-keyword">return</span> o;<br>&#125;<br>fixed4 frag(v2f i) : SV_Target&#123;<br>    float3 worldPos = float3(i.TtoW0.w, i.TtoW1.w, i.TtoW2.w); <span class="hljs-comment">// 节省一个寄存器</span><br>    fixed3 viewDir = <span class="hljs-built_in">normalize</span>(UnityWorldSpaceViewDir(worldPos));<br>    float2 speed = _Time.y * float2(_WaveXSpeed, _WaveYSpeed); <span class="hljs-comment">// _Time.y为t本身</span><br>    fixed3 bump1 = UnpackNormal(_tex2D(_WaveMap, i.uv.zw + speed)).rgb; <span class="hljs-comment">// UnpackNormal用于解码采样法线值</span><br>    fixed3 bump2 = UnpackNormal(_tex2D(_WaveMap, i.uv.zw - speed)).rgb;<br>    fixed3 bump = <span class="hljs-built_in">normalize</span>(bump1+bump2); <span class="hljs-comment">// 模拟两层交叉水面的波动效果。否则水波只向一个方向流动，不太真实</span><br>    float2 <span class="hljs-keyword">offset</span> = bump.xy * _Distortion * _RefractionTex_TexelSize.xy; <span class="hljs-comment">// _RefractionTex是Grab得到的屏幕图像，水波bump越强烈，折射看到的画面就越扭曲。</span><br>    i.scrPos.xy = <span class="hljs-keyword">offset</span> * i.scrPos.z + i.scrPos.xy; <span class="hljs-comment">// 将深度纳入考虑，近处水面折射越强，远处较小</span><br>    <span class="hljs-comment">// 此时，i.scrPos.xy为投影空间坐标，而非Clip空间坐标，所以要进行透视除法（采样的UV是Clip空间下的）</span><br>    fixed3 refrCol = tex2D(_RefractionTex, i.scrPos.xy/i.scrPos.w).rgb; <span class="hljs-comment">// 对i.scrPos进行透视除法，以得到折射向量</span><br>    bump = <span class="hljs-built_in">normalize</span>(half3(<span class="hljs-built_in">dot</span>(i.TtoW0.xyz, bump),<span class="hljs-built_in">dot</span>(i.TtoW1.xyz, bump), <span class="hljs-built_in">dot</span>(i.TtoW2.xyz, bump))); <span class="hljs-comment">// 将采样法线值通过TBN矩阵变换到世界空间</span><br>    fixed4 texColor = tex2D(_MainTex, i.uv.xy + speed); <span class="hljs-comment">// 主材质颜色，即水波本身的颜色</span><br>    fixed3 reflDir = <span class="hljs-built_in">reflect</span>(-viewDir, bump); <span class="hljs-comment">// 反射方向，用于CubeMap采样</span><br>    fixed3 reflCol = texCUBE(_Cubemap, reflDir).rgb * texColor.rgb * _Color.rgb;<br>    fixed fresnel = <span class="hljs-built_in">pow</span>(<span class="hljs-number">1</span>-saturate(<span class="hljs-built_in">dot</span>(viewDir, bump)),<span class="hljs-number">4</span>); <span class="hljs-comment">// 计算菲涅尔项</span><br>    fixed3 finalColor = reflCol * fresnel + refrCol * (<span class="hljs-number">1</span>-fresnel);<br>    <span class="hljs-keyword">return</span> fixed4(finalColor, <span class="hljs-number">1</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="非均匀雾效"><a class="markdownIt-Anchor" href="#非均匀雾效"></a> 非均匀雾效</h3>
+<p>VS与先前的全局雾效一致。</p>
+<p>FS：</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs glsl">fixed4 frag(v2f i) : SV_Target&#123;<br>    <span class="hljs-type">float</span> linearDepth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv_depth));<br>    float3 worldPos = _WorldSpaceCameraPos + linearDepth * i.interpolatedRay.xyz;<br>    float2 speed = _Time.y * float2(_FogXSpeed, _FogYSpeed);<br>    <span class="hljs-type">float</span> noise = tex2D(_NoiseTex, i.uv + speed).r - <span class="hljs-number">0.5</span>) * _NoiseAmount; <span class="hljs-comment">// 此全局雾方案本质上是屏幕后处理，所以实际上只渲染了一个面片，所以噪声纹理二维的足矣</span><br>    <span class="hljs-type">float</span> fogDensity = (_FogEnd - worldPos.y) / (_FogEnd - _FogStart); <span class="hljs-comment">// 基于高度的线性雾</span><br>    fogDensity = saturate(fogDensity * _FogDensity * (<span class="hljs-number">1</span> + noise));<br>    fixed4 finalColor = tex2D(_MainTex, i.uv);<br>    finalColor.rgb = lerp(finalColor.rgb, _FogColor.rgb, fogDensity);<br>    <span class="hljs-keyword">return</span> finalColor;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="优化"><a class="markdownIt-Anchor" href="#优化"></a> 优化</h2>
+<p>影响性能的优化如下：</p>
+<ul>
+<li>CPU：DrawCall数量、脚本逻辑复杂程度、物理模拟次数</li>
+<li>GPU：顶点数量、逐顶点计算复杂度、片段数量、逐片段计算复杂度</li>
+<li>带宽：纹理尺寸/压缩格式、帧缓冲分辨率</li>
+</ul>
+<h3 id="减少drawcall"><a class="markdownIt-Anchor" href="#减少drawcall"></a> 减少Drawcall</h3>
+<p>Drawcall是CPU对GPU发出的一次绘制请求。</p>
+<p>渲染一千个三角形网格比渲染包含了一千个三角形的网格耗时更久，因为前者的drawcall数量是后者的一千倍。CPU会花费大把时间在提交drawcall上，而在提交的过程中，GPU将会等待CPU完成提交后才会渲染。</p>
+<p>批处理（Batching）是一种常见的优化drawcall数量的技术。使用同一个材质的物体可以进行批处理。</p>
+<p>Unity支持动态批处理和静态批处理。前者的一切操作是Unity自动完成的，但其存在诸多限制，以至于一不小心就会破坏动态批处理。静态批处理自由度较高，但会占用更多内存，并且经过静态批处理的物体将不可以再移动。</p>
+<h4 id="动态批处理"><a class="markdownIt-Anchor" href="#动态批处理"></a> 动态批处理</h4>
+<p>其原理为：在每一帧把符合条件的模型网格进行合并，然后把合并后的模型数据传递给GPU，再用同一材质对其进行渲染.。</p>
+<p>主要的条件限制如下：</p>
+<ul>
+<li>网格顶点属性规模要小于某个定值。顶点属性规模的意思是，有N个顶点属性，M个顶点，则N*M应当小于定值。</li>
+<li>若使用了Lightmap，则材质使用的有关Lightmap的属性必须相同。</li>
+<li>单Pass</li>
+</ul>
+<h4 id="静态批处理"><a class="markdownIt-Anchor" href="#静态批处理"></a> 静态批处理</h4>
+<p>其原理为：在开始运行时，一次性将需要静态批处理的模型合并到同一网格。它与动态批处理的本质区别在于，静态批处理<strong>只需要运行一次</strong>。</p>
+<p>启用静态批处理的方式是，勾选GO Inspector名称右侧的Static复选框（或勾选下拉栏中的Batching Static）。</p>
+<p>其具体实现原理为：</p>
+<ol>
+<li>首先，将静态物体的顶点坐标变换到世界空间下。</li>
+<li>为需要Batching的物体构建一个更大的顶点和索引缓存。</li>
+<li>对于使用了同一材质的物体，调用一个Drawcall将其全部提交</li>
+<li>对于使用不同材质的物体，减少它们之间的状态切换</li>
+</ol>
+<h4 id="共享材质"><a class="markdownIt-Anchor" href="#共享材质"></a> 共享材质</h4>
+<p>当一个材质从同一个着色器创建，赋值给了两个模型。但两个模型的材质属性有所不同，如纹理、颜色等，也会导致两个Drawcall。我们可以通过Atlas、顶点数据等策略规避这个问题。</p>
+<p>图集（Atlas）是把若干纹理合并到一张大的纹理的优化策略。使用了同一张纹理，就能使用同一个材质，减少Drawcall。</p>
+<p>纹理以外的材质属性，有微小变化的，可以使用网格顶点数据存储这些属性。无论如何，只要使用同一个材质实例的网格，都会共享所有属性的数值。使用同一个材质实例的网格，我们称这些网格使用了<strong>共享材质</strong>，表现为<code>Renderer.sharedMaterial</code>。使用<code>setFloat</code>等方法改变<code>sharedMaterial</code>属性时，所有使用该材质的网格均会变化。</p>
+<p>若使用<code>Renderer.material</code>修改材质，本质上是创建了<code>sharedMaterial</code>的一个复制体，会破坏批处理。</p>
+<h4 id="注意事项"><a class="markdownIt-Anchor" href="#注意事项"></a> 注意事项</h4>
+<p>使用批处理需要谨记下列建议：</p>
+<ol>
+<li>在保证内存占用可以接受的情况下，<strong>尽量选择静态批处理</strong>，且注意<strong>静态批处理的物体不可移动</strong>。</li>
+<li>若使用动态批处理，则需要尽可能避免破坏限制。</li>
+</ol>
+<p>同时也需要注意，若Shader中存在模型空间运算（如顶点动画），则<strong>必须使用<code>DisableBatching</code>标签取消批处理</strong>，否则会导致错误。此外，对于半透明材质物体，一定注意其在Hierachy下的排列顺序满足从后往前，否则会破坏批处理。</p>
+<h3 id="减少顶点数量"><a class="markdownIt-Anchor" href="#减少顶点数量"></a> 减少顶点数量</h3>
+<h4 id="几何体"><a class="markdownIt-Anchor" href="#几何体"></a> 几何体</h4>
+<p>在3D建模时，尽可能减少三角形数量，同时移除不必要的硬边（Hard Edge）和纹理衔接，以避免边界平滑和纹理分离。</p>
+<p>这里解释一下上面几个专有名词的概念。</p>
+<p>在Unity中显示的顶点数往往多于建模软件中的顶点数，这是因为GPU有时需要把一个顶点拆分为更多的顶点，一是为了分离纹理坐标（UV Split），另一个是为了产生平滑边界。对于前者，举个例子，一个立方体的三个面可能共用一个顶点，但在这三个面上该顶点对应的纹理坐标并不相同，所以就需要拆分出三个顶点。对于后者，一个顶点可能会对应多个法线或切线信息，而GPU对于一个顶点只能处理一个属性变量，所以就需要拆分出多个。</p>
+<h4 id="lod"><a class="markdownIt-Anchor" href="#lod"></a> LOD</h4>
+<p>使用<code>LOD Group</code>组件为物体构建LOD（Level of Details），为一个物体准备多个不同细节层次的模型，并给组件赋值。</p>
+<h4 id="遮挡剔除"><a class="markdownIt-Anchor" href="#遮挡剔除"></a> 遮挡剔除</h4>
+<p>遮挡剔除（Occlusion Culling）用于消除在其他物体之后，无法看到的物体。</p>
+<p>Occlusion Culling与视锥体剔除（Frustum Culling）不同。前者主要做深度判断，后者主要做NDC范围判断。</p>
+<p>遮挡剔除作用于<code>Renderer</code>组件。被更近的Render遮挡的Renderer将会被删除。</p>
+<p>遮挡剔除本身需要CPU算力。适合开启遮挡剔除的情景如下：</p>
+<ul>
+<li>只有当Overdraw到一定程度时，以至于GPU遇到瓶颈时，才需要开启遮挡剔除。</li>
+<li>用户设备的内存足够大，因为需要存放遮挡剔除数据</li>
+<li>彼此连接的狭长室内场景</li>
+<li>运行时不会生成场景几何体（即所有需要渲染的物体在场景加载时就已经确定），如地形破坏、大量即时生成的GO等。</li>
+</ul>
+<p>通过在Occlusion Culling窗口更改参数，并在场景中使用遮挡区域，就可以开启遮挡剔除。具体步骤如下：</p>
+<ol>
+<li>为场景中所有<strong>运行时始终不移动</strong>且<strong>具有Renderer组件</strong>的<strong>被遮挡物</strong>（即会被其他物体遮挡的物体）设置为Occludee Static</li>
+<li>为场景中所有<strong>运行时始终不移动</strong>、<strong>不透明</strong>且<strong>具有Mesh Renderer或Terrain组件</strong>的遮挡物（会遮挡其他物体的物体）设置为Occluder Static</li>
+<li>启用摄像机的Occlusion Culling属性</li>
+<li>在Window-Rendering-Occlusion Culling窗口的Bake选项卡中进行烘焙。</li>
+<li>若要在Scene中查看Occulusion Culling效果，则在Occlusion Culling窗口活跃时，选中一个相机GO，观察Scene视图。此时，无法被相机看到的物体应当消失。</li>
+</ol>
+<p>动态被遮挡物无需烘焙，只需要在Renderer组件中开启Dynamic Occulusion组件。此时，当它被静态遮挡物遮挡时，将会被剔除。但存在类似于“鹰眼视觉”、“墙后显示”的需求时，应当关闭该属性。若确定该动态物体不可能被遮挡剔除，则关闭该属性。</p>
+<p>使用<code>Occlusion Area</code>组件定义需要进行遮挡剔除的场景区域。Unity在烘焙遮挡数据时，将对组件包围盒内的区域进行精度更高的烘焙。如果场景内没有该组件，则会烘焙所有静态遮挡、被遮挡物体，导致漫长的烘焙时间和过大的遮挡数据。</p>
+<p>使用<code>Occlusion Portal</code>组件定义遮挡入口。遮挡入口关闭时将作为静态遮挡物，否则就不会遮挡游戏对象。改变该组件的<code>open</code>属性以切换打开/关闭状态。</p>
+<h3 id="减少片段数量"><a class="markdownIt-Anchor" href="#减少片段数量"></a> 减少片段数量</h3>
+<p>减少片段数量的关键在于减少Overdraw。可通过Scene试图左上角的下拉菜单中选择Overdraw以查看Overdraw情况。</p>
+<h4 id="控制绘制顺序"><a class="markdownIt-Anchor" href="#控制绘制顺序"></a> 控制绘制顺序</h4>
+<p>Unity中，Render Queue小于2500的物体是从前往后绘制的，因为深度测试的存在，使得后面的物体被遮挡的片段会被直接剔除。大于2500的物体则是从后往前绘制，因为要考虑到半透明物体的渲染次序。</p>
+<p>我们要尽可能根据实际情况排列物体顺序。例如，在FPS中，先玩家，再绘制掩体，再绘制敌人。</p>
+<h4 id="小心透明物体"><a class="markdownIt-Anchor" href="#小心透明物体"></a> 小心透明物体</h4>
+<p>半透明物体必定会造成Overdraw。大部分UI对象为半透明，所以将UI相机和主相机分离可以减少大量的Overdraw。</p>
+<p>在移动设备上，我们要尽量避免使用Alpha Test，因为discard/clip操作会导致一些硬件优化策略（与TBDR有关）失效。此时，Blend的性能反而比Test更优。</p>
+<h4 id="减少实时光照和阴影"><a class="markdownIt-Anchor" href="#减少实时光照和阴影"></a> 减少实时光照和阴影</h4>
+<p>多用Light Map烘焙，少用RealTime光源；LUT也是一种避免光照计算的好方法。</p>
+<h3 id="节省带宽"><a class="markdownIt-Anchor" href="#节省带宽"></a> 节省带宽</h3>
+<p>前面提到，纹理大小和分辨率是影响带宽的重要因素。因此，我们可以：</p>
+<ol>
+<li>对于纹理，其长宽比最好为正方形，长宽最好为2的整数幂，多使用MipMap（在导入设置的高级选项中）</li>
+<li>对于分辨率，略。</li>
+</ol>
+<h3 id="减少计算复杂度"><a class="markdownIt-Anchor" href="#减少计算复杂度"></a> 减少计算复杂度</h3>
+<h4 id="shader-lod"><a class="markdownIt-Anchor" href="#shader-lod"></a> Shader LOD</h4>
+<p>ShaderLab中，<code>LOD</code>语义可以指定Shader的LOD值。当LOD值小于特定值时才使用该Shader，而使用了超过设定值的Shader的物体将不会被渲染。</p>
+<h4 id="优化shader代码"><a class="markdownIt-Anchor" href="#优化shader代码"></a> 优化Shader代码</h4>
+<ol>
+<li>注意float、half类型的使用。通常，float适用于顶点坐标等变量，应当尽量在VS中使用；half适用于标量、纹理坐标等变量；fixed适用于颜色和单位向量。对于half、fixed变量，应当尽量避免Swizzle操作。</li>
+<li>定义appdata、v2f结构体时，应尽量减少插值寄存器（TEXCOORD语义标记）的数量。例如，对于两个float2，把他们放在一个float4里存储。</li>
+<li>避免全屏后处理。如果不可避免使用全屏后处理，使用fixed或half进行计算。如果实在要涉及到高精度计算，则使用LUT或转移到VS中处理。</li>
+<li>把多个后处理特效合并到一个Shader中以减少Pass数量。</li>
+<li>避免使用控制语句。</li>
+<li>避免使用复杂数学计算函数</li>
+<li>避免使用discard操作</li>
+</ol>
+<h2 id="pbr"><a class="markdownIt-Anchor" href="#pbr"></a> PBR</h2>
+<p>本节主要介绍Unity Standard Shader使用方法。</p>
+<p>Standard Shader支持Metallic Workflow和Specular Workflow，前者较常用且为默认工作流。</p>
+<p>使用Standard Shader时，需要在Edit-Project Settings-Player-Other Settings-Color Space中设置颜色空间为Linear。因为PBS需要在线性空间中计算。</p>
+<p>下面介绍部分主要材质属性。</p>
+<ul>
+<li>Albedo：物体整体颜色</li>
+<li>Metallic：物体金属度。设置为纹理时，A通道为Smoothness
+<ul>
+<li>Smoothness：Metallic的附属属性，用于定义材质表面光滑程度。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>在Specular工作流中，Specular将用于替换Metallic，用于定义镜面反射强度。</p>
+</blockquote>
+<ul>
+<li>Normal Map：法线贴图</li>
+<li>Height Map：高度图</li>
+<li>…</li>
+</ul>
+<h3 id="工作流描述"><a class="markdownIt-Anchor" href="#工作流描述"></a> 工作流描述</h3>
+<h4 id="设置光照环境"><a class="markdownIt-Anchor" href="#设置光照环境"></a> 设置光照环境</h4>
+<p>打开Window-Lighting窗口，将HDRI拖入Scene选项卡下的Skybox属性中。</p>
+<p>设置环境光照来源（Ambient Source），可以是Skybox，也可以是渐变/固定颜色。</p>
+<p>设置环境光强度（Ambient Intensity）。</p>
+<blockquote>
+<p>环境光来自反射源的反射。默认反射源（Reflection Resource）为天空盒。若不想让物体接受环境光，则设置反射源为Custom并留空。</p>
+</blockquote>
+<p>实时全局光照（Global Illumination，GI）使得场景物体不仅可以收到直接光影响，也可以收到间接光影响。</p>
+<p>对于光源组件的Bake属性，我们可以根据设备性能选择不同的选项。Realtime模式将让场景内所有受到此光源影响的物体都会进行实时光照计算；Baked模式将会在Bake时生成Lightmap用于采样获取光照结果，但物体移动后再采样Lightmap会出现差错；Mix模式会将标记为Static的物体进行Bake，其他物体采用实时模式。</p>
+<p>光源组件的Bounce Intensity属性反映了GI中受此光源影响的物体的间接光（由此光源发出的光反射得到）强度。调整Light窗口Scene选项卡下General GI参数块中的Bounce Boost和Indirect Intensity参数能全局控制间接光照强度。</p>
+<h4 id="反射探针"><a class="markdownIt-Anchor" href="#反射探针"></a> 反射探针</h4>
+<p>对于金属度高、平滑度高的物体，将能精确映射反射源的内容。然而，在变化较大的场景中，如果物体四周的环境总是在发生变化，就会发生穿帮。为此，我们可以使用反射探针（Reflection Probe）。它允许我们在场景的特定位置对整个场景的环境反射进行采样。</p>
+<p>反射探针有Baked、Realtime和Custom类型。对于第一种，运行时探针中存储的Cubemap不会发生变化，适合“环境不变物体变”的情况。对于第二种，会实时更新Cubemap，但性能开销较大（可以通过脚本精确触发探针更新）；对于第三种，可以使用自定义Cubemap完成环境反射，也可以烘焙。</p>
+<p>反射探针应当放置在明显具有反射现象的物体旁边，或容易发生遮挡的物体周围。放置完毕后，还要设置探针管辖的区域，区域内的反射物体将采用探针的Cubemap作为反射源。存在多个管辖区域重叠的探针时，Unity会像处理Light Probe那样，进行探针的平滑混合。</p>
+<p>反射探针不仅能提高反射真实度，也能模拟互相反射的效果（即两个反射物体互相靠近）。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Unity/" class="print-no-link">#Unity</a>
+      
+        <a href="/tags/Shader/" class="print-no-link">#Shader</a>
+      
+        <a href="/tags/%E6%8A%80%E6%9C%AF%E7%BE%8E%E6%9C%AF/" class="print-no-link">#技术美术</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Unity Shader学习笔记（五） - 噪声、优化与PBS工作流</div>
+      <div>http://example.com/2025/02/10/Unity-Shader学习笔记（五）-噪声、优化与PBS工作流/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yoi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/10/Unity-Shader%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89-%E5%90%8E%E5%A4%84%E7%90%86%E4%B8%8ENPR/" title="Unity Shader学习笔记（四） - 后处理与NPR">
+                        <span class="hidden-mobile">Unity Shader学习笔记（四） - 后处理与NPR</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       Tech · Art · Life. |  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
