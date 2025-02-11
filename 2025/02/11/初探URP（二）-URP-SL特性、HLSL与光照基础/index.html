@@ -1,0 +1,1222 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/tagIcon.png">
+  <link rel="icon" href="/img/tagIcon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yoi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="## URP ShaderLab 此处主要介绍与Built-in不同的部分。  渲染管线 只有SubShader的RenderPipeline Tag与Shader.globalRenderPipeline相同时，该SubShader才会调用。 URP Shader的Renderpipeline Tag始终应当被设置为UniversalPipeline。  Pass 每个Pass都应当包含Ligh">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初探URP（二） - URP SL特性、HLSL与光照基础">
+<meta property="og:url" content="http://example.com/2025/02/11/%E5%88%9D%E6%8E%A2URP%EF%BC%88%E4%BA%8C%EF%BC%89-URP-SL%E7%89%B9%E6%80%A7%E3%80%81HLSL%E4%B8%8E%E5%85%89%E7%85%A7%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="Yoi&#39;s Home">
+<meta property="og:description" content="## URP ShaderLab 此处主要介绍与Built-in不同的部分。  渲染管线 只有SubShader的RenderPipeline Tag与Shader.globalRenderPipeline相同时，该SubShader才会调用。 URP Shader的Renderpipeline Tag始终应当被设置为UniversalPipeline。  Pass 每个Pass都应当包含Ligh">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-11T10:32:19.000Z">
+<meta property="article:modified_time" content="2025-02-11T10:32:45.575Z">
+<meta property="article:author" content="Yoi">
+<meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="URP">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>初探URP（二） - URP SL特性、HLSL与光照基础 - Yoi&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>攸一的文书档案</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202401261945400.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="初探URP（二） - URP SL特性、HLSL与光照基础"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-11 18:32" pubdate>
+          2025年2月11日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          36 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">初探URP（二） - URP SL特性、HLSL与光照基础</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2025年2月11日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>##</strong> <strong>URP ShaderLab</strong></p>
+<p>此处主要介绍与Built-in不同的部分。</p>
+<h3 id="渲染管线"><a class="markdownIt-Anchor" href="#渲染管线"></a> 渲染管线</h3>
+<p>只有SubShader的<code>RenderPipeline</code> Tag与<code>Shader.globalRenderPipeline</code>相同时，该<code>SubShader</code>才会调用。</p>
+<p>URP Shader的<code>Renderpipeline</code> Tag始终应当被设置为<code>UniversalPipeline</code>。</p>
+<h3 id="pass"><a class="markdownIt-Anchor" href="#pass"></a> Pass</h3>
+<p>每个Pass都应当包含<code>LightMode</code> Tag，用于指定在何时使用此Pass。</p>
+<p>Name关键字用于定义此Pass的唯一名称，便于在其他SubShader中使用UsePass。但不建议这么做，因为UsePass会破坏SRP Batcher。</p>
+<blockquote>
+<p>为什么会破坏？</p>
+<p>Shader中的Pass只有共用同一个Unity Per Material CBUFFER时，才能进行SRP Batcher。而UsePass会引用其他Shader中定义的CBUFFER。</p>
+</blockquote>
+<p>通过<code>#pragma target x.x</code>可以指定指定的着色器编译目标。版本越高，支持的功能越多。</p>
+<p>通过<code>#pragma exclude-renderers</code>、<code>#pragma only_renderers</code>指定此着色器应用的平台。支持的选项有<code>gles</code>、<code>gles3</code>、<code>glcore</code>、<code>d3d11</code>、<code>d3d11_9x</code>等。</p>
+<h4 id="lightmode"><a class="markdownIt-Anchor" href="#lightmode"></a> LightMode</h4>
+<p>URP可使用下列LightMode选项：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UniversalForward</td>
+<td>用于渲染前向渲染路径的对象</td>
+</tr>
+<tr>
+<td>ShadowCaster</td>
+<td>投射阴影</td>
+</tr>
+<tr>
+<td>DepthOnly</td>
+<td>若启用MSAA或平台不支持复制深度缓冲区，则使用此选项来创建<code>_CameraDepthTexture</code></td>
+</tr>
+<tr>
+<td>DepthNormals</td>
+<td>若Render Feature需要，则使用<code>Depth Normals PrePass</code>创建<code>_CameraDepthTexture</code>和<code>_CameraNormalsTexture</code></td>
+</tr>
+<tr>
+<td>Meta</td>
+<td>烘焙LightMap期间使用</td>
+</tr>
+<tr>
+<td>Universal2D</td>
+<td>使用Universal2D渲染器时使用</td>
+</tr>
+<tr>
+<td>SRPDefaultUnlit</td>
+<td>LightMode默认值。用于在前向、延迟渲染中绘制额外Pass。</td>
+</tr>
+<tr>
+<td>UniversalGBuffer</td>
+<td>用于延迟渲染管线</td>
+</tr>
+<tr>
+<td>UniversalForwardOnly</td>
+<td>若Shader中存在不适用于延迟渲染的数据，且使用前向渲染，则选择该选项</td>
+</tr>
+</tbody>
+</table>
+<h3 id="多pass"><a class="markdownIt-Anchor" href="#多pass"></a> 多Pass</h3>
+<p><strong>URP中，基于<code>SRPDefaultUnlit</code>标签的多Pass会破坏SRP Batcher兼容性</strong>。</p>
+<p>实现多Pass的推荐方法为使用<strong>Render Feature</strong>。</p>
+<h2 id="hlsl"><a class="markdownIt-Anchor" href="#hlsl"></a> HLSL</h2>
+<p>使用<code>HLSLPROGRAM</code>和<code>ENDHLSL</code>定义HLSL代码块。每个HLSL代码块中都必须包含VS和FS。通过<code>#pragma vertex xx</code>和<code>#pragma fragment xx</code>链接FS、VS到指定函数。</p>
+<h3 id="变量"><a class="markdownIt-Anchor" href="#变量"></a> 变量</h3>
+<ul>
+<li>有如下标量类型：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bool</td>
+<td></td>
+</tr>
+<tr>
+<td>float</td>
+<td>32位浮点数，用于世界空间位置、纹理坐标或设计复杂函数的计算</td>
+</tr>
+<tr>
+<td>half</td>
+<td>16位浮点数，用于短矢量、方向、物体空间位置、颜色</td>
+</tr>
+<tr>
+<td>double</td>
+<td>64位浮点数，无法用于输入/输出</td>
+</tr>
+<tr>
+<td>real</td>
+<td>若需要函数同时支持half、float输入，则将此类型作为参数。默认为half，若指定<code>#define PREFER_HALF 0</code>，则使用float</td>
+</tr>
+<tr>
+<td>int</td>
+<td>32位有符号整数</td>
+</tr>
+<tr>
+<td>uint</td>
+<td>32位无符号整数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>URP不支持fixed。若遇到原本为fixed的变量，请修改为half</strong>。</p>
+<ul>
+<li>有如下矢量类型：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>floatx</td>
+<td>包含x个float的矢量</td>
+</tr>
+<tr>
+<td>halfx</td>
+<td></td>
+</tr>
+<tr>
+<td>intx</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>支持Swizzle操作。</p>
+<ul>
+<li>有如下矩阵类型：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>floatNxM</td>
+<td>N行M列的浮点数矩阵</td>
+</tr>
+<tr>
+<td>intNxM</td>
+<td></td>
+</tr>
+<tr>
+<td>halfNxM</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>进行<code>mul</code>操作时，参数1位矩阵，参数2为需要变换的矢量。</p>
+<p>通过数组访问时，索引顺序为[N][M]。</p>
+<ul>
+<li>纹理对象定义如下：</li>
+</ul>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs scss"><span class="hljs-comment">// 2D纹理，通过SAMPLE_TEXTURE2D、SAMPLE_TEXTURE2D_LOD采样</span><br><span class="hljs-built_in">TEXTURE2D</span>(textureName);<br><span class="hljs-built_in">SAMPLER</span>(sampler_textureName);<br><span class="hljs-comment">// 2D数组纹理，通过SAMPLE_TEXTURE_2D_ARRAY、SAMPLE_TEXTURE_2D_ARRAY_LOD采样</span><br><span class="hljs-built_in">TEXTURE2D_ARRAY</span>(textureName);<br><span class="hljs-built_in">SAMPLER</span>(sampler_textureName);<br><span class="hljs-comment">// 3D纹理，通过SAMPLE_TEXTURE3D和对应LOD版本采样</span><br><span class="hljs-built_in">TEXTURE3D</span>(textureName);<br><span class="hljs-built_in">SAMPLER</span>(sampler_textureName);<br><span class="hljs-comment">// Cube纹理，通过SAMPLER_TEXTURE_CUBE和对应LOD版本采样</span><br><span class="hljs-built_in">TEXTURECUBE</span>(textureName);<br><span class="hljs-built_in">SAMPLER</span>(sampler_textureName);<br><span class="hljs-comment">// Cube数组纹理，通过SAMPLER_TEXTURE_CUBE_ARRAY和对应LOD版本采样</span><br><span class="hljs-built_in">TEXTURECUBE_ARRAY</span>(textureName);<br><span class="hljs-built_in">SAMPLER</span>(sampler_textureName);<br></code></pre></td></tr></table></figure>
+<ul>
+<li>可定义任意类型的数组，并通过循环进行索引访问。但Unity仅能从C#脚本设置float4和float类型数组。</li>
+</ul>
+<blockquote>
+<p>数组无法包含在CBUFFER块中，这意味着SRP Batcher对于内部定义了数组变量的Shader不太好起作用。一般，我们更多地将数组变量通过<code>Shader.SetGlobalVector</code>和<code>Shader.SetGlobalFloat</code>等方法设置为全局变量。</p>
+</blockquote>
+<ul>
+<li>可使用<code>StructedBuffer&lt;结构体类型&gt;</code>定义缓冲对象。</li>
+</ul>
+<blockquote>
+<p>缓冲是数组的替代方案，仅能在支持<code>#pragma target 4.5</code>的部分平台上使用。通过<code>SystemInfo.supportsComputeShader</code>检查平台是否支持该特性。</p>
+</blockquote>
+<p>缓冲对象可以通过索引访问。<code>StructedBuffer</code>是只读的，但<code>RWStructedBuffer</code>是可读可写的。</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">struct Example &#123;<br>    float3 A;<br>    <span class="hljs-type">float</span> B;<br>&#125;;<br>StructuredBuffer&lt;Example&gt; _BufferExample;<br><span class="hljs-type">void</span> GetBufferValue(<span class="hljs-type">float</span> <span class="hljs-keyword">Index</span>, <span class="hljs-keyword">out</span> float3 <span class="hljs-keyword">Out</span>) &#123;<br>    <span class="hljs-keyword">Out</span> = _BufferExample[<span class="hljs-keyword">Index</span>].A;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在C#脚本中，需要定义与Shader中缓冲泛型类型相同的结构体类型，保证内部成员数据类型一致，并借助<code>ComputeBuffer</code>类的<code>SetData</code>方法和<code>material.SetBuffer</code>方法进行数据传递。如下：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-keyword">using</span> UnityEngine;<br>[ExecuteAlways]<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BufferTest</span> : MonoBehaviour &#123;<br>    <span class="hljs-keyword">private</span> ComputeBuffer buffer;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Test</span> &#123;<br>        <span class="hljs-keyword">public</span> Vector3 A;<br>        <span class="hljs-keyword">public</span> <span class="hljs-type">float</span> B;<br>    &#125;<br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-type">void</span> <span class="hljs-title">OnEnable</span><span class="hljs-params">()</span> </span>&#123;<br>        Test test = <span class="hljs-keyword">new</span> Test &#123;<br>            A = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Vector3</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0.5f</span>, <span class="hljs-number">0.5f</span>),<br>            B = <span class="hljs-number">0.1f</span>,<br>        &#125;;<br>        Test test2 = <span class="hljs-keyword">new</span> Test &#123;<br>            A = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Vector3</span>(<span class="hljs-number">0.5f</span>, <span class="hljs-number">0.5f</span>, <span class="hljs-number">0</span>),<br>            B = <span class="hljs-number">0.1f</span>,<br>        &#125;;<br>        Test[] data = <span class="hljs-keyword">new</span> Test[] &#123; test, test2 &#125;;<br>        buffer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">ComputeBuffer</span>(data.Length, <span class="hljs-built_in">sizeof</span>(<span class="hljs-type">float</span>) * <span class="hljs-number">4</span>);<br>        buffer.<span class="hljs-built_in">SetData</span>(data);<br>        <span class="hljs-built_in">GetComponent</span>&lt;MeshRenderer&gt;().sharedMaterial.<span class="hljs-built_in">SetBuffer</span>(<span class="hljs-string">&quot;_BufferExample&quot;</span>, buffer);<br>    &#125;<br>    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-type">void</span> <span class="hljs-title">OnDisable</span><span class="hljs-params">()</span> </span>&#123;<br>        buffer.<span class="hljs-built_in">Dispose</span>(); <span class="hljs-comment">// 注意缓冲区的释放</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="cbuffer"><a class="markdownIt-Anchor" href="#cbuffer"></a> CBUFFER</h3>
+<p><code>UnityPerMaterial CBUFFER</code>应当包含在HLSLINCLUDE块内，用于确保所有Pass使用相同的CBUFFER。</p>
+<p>CBUFFER必须包含纹理以外的所有在Properties块中声明过的变量，此外，还必须包含纹理变量的_ST和_TexelSize变量。它不应当包含未在Properties块中声明的变量。</p>
+<p>CBUFFER块从<code>CBUFFER_START(UnityPerMateiral)</code>开始，<code>CBUFFER_END</code>结束。</p>
+<h3 id="结构体"><a class="markdownIt-Anchor" href="#结构体"></a> 结构体</h3>
+<p>URP中，VS的输入结构体类型应当命名为<code>Attributes</code>。其中，涉及到位置的，应当在变量名标注其所在坐标空间，如<code>positionWS</code>。Attributes中的常用于语义包括<code>POSITION</code>、<code>COLOR</code>、<code>TEXCOORD0-7</code>、<code>NORMAL</code>、<code>TANGENT</code>等。</p>
+<blockquote>
+<p><code>SV_VertexID</code>是一类特殊的用于Attributes的语义，它可以获取每个顶点的标识符，常与ComputeBuffer一同使用。</p>
+</blockquote>
+<p>FS的输入结构体类型应当被命名为<code>Varyings</code>。其中必须包含用<code>SV_POSITION</code>语义标记的<code>positionCS</code>。对于Varyings，<code>COLOR</code>、<code>NORMAL</code>、<code>TANGENT</code>语义尽量少用，尽量多用<code>TEXCOORD</code>进行数据传递。</p>
+<blockquote>
+<p>一个有趣的语义是<code>VFACE</code>，用于标记一个float变量。若此片段为正面，则为正数，否则为负数。</p>
+</blockquote>
+<h3 id="fs输出"><a class="markdownIt-Anchor" href="#fs输出"></a> FS输出</h3>
+<p>一般情况下，使用<code>half4</code>作为FS输出。然而，在某些情况下，我们需要用到MRT。如果使用<code>UniversalGBuffer</code>的<code>LightMode</code>，则默认开启MRT，否则，需要在C#脚本中使用<code>CommandBuffer.SetRenderTarget</code>中使用<code>RenderTargetIdentifier[]</code>数组。<strong>GLES2等平台不支持MRT</strong>。</p>
+<p>若要使用MRT，我们这样撰写FS：</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs verilog"><span class="hljs-keyword">struct</span> FragOut &#123;<br>    half4 color : SV_Target0;<br>    half4 color2 : SV_Target1;<br>&#125;;<br>FragOut UnlitPassFragment(Varyings <span class="hljs-keyword">input</span>) &#123;<br>    FragOut <span class="hljs-keyword">output</span>;<br>    <span class="hljs-keyword">output</span><span class="hljs-variable">.color</span> = color;<br>    <span class="hljs-keyword">output</span><span class="hljs-variable">.color2</span> = color2;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">output</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="vs"><a class="markdownIt-Anchor" href="#vs"></a> VS</h2>
+<p>一个典型的VS如下：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs ada">Varyings UnlitPassVertex(Attributes <span class="hljs-keyword">IN</span>) &#123;<br>    Varyings <span class="hljs-keyword">OUT</span>;<br>    VertexPositionInputs positionInputs = GetVertexPositionInputs(<span class="hljs-keyword">IN</span>.positionOS.xyz);<br>    <span class="hljs-keyword">OUT</span>.positionCS = positionInputs.positionCS;<br>    <br>    <span class="hljs-keyword">OUT</span>.uv = TRANSFORM_TEX(<span class="hljs-keyword">IN</span>.uv, _BaseMap);<br>    <br>    <span class="hljs-keyword">OUT</span>.color = <span class="hljs-keyword">IN</span>.color;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">OUT</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>可以看到，我们并没有用<code>TransformObjectToHClip</code>函数进行顶点变换，而是用<code>GetVertexPositionInputs(float3 positionOS)</code>获取了<code>VertexPositionInputs</code>类型的<code>positionInputs</code>变量。这个函数包含在<code>ShaderVariablesFunctions.hlsl</code>内（也包含在Core.hlsl内）。</p>
+<p><code>VertexPositionInputs</code>结构体包含了<code>positionWS</code>、<code>positionVS</code>、<code>positionCS</code>、<code>positionNDC</code>四个变量，简化了计算。对于未使用的变量，编译器会自动将它们去除，所以不会有多余的计算。</p>
+<p>通过下列代码，我们可以获取法线、切线和副切线向量的世界空间位置，用于构建TBN矩阵：</p>
+<figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs nsis">Vertex<span class="hljs-params">Normal</span>Inputs <span class="hljs-params">normal</span>Inputs = GetVertex<span class="hljs-params">Normal</span>Inputs(IN.<span class="hljs-params">normal</span>OS, IN.tangentOS)<span class="hljs-comment">;</span><br>OUT.<span class="hljs-params">normal</span>WS = <span class="hljs-params">normal</span>Inputs.<span class="hljs-params">normal</span>WS<span class="hljs-comment">;</span><br>OUT.tangentWS = <span class="hljs-params">normal</span>Inputs.tangentWS<span class="hljs-comment">;</span><br>OUT.bitangentWS = <span class="hljs-params">normal</span>Inputs.bitangentWS<span class="hljs-comment">;</span><br></code></pre></td></tr></table></figure>
+<h2 id="fs"><a class="markdownIt-Anchor" href="#fs"></a> FS</h2>
+<p>一个典型的最简FS如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">half4 <span class="hljs-title">UnlitPassFragment</span><span class="hljs-params">(Varyings IN)</span> : SV_Target &#123;</span><br>    half4 baseMap = <span class="hljs-built_in">SAMPLE_TEXTURE2D</span>(_BaseMap, sampler_BaseMap, IN.uv);<br>    <br>    <span class="hljs-keyword">return</span> baseMap * _BaseColor * IN.color;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在FS中可以实现剔除操作。有两种方式：1. 控制语句+discard关键字 2.使用函数<code>clip(float)</code>，当float&lt;0则自动剔除该片段。</p>
+<h2 id="关键字与shader变体"><a class="markdownIt-Anchor" href="#关键字与shader变体"></a> 关键字与Shader变体</h2>
+<h3 id="multi-compile"><a class="markdownIt-Anchor" href="#multi-compile"></a> Multi Compile</h3>
+<p>URP中，可以通过<code>#pragma multi_compile _A _B _C (...etc)</code>来进行条件编译。其中，_A、_B、_C是关键字。在Shader代码中，后续就可以通过<code>#ifdef _A</code>、<code>#if defined(_A)</code>、<code>#elif defined(_A)</code>、<code>#else</code>等控制语句来进行条件编译。条件编译有逻辑运算符号，如<code>and</code>、<code>or</code>、<code>&amp;&amp;</code>、<code>||</code>等。</p>
+<p>常见的Multi Compile关键字有：</p>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS</td>
+<td>在顶点着色器中处理附加光源（性能优化选项）</td>
+</tr>
+<tr>
+<td>_ _MAIN_LIGHT_SHADOWS</td>
+<td>启用主光源的阴影计算</td>
+</tr>
+<tr>
+<td>_ _MAIN_LIGHT_SHADOWS_CASCADE</td>
+<td>启用主光源的级联阴影（CSM）</td>
+</tr>
+<tr>
+<td>_ _ADDITIONAL_LIGHT_SHADOWS</td>
+<td>启用附加光源的阴影计算</td>
+</tr>
+<tr>
+<td>_ _SHADOWS_SOFT</td>
+<td>启用软阴影（PCF滤波）</td>
+</tr>
+<tr>
+<td>_ LIGHTMAP_ON</td>
+<td>启用光照贴图</td>
+</tr>
+<tr>
+<td>_ DIRLIGHTMAP_COMBINED</td>
+<td>使用方向性光照贴图（结合法线信息）</td>
+</tr>
+<tr>
+<td>_ LIGHTMAP_SHADOW_MIXING</td>
+<td>混合光照贴图和实时阴影</td>
+</tr>
+<tr>
+<td>_ SHADOWS_SHADOWMASK</td>
+<td>使用阴影遮罩混合技术</td>
+</tr>
+<tr>
+<td>_fog</td>
+<td>启用雾效</td>
+</tr>
+<tr>
+<td>_instancing</td>
+<td>启用GPU实例化支持</td>
+</tr>
+<tr>
+<td>_ DOTS_INSTANCING_ON</td>
+<td>启用面向数据技术的实例化</td>
+</tr>
+<tr>
+<td>_ _SCREEN_SPACE_OCCLUSION</td>
+<td>启用屏幕空间环境光遮蔽（SSAO）</td>
+</tr>
+</tbody>
+</table>
+<p>使用<code>#pragma multi_compile</code>，编译此Shader时会产生若干Shader变体，导致Shader编译时间延长。我们可以通过下列策略计算Shader变体数量：</p>
+<ul>
+<li>对于单个<code>#pragma multi_compile</code>语句，后面跟了N个关键字，则生成N个变体</li>
+<li>若存在多个语句，则生成的变体数量为每个语句跟的关键字数量的笛卡尔积。
+<ul>
+<li>例如，语句1有2个关键字，语句2有3个，则最终变体组合总数为2*3 = 6个。</li>
+</ul>
+</li>
+</ul>
+<p>可以通过Edit-Project Settings-Graphics-Shader Loading-Log Shader Compilation开启Shader编译日志，开启后就能在日志中找到Shader变体数量。</p>
+<p>最终的变体数量可能会小于计算得到的变体数量，因为Unity会在构建时根据<code>Player Settings</code>、<code>Quality Settings</code>进行剔除。</p>
+<p>如果某个关键字仅用于VS或FS，可以在<code>multi_compile</code>后面加<code>_vertex</code>或<code>_fragment</code>，这有助于减少变体数量。</p>
+<p>关键字有全局和局部之分。一个项目最多有256个全局关键字；一个Shader最多有64个局部关键字。局部的关键字通过在<code>multi_compile</code>后加<code>_local</code>定义。局部关键字同样支持指定<code>vertex</code>和<code>fragment</code>。</p>
+<p><strong>如果multi compile后面跟了一个下划线+一个空格（<code>#pragma multi_compile _ _A _B</code>），意思是生成一个禁用这两个关键字的变体。</strong></p>
+<h3 id="shader-feature"><a class="markdownIt-Anchor" href="#shader-feature"></a> Shader Feature</h3>
+<p>Shader Feature与Multi Compile类似，但有以下不同：</p>
+<ul>
+<li>自动生成禁用后附关键字的额外变体</li>
+<li>代码中未使用的关键字将不会包含在最终Build。这可以大幅缩短构建时间或运行时着色器编译时间。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> shader_featrue _A _B</span><br></code></pre></td></tr></table></figure>
+<h2 id="光照"><a class="markdownIt-Anchor" href="#光照"></a> 光照</h2>
+<p>URP不支持Surface Shader。</p>
+<p><code>Lighting.hlsl</code>中包含许多光照计算的帮助函数。包含<code>Lighting.hlsl</code>前，必须确保定义下列关键字：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile _ _MAIN_LIGHT_SHADOWS</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile_fragment _ _SHADOWS_SOFT</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile _ LIGHTMAP_ON</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile _ DIRLIGHTMAP_COMBINED</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile _ LIGHTMAP_SHADOW_MIXING</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile _ SHADOWS_SHADOWMASK</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile _ _SCREEN_SPACE_OCCLUSION</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile_fog</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> multi_compile_instancing</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl&quot;</span></span><br></code></pre></td></tr></table></figure>
+<p>通过下列代码传入结构体：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus">half4 <span class="hljs-attribute">color</span> = <span class="hljs-built_in">UniversalFragmentPBR</span>(inputData, surfaceData);<br></code></pre></td></tr></table></figure>
+<h3 id="快速开始"><a class="markdownIt-Anchor" href="#快速开始"></a> 快速开始</h3>
+<p>通过<code>UniversalFragmentPBR</code>和<code>UniversalFragmentBlinnPhong</code>函数，可以快速为Shader附加光照。为了使用这两个函数，我们需要设置<code>InputData</code>和<code>SurfaceData</code>结构。</p>
+<p>SurfaceData的结构定义包含在<code>SurfaceData.hlsl</code>中。如下：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs abnf">struct SurfaceData &#123;<br>    half3 albedo<span class="hljs-comment">;</span><br>    half3 specular<span class="hljs-comment">;</span><br>    half  metallic<span class="hljs-comment">;</span><br>    half  smoothness<span class="hljs-comment">;</span><br>    half3 normalTS<span class="hljs-comment">; // 切线空间法线</span><br>    half3 emission<span class="hljs-comment">;</span><br>    half  occlusion<span class="hljs-comment">;</span><br>    half  alpha<span class="hljs-comment">;</span><br>    half  clearCoatMask<span class="hljs-comment">;</span><br>    half  clearCoatSmoothness<span class="hljs-comment">;</span><br>&#125;<span class="hljs-comment">;</span><br></code></pre></td></tr></table></figure>
+<p>InputData的结构定义同样包含在<code>SurfaceData.hlsl</code>中。如下：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs abnf">struct InputData &#123;<br>    float3  positionWS<span class="hljs-comment">;</span><br>    half3   normalWS<span class="hljs-comment">;</span><br>    half3   viewDirectionWS<span class="hljs-comment">;</span><br>    float4  shadowCoord<span class="hljs-comment">;</span><br>    half    fogCoord<span class="hljs-comment">;</span><br>    half3   vertexLighting<span class="hljs-comment">;</span><br>    half3   bakedGI<span class="hljs-comment">;</span><br>    float2  normalizedScreenSpaceUV<span class="hljs-comment">;</span><br>    half4   shadowMask<span class="hljs-comment">;</span><br>&#125;<span class="hljs-comment">;</span><br></code></pre></td></tr></table></figure>
+<h4 id="初始化inputdata"><a class="markdownIt-Anchor" href="#初始化inputdata"></a> 初始化InputData</h4>
+<p>对于InputData，PBR和简单光照都是相同的。我们这样进行初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl&quot;</span></span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">InitializeInputData</span><span class="hljs-params">(Varyings input, half3 normalTS, out InputData inputData)</span> </span>&#123;<br>    inputData = (InputData)<span class="hljs-number">0</span>; <span class="hljs-comment">// 用于避免不完全的初始化</span><br>    inputData.positionWS = input.positionWS; <span class="hljs-comment">// 世界空间顶点坐标</span><br>    <span class="hljs-comment">// 若存在法线贴图</span><br>    <span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _NORMALMAP</span><br>        half3 viewDirWS = <span class="hljs-built_in">half3</span>(input.normalWS.w, input.tangentWS.w, input.bitangentWS.w); <span class="hljs-comment">// 似乎是为了减少计算，直接把ViewDir存放在TBN矩阵中</span><br>        inputData.normalWS = <span class="hljs-built_in">TransformTangentToWorld</span>(normalTS,<span class="hljs-built_in">half3x3</span>(input.tangentWS.xyz, input.bitangentWS.xyz, input.normalWS.xyz)); <span class="hljs-comment">// 构建TBN矩阵并将法线转换到世界空间</span><br>    <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>        half3 viewDirWS = <span class="hljs-built_in">GetWorldSpaceNormalizeViewDir</span>(inputData.positionWS);<br>        inputData.normalWS = input.normalWS;<br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>    inputData.normalWS = <span class="hljs-built_in">NormalizeNormalPerPixel</span>(inputData.normalWS); <span class="hljs-comment">// 逐像素归一化法线</span><br>    viewDirWS = <span class="hljs-built_in">SafeNormalize</span>(viewDirWS); <span class="hljs-comment">// 归一化世界空间ViewDir</span><br><br>    inputData.viewDirectionWS = viewDirWS;<br><br>    <span class="hljs-comment">// 阴影相关</span><br>    <span class="hljs-meta">#<span class="hljs-keyword">if</span> defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) <span class="hljs-comment">// 顶点阴影坐标插值</span></span><br>        inputData.shadowCoord = input.shadowCoord;<br>    <span class="hljs-meta">#<span class="hljs-keyword">elif</span> defined(MAIN_LIGHT_CALCULATE_SHADOWS) <span class="hljs-comment">// 计算阴影坐标</span></span><br>        inputData.shadowCoord = <span class="hljs-built_in">TransformWorldToShadowCoord</span>(inputData.positionWS);<br>    <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>        inputData.shadowCoord = <span class="hljs-built_in">float4</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>    <span class="hljs-comment">// 雾效相关</span><br>    <span class="hljs-comment">/*#ifdef _ADDITIONAL_LIGHTS_VERTEX // 若有额外光源</span><br><span class="hljs-comment">        inputData.fogCoord = input.fogFactorAndVertexLight.x;</span><br><span class="hljs-comment">        inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;</span><br><span class="hljs-comment">    #else</span><br><span class="hljs-comment">        inputData.fogCoord = input.fogFactor;</span><br><span class="hljs-comment">        inputData.vertexLighting = half3(0, 0, 0);</span><br><span class="hljs-comment">    #endif */</span><br><br>    <span class="hljs-comment">// 新版本URP用这个</span><br>    <span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _ADDITIONAL_LIGHTS_VERTEX</span><br>        inputData.fogCoord = <span class="hljs-built_in">InitializeInputDataFog</span>(<span class="hljs-built_in">float4</span>(inputData.positionWS, <span class="hljs-number">1.0</span>), input.fogFactorAndVertexLight.x);<br>        inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;<br>    <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>        inputData.fogCoord = <span class="hljs-built_in">InitializeInputDataFog</span>(<span class="hljs-built_in">float4</span>(inputData.positionWS, <span class="hljs-number">1.0</span>), input.fogFactor);<br>        inputData.vertexLighting = <span class="hljs-built_in">half3</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>    inputData.bakedGI = <span class="hljs-built_in">SAMPLE_GI</span>(input.lightmapUV, input.vertexSH, inputData.normalWS);<br>    inputData.normalizedScreenSpaceUV = <span class="hljs-built_in">GetNormalizedScreenSpaceUV</span>(input.positionCS); <span class="hljs-comment">// 仅用于对SSAO纹理采样</span><br>    inputData.shadowMask = <span class="hljs-built_in">SAMPLE_SHADOWMASK</span>(input.lightmapUV);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="简单光照"><a class="markdownIt-Anchor" href="#简单光照"></a> 简单光照</h4>
+<p><code>Lighting.hlsl</code>头文件中包含了<code>LightLambert</code>和<code>LightingSpecular</code>函数，用于计算Blinn-Phong模型中的漫反射和镜面反射项。<code>UniversalFragmentBlinnPhong</code>函数内部调用了这两个函数。</p>
+<p>在使用Blinn-Phong光照模型时，我们这样初始化SurfaceData：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl&quot;</span></span><br><br><span class="hljs-built_in">TEXTURE2D</span>(_SpecGlossMap);<br><span class="hljs-built_in">SAMPLER</span>(sampler_SpecGlossMap);<br><br><span class="hljs-function">half4 <span class="hljs-title">SampleSpecularSmoothness</span><span class="hljs-params">(float2 uv, half alpha, half4 specColor, TEXTURE2D_PARAM(specMap, sampler_specMap))</span> </span>&#123;<br>    half4 specularSmoothness = <span class="hljs-built_in">half4</span>(<span class="hljs-number">0.0</span>h, <span class="hljs-number">0.0</span>h, <span class="hljs-number">0.0</span>h, <span class="hljs-number">1.0</span>h);<br>    <span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _SPECGLOSSMAP</span><br>        specularSmoothness = <span class="hljs-built_in">SAMPLE_TEXTURE2D</span>(specMap, sampler_specMap, uv) * specColor;<br>    <span class="hljs-meta">#<span class="hljs-keyword">elif</span> defined(_SPECULAR_COLOR)</span><br>        specularSmoothness = specColor;<br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>    <span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _GLOSSINESS_FROM_BASE_ALPHA</span><br>        <span class="hljs-comment">// 若重载gloss值</span><br>        specularSmoothness.a = <span class="hljs-built_in">exp2</span>(<span class="hljs-number">10</span> * alpha + <span class="hljs-number">1</span>);<br>    <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>         <span class="hljs-comment">// 若从SPECGLOSS的alpha通道获取gloss值</span><br>        specularSmoothness.a = <span class="hljs-built_in">exp2</span>(<span class="hljs-number">10</span> * specularSmoothness.a + <span class="hljs-number">1</span>);<br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>    <span class="hljs-keyword">return</span> specularSmoothness;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">InitializeSurfaceData</span><span class="hljs-params">(Varyings IN, out SurfaceData surfaceData)</span></span>&#123;<br>    surfaceData = (SurfaceData)<span class="hljs-number">0</span>;<br><br>    half4 baseMap = <span class="hljs-built_in">SAMPLE_TEXTURE2D</span>(_BaseMap, sampler_BaseMap, IN.uv);<br><br>    <span class="hljs-comment">// 若开启透明度测试</span><br>    <span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _ALPHATEST_ON</span><br>        <span class="hljs-built_in">clip</span>(baseMap.a - _Cutoff);<br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>    half4 diffuse = baseMap * _BaseColor * IN.color;<br>    surfaceData.albedo = diffuse.rgb;<br>    surfaceData.normalTS = <span class="hljs-built_in">SampleNormal</span>(IN.uv, <span class="hljs-built_in">TEXTURE2D_ARGS</span>(_BumpMap, sampler_BumpMap));<br>    <span class="hljs-comment">// 此处TEXTURE2D_ARGS宏无实际意义</span><br>    surfaceData.emission = <span class="hljs-built_in">SampleEmission</span>(IN.uv, _EmissionColor.rgb, <span class="hljs-built_in">TEXTURE2D_ARGS</span>(_EmissionMap, sampler_EmissionMap));<br><br>    half4 specular = <span class="hljs-built_in">SampleSpecularSmoothness</span>(IN.uv, diffuse.a, _SpecColor, <span class="hljs-built_in">TEXTURE2D_ARGS</span>(_SpecGlossMap, sampler_SpecGlossMap));<br>    surfaceData.specular = specular.rgb;<br>    surfaceData.smoothness = specular.a * _Smoothness;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>然后，我们便可以这样调用<code>UniversalFragmentBlinnPhong</code>：</p>
+<figure class="highlight rsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs rsl"><span class="hljs-meta">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl&quot;</span><br>half4 LitPassFragment(Varyings IN) : SV_Target &#123;<br>    SurfaceData surfaceData;<br>    InitializeSurfaceData(IN, surfaceData);<br>    <br>    InputData inputData;<br>    InitializeInputData(IN, surfaceData.normalTS, inputData);<br><br>    half4 <span class="hljs-type">color</span> = UniversalFragmentBlinnPhong(inputData, surfaceData.albedo, half4(surfaceData.<span class="hljs-built_in">specular</span>, <span class="hljs-number">1</span>), <br>        surfaceData.smoothness, surfaceData.emission, surfaceData.alpha);<br>    <br>    <span class="hljs-type">color</span>.rgb = MixFog(<span class="hljs-type">color</span>.rgb, inputData.fogCoord);<br>    <span class="hljs-keyword">return</span> <span class="hljs-type">color</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="pbr光照"><a class="markdownIt-Anchor" href="#pbr光照"></a> PBR光照</h4>
+<p>对于PBR光照，我们如此配置SurfaceData：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl&quot;</span></span><br><br><span class="hljs-built_in">TEXTURE2D</span>(_MetallicSpecGlossMap);   <span class="hljs-built_in">SAMPLER</span>(sampler_MetallicSpecGlossMap);<br><span class="hljs-built_in">TEXTURE2D</span>(_OcclusionMap);           <span class="hljs-built_in">SAMPLER</span>(sampler_OcclusionMap);<br><br><span class="hljs-function">half4 <span class="hljs-title">SampleMetallicSpecGloss</span><span class="hljs-params">(float2 uv, half albedoAlpha)</span> </span>&#123;<br>    half4 specGloss;<br>    <span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _METALLICSPECGLOSSMAP</span><br>        specGloss = <span class="hljs-built_in">SAMPLE_TEXTURE2D</span>(_MetallicSpecGlossMap, sampler_MetallicSpecGlossMap, uv)<br>        <span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A</span><br>            specGloss.a = albedoAlpha * _Smoothness;<br>        <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>            specGloss.a *= _Smoothness;<br>        <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>    <span class="hljs-meta">#<span class="hljs-keyword">else</span> <span class="hljs-comment">// _METALLICSPECGLOSSMAP</span></span><br>        <span class="hljs-meta">#<span class="hljs-keyword">if</span> _SPECULAR_SETUP</span><br>            specGloss.rgb = _SpecColor.rgb;<br>        <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>            specGloss.rgb = _Metallic.rrr;<br>        <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>        <span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A</span><br>            specGloss.a = albedoAlpha * _Smoothness;<br>        <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>            specGloss.a = _Smoothness;<br>        <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>    <span class="hljs-keyword">return</span> specGloss;<br>&#125;<br><br><span class="hljs-function">half <span class="hljs-title">SampleOcclusion</span><span class="hljs-params">(float2 uv)</span> </span>&#123;<br>    <span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _OCCLUSIONMAP</span><br>    <span class="hljs-meta">#<span class="hljs-keyword">if</span> defined(SHADER_API_GLES)</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">SAMPLE_TEXTURE2D</span>(_OcclusionMap, sampler_OcclusionMap, uv).g;<br>    <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>        half occ = <span class="hljs-built_in">SAMPLE_TEXTURE2D</span>(_OcclusionMap, sampler_OcclusionMap, uv).g;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">LerpWhiteTo</span>(occ, _OcclusionStrength);<br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>    <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1.0</span>;<br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">InitializeSurfaceData</span><span class="hljs-params">(Varyings IN, out SurfaceData surfaceData)</span></span>&#123;<br>    surfaceData = (SurfaceData)<span class="hljs-number">0</span>;<br><br>    half4 albedoAlpha = <span class="hljs-built_in">SampleAlbedoAlpha</span>(IN.uv, <span class="hljs-built_in">TEXTURE2D_ARGS</span>(_BaseMap, sampler_BaseMap));<br>    surfaceData.alpha = <span class="hljs-built_in">Alpha</span>(albedoAlpha.a, _BaseColor, _Cutoff);<br>    surfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb * IN.color.rgb;<br><br>    surfaceData.normalTS = <span class="hljs-built_in">SampleNormal</span>(IN.uv, <span class="hljs-built_in">TEXTURE2D_ARGS</span>(_BumpMap, sampler_BumpMap));<br>    surfaceData.emission = <span class="hljs-built_in">SampleEmission</span>(IN.uv, _EmissionColor.rgb, <span class="hljs-built_in">TEXTURE2D_ARGS</span>(_EmissionMap, sampler_EmissionMap));<br>    surfaceData.occlusion = <span class="hljs-built_in">SampleOcclusion</span>(IN.uv);<br>        <br>    half4 specGloss = <span class="hljs-built_in">SampleMetallicSpecGloss</span>(IN.uv, albedoAlpha.a);<br>    <span class="hljs-meta">#<span class="hljs-keyword">if</span> _SPECULAR_SETUP</span><br>        surfaceData.metallic = <span class="hljs-number">1.0</span>h;<br>        surfaceData.specular = specGloss.rgb;<br>    <span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>        surfaceData.metallic = specGloss.r;<br>        surfaceData.specular = <span class="hljs-built_in">half3</span>(<span class="hljs-number">0.0</span>h, <span class="hljs-number">0.0</span>h, <span class="hljs-number">0.0</span>h);<br>    <span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br>    surfaceData.smoothness = specGloss.a;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在FS中：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs maxima">half4 LitPassFragment(Varyings IN) : SV_Target &#123;<br>    SurfaceData surfaceData;<br>    InitializeSurfaceData(IN, surfaceData);<br><br>    InputData inputData;<br>    InitializeInputData(IN, surfaceData.normalTS, inputData);<br><br>    half4 <span class="hljs-built_in">color</span> = UniversalFragmentPBR(inputData, surfaceData);<br>    <br>    <span class="hljs-built_in">color</span>.rgb = MixFog(<span class="hljs-built_in">color</span>.rgb, inputData.fogCoord);<br>    <span class="hljs-built_in">return</span> <span class="hljs-built_in">color</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="其他pass"><a class="markdownIt-Anchor" href="#其他pass"></a> 其他Pass</h3>
+<h4 id="shadowcaster"><a class="markdownIt-Anchor" href="#shadowcaster"></a> ShadowCaster</h4>
+<p><code>LightMode</code>为<code>ShadowCaster</code>的Pass用于投射阴影。在Built-in中，我们使用<code>Fallback</code>或<code>UsePass</code>来启用阴影投射Pass，但这会破坏SRP Batcher兼容性。通过善加利用<code>Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl</code>，我们可以解决这个问题。</p>
+<blockquote>
+<p>我们只需要在Pass中include这个hlsl文件即可，不需要添加其他任何代码。</p>
+</blockquote>
+<p>有一点需要注意，在应用ShadowCaster时，如果此物体应用了顶点动画，则需要使用<code>#pragma vertex xxx</code>指定一个应用了顶点变化的新VS。</p>
+<h4 id="depthonlydepthnormals"><a class="markdownIt-Anchor" href="#depthonlydepthnormals"></a> DepthOnly/DepthNormals</h4>
+<p>与<code>ShadowCaster</code>类似，我们可以通过直接include <code>DepthOnlyPass.hlsl</code>和<code>DepthNormalsPass.hlsl</code>完成操作。</p>
+<p>类似地，若应用了顶点动画，则需要指定新VS。</p>
+<h4 id="meta"><a class="markdownIt-Anchor" href="#meta"></a> Meta</h4>
+<p>烘焙GI时需要使用Meta Pass。我们可以使用<code>UnlitMetaPass.hlsl</code>和<code>LitMetaPass.hlsl</code>完成此Pass定义。如果这两个文件不能满足我们的要求，也可以通过<code>MetaInput.hlsl</code>自定义。</p>
+<h2 id="built-in-urp对照表"><a class="markdownIt-Anchor" href="#built-in-urp对照表"></a> Built-in URP对照表</h2>
+<h3 id="常见内置函数对照"><a class="markdownIt-Anchor" href="#常见内置函数对照"></a> 常见内置函数对照</h3>
+<table>
+<thead>
+<tr>
+<th>Built-in</th>
+<th>URP Function</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>float3 WorldSpaceViewDir(float4 v)</code></td>
+<td><code>float3 GetWorldSpaceNormalizedViewDir(float3  positionWS)</code></td>
+<td>计算顶点所在位置到摄像机在世界空间中的方向。</td>
+</tr>
+<tr>
+<td><code>float3 ObjSpaceViewDir(float4 v)</code></td>
+<td><code>half3 GetObjectSpaceViewDir(float3 positionOS)</code></td>
+<td>计算顶点在物体空间中的视角方向。一般通过将摄像机位置转换到物体空间后传入作为参数</td>
+</tr>
+<tr>
+<td><code>float3 WorldSpaceLightDir(float4 v)</code></td>
+<td><code>GetMainLight().direction</code>或使用<code>_MainLightPosition</code>计算得到</td>
+<td>获取主光源在世界空间中的方向。</td>
+</tr>
+<tr>
+<td><code>float3 ObjSpaceLightDir(float4 v)</code></td>
+<td>将<code>_MainLightPosition</code>通过I_M矩阵变换后计算得到</td>
+<td>获取主光源在物体空间中的方向。</td>
+</tr>
+<tr>
+<td><code>float3 UnityObjectToWorldNormal(float3 norm)</code></td>
+<td><code>float3 TransformObjectToWorldNormal(float3 norm)</code>或使用<code>GetVertexNormalInputs()</code></td>
+<td>将法线从物体空间转换到世界空间。</td>
+</tr>
+<tr>
+<td><code>float3 UnityObjectToWorldDir(float3 dir)</code></td>
+<td><code>float3 TransformObjectToWorldDir(float3 dir)</code></td>
+<td>将方向向量从物体空间转换到世界空间（不考虑平移分量）。</td>
+</tr>
+<tr>
+<td><code>float3 UnityWorldToObjectDir(float3 dir)</code></td>
+<td><code>float3 TransformWorldToObjectDir(float3 dir)</code></td>
+<td>将方向向量从世界空间转换到世界空间。</td>
+</tr>
+<tr>
+<td><code>float4 UnityObjectToClipPos(float4 v)</code></td>
+<td><code>float4 TransformObjectToHClip(float4 v)</code>或使用<code>GetVertexPositionInputs()</code></td>
+<td>将物体空间中的顶点坐标转换到裁剪空间。常用于顶点变换</td>
+</tr>
+<tr>
+<td><code>fixed3 UnpackNormal(fixed4 sampleValue)</code></td>
+<td><code>float3 UnpackNormalScale(float4 sampleValue)</code></td>
+<td>解包法线贴图中存储的法线数据。内部实现将采样值转换成 -1～1 范围的法线。</td>
+</tr>
+<tr>
+<td><code>float4 ComputeScreenPos(float4 pos)</code></td>
+<td><code>float4 ComputeScreenPos(float4 positionOS)</code>或<code>GetVertexPositionInputs().positionNDC</code>。后者更推荐。</td>
+<td>计算模型空间顶点坐标在屏幕空间的坐标。</td>
+</tr>
+<tr>
+<td><code>Linear01Depth(z)</code></td>
+<td><code>Linear01Depth(z, _ZBufferParams)</code></td>
+<td>将深度值转化为线性深度，且映射到[0,1]范围</td>
+</tr>
+<tr>
+<td><code>LinearEyeDepth(z)</code></td>
+<td><code>LinearEyeDepth(z, _ZBufferParams)</code></td>
+<td>将深度值转化为线性深度</td>
+</tr>
+</tbody>
+</table>
+<h3 id="常见内置变量对照"><a class="markdownIt-Anchor" href="#常见内置变量对照"></a> 常见内置变量对照：</h3>
+<table>
+<thead>
+<tr>
+<th>Built-in Variable</th>
+<th>URP Variable</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_Time</code> (float4)</td>
+<td><code>_Time</code> (float4)</td>
+<td>包含时间信息（t/20, t, t<em>2, t</em>3），常用于动画、周期性效果等。</td>
+</tr>
+<tr>
+<td><code>_SinTime</code> (float4)</td>
+<td><code>_SinTime</code> (float4)</td>
+<td>正弦函数形式的时间，用于周期性动画。</td>
+</tr>
+<tr>
+<td><code>_CosTime</code> (float4)</td>
+<td><code>_CosTime</code> (float4)</td>
+<td>余弦函数形式的时间。</td>
+</tr>
+<tr>
+<td><code>_WorldSpaceCameraPos</code> (float3)</td>
+<td><code>_WorldSpaceCameraPos</code> (float3)</td>
+<td>摄像机在世界空间中的位置。</td>
+</tr>
+<tr>
+<td><code>_ProjectionParams</code> (float4)</td>
+<td><code>_ProjectionParams</code> (float4)</td>
+<td>包含投影相关参数(1 or -1, near, far, 1/far)，其中第一个参数为投影翻转(-1为翻转)，通常用于屏幕空间计算。</td>
+</tr>
+<tr>
+<td><code>_ScreenParams</code>(float4)</td>
+<td><code>_ScreenParams</code>(float4)</td>
+<td>包含屏幕相关参数<code>(width, height, 1+1.0/widfth, 1+1.0/height)</code></td>
+</tr>
+<tr>
+<td><code>_MainTex</code> (sampler2D)</td>
+<td><code>_MainTex</code> (sampler2D)</td>
+<td>主纹理采样器。</td>
+</tr>
+<tr>
+<td><code>_LightColor0</code> (float4)</td>
+<td><code>_MainLightColor</code> (float4)</td>
+<td>Built-in 中的主光源颜色；在 URP 中更名为 <code>_MainLightColor</code>。</td>
+</tr>
+<tr>
+<td><code>_WorldSpaceLightPos0</code> (float4)</td>
+<td><code>_MainLightPosition</code> (float4)</td>
+<td>主光源的位置或方向（对方向光，w 为 0，对点光，w 为 1），URP 中常用名称为 <code>_MainLightPosition</code>。</td>
+</tr>
+<tr>
+<td><code>_WorldSpaceLightDir0</code> (float3)</td>
+<td><code>GetMainLight().direction</code>计算得到</td>
+<td>主光源在世界空间中的方向；</td>
+</tr>
+<tr>
+<td><code>_LightMatrix0</code></td>
+<td><code>_MainLightWorldToShadow</code></td>
+<td>光源的阴影矩阵</td>
+</tr>
+<tr>
+<td><code>_ZBufferParams</code></td>
+<td><code>_ZBufferParams</code></td>
+<td>深度缓冲参数</td>
+</tr>
+</tbody>
+</table>
+<h3 id="常见内置宏对照"><a class="markdownIt-Anchor" href="#常见内置宏对照"></a> 常见内置宏对照：</h3>
+<table>
+<thead>
+<tr>
+<th>Built-in Macro</th>
+<th>URP 宏/函数及说明</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UNITY_MATRIX_MVP</code></td>
+<td><code>UNITY_MATRIX_MVP</code> (float4x4)</td>
+<td>模型-视图-投影矩阵，将顶点从模型空间转换到裁剪空间。</td>
+</tr>
+<tr>
+<td><code>UNITY_MATRIX_V</code></td>
+<td><code>UNITY_MATRIX_V</code> (float4x4)</td>
+<td>视图矩阵。</td>
+</tr>
+<tr>
+<td><code>UNITY_MATRIX_P</code></td>
+<td><code>UNITY_MATRIX_P</code> (float4x4)</td>
+<td>投影矩阵。</td>
+</tr>
+<tr>
+<td><code>UNITY_MATRIX_I_V</code></td>
+<td><code>UNITY_MATRIX_I_V</code> (float4x4)</td>
+<td>视图矩阵的逆矩阵。</td>
+</tr>
+<tr>
+<td><code>UNITY_MATRIX_I_P</code></td>
+<td><code>UNITY_MATRIX_I_P</code> (float4x4)</td>
+<td>投影矩阵的逆矩阵。</td>
+</tr>
+<tr>
+<td><code>UNITY_LIGHT_ATTENUATION</code></td>
+<td>使用<code>GetMainLight().distanceAttenuation</code>和<code>GetMainLight().shadowAttenuation</code>得到。</td>
+<td>用于计算光照衰减。</td>
+</tr>
+<tr>
+<td><code>TRANSFORM_TEX</code></td>
+<td><code>TRANSFORM_TEX</code></td>
+<td>纹理坐标变换</td>
+</tr>
+<tr>
+<td><code>UNITY_FOG_COORDS(n)</code></td>
+<td><code>float fogFactor : TEXCOORDn</code>（即不需要额外处理）</td>
+<td>定义雾效坐标</td>
+</tr>
+<tr>
+<td><code>UNITY_TRANSFER_FOG</code></td>
+<td><code>OUT.fogFactor = ComputeFogFactor(positionCS.z)</code></td>
+<td>计算雾效</td>
+</tr>
+<tr>
+<td><code>UNITY_APPLY_FOG(fogCoord, color, fogColor)</code></td>
+<td><code>color.rgb = MixFog(color.rgb, fogCoord)</code></td>
+<td>应用雾效</td>
+</tr>
+<tr>
+<td><code>UNITY_APPLY_FOG_COLOR(fogCoord, color)</code></td>
+<td><code>color.rgb = MixFogColor(color.rgb, fogColor.rgb, fogCoord)</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>SHADOW_COORDS(n)</code></td>
+<td><code>float4 shadowCoord : TEXCOORD1</code>（即不需要额外处理）</td>
+<td>阴影坐标变量声明</td>
+</tr>
+<tr>
+<td><code>TRANSFER_SHADOW(o)</code></td>
+<td><code>TransformWorldToShadowCoord(inputData.positionWS)</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>SHADOW_ATTENUATION(i)</code></td>
+<td><code>GetMainLight(shadowCoord)</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+        <a href="/tags/Unity/" class="print-no-link">#Unity</a>
+      
+        <a href="/tags/URP/" class="print-no-link">#URP</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>初探URP（二） - URP SL特性、HLSL与光照基础</div>
+      <div>http://example.com/2025/02/11/初探URP（二）-URP-SL特性、HLSL与光照基础/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yoi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/10/Unity-Shader%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%94%EF%BC%89-%E5%99%AA%E5%A3%B0%E3%80%81%E4%BC%98%E5%8C%96%E4%B8%8EPBS%E5%B7%A5%E4%BD%9C%E6%B5%81/" title="Unity Shader学习笔记（五） - 噪声、优化与PBS工作流">
+                        <span class="hidden-mobile">Unity Shader学习笔记（五） - 噪声、优化与PBS工作流</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       Tech · Art · Life. |  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
