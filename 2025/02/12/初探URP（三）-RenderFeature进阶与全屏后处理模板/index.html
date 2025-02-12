@@ -1,0 +1,827 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/tagIcon.png">
+  <link rel="icon" href="/img/tagIcon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yoi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Render Feature详解 Render Feature表现为一个C#类，继承自ScriptableRenderFeature类。该类通常包含一个继承自ScriptableRenderPass的内部类定义，用于定义需要向管线内插入的Pass。同时，也会声明一个此Pass类的变量。 123456public class CustomRenderFeature : ScriptableRend">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初探URP（三） - RenderFeature进阶与全屏后处理模板">
+<meta property="og:url" content="http://example.com/2025/02/12/%E5%88%9D%E6%8E%A2URP%EF%BC%88%E4%B8%89%EF%BC%89-RenderFeature%E8%BF%9B%E9%98%B6%E4%B8%8E%E5%85%A8%E5%B1%8F%E5%90%8E%E5%A4%84%E7%90%86%E6%A8%A1%E6%9D%BF/index.html">
+<meta property="og:site_name" content="Yoi&#39;s Home">
+<meta property="og:description" content="Render Feature详解 Render Feature表现为一个C#类，继承自ScriptableRenderFeature类。该类通常包含一个继承自ScriptableRenderPass的内部类定义，用于定义需要向管线内插入的Pass。同时，也会声明一个此Pass类的变量。 123456public class CustomRenderFeature : ScriptableRend">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-12T08:46:47.000Z">
+<meta property="article:modified_time" content="2025-02-12T08:47:19.555Z">
+<meta property="article:author" content="Yoi">
+<meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="URP">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>初探URP（三） - RenderFeature进阶与全屏后处理模板 - Yoi&#39;s Home</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.0.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>攸一的文书档案</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://yoi-note.oss-cn-chengdu.aliyuncs.com/Image/202401261945400.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="初探URP（三） - RenderFeature进阶与全屏后处理模板"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-02-12 16:46" pubdate>
+          2025年2月12日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          23 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">初探URP（三） - RenderFeature进阶与全屏后处理模板</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2025年2月12日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="render-feature详解"><a class="markdownIt-Anchor" href="#render-feature详解"></a> Render Feature详解</h2>
+<p>Render Feature表现为一个C#类，继承自ScriptableRenderFeature类。该类通常包含一个继承自ScriptableRenderPass的内部类定义，用于定义需要向管线内插入的Pass。同时，也会声明一个此Pass类的变量。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderFeature</span> : <span class="hljs-title">ScriptableRenderFeature</span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPass</span> : <span class="hljs-title">ScriptableRenderPass</span>&#123;<br>        <span class="hljs-comment">//类定义</span><br>    &#125;<br>    CustomRenderPass customRenderPass; <span class="hljs-comment">//变量</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>无论是Feature还是Pass，它们的生命周期函数都包含了一些比较重要的参数类型。下面进行解释。</p>
+<ul>
+<li><code>CommandBuffer</code></li>
+</ul>
+<p>用于记录和执行渲染命令的工具。通过它可以在渲染过程中插入自定义的绘制指令。常用的指令有：<code>DrawMesh</code>、<code>DrawRenderer</code>、<code>SetGlobalTexture</code>、<code>Clear</code>等。</p>
+<p>使用<code>CommandBufferPool.Get(“名称”)</code>在不包含CommandBuffer的函数中获取命令缓冲区。</p>
+<ul>
+<li><code>RenderingData</code></li>
+</ul>
+<p>包含了当前渲染的所有必要数据的结构体。内含当前相机、RT与光源等的信息。</p>
+<p>常用的字段有<code>cameraData</code>、<code>cullResults</code>、<code>lightData</code>等。时常利用<code>cameraData</code>来设置RT、调整相机属性等。</p>
+<ul>
+<li><code>ScriptableRenderContext</code></li>
+</ul>
+<p>用于与渲染管线交互的核心结构。</p>
+<p>常用方法有<code>ExecuteCommandBuffer</code>、<code>DrawRenderers</code>、<code>Submit</code>等。</p>
+<p>常用于提交命令缓冲区、控制渲染流程。</p>
+<ul>
+<li><code>ScriptableRenderer</code></li>
+</ul>
+<p>执行渲染操作的具体实现。</p>
+<p>常用字段/方法有：<code>cameraColorTargetHandle</code>、<code>cameraDepthTargetHandle</code>、<code>EnqueuePass()</code>等。</p>
+<ul>
+<li><code>CameraData</code></li>
+</ul>
+<p>包含了关于相机的具体数据。</p>
+<p>常用字段有：<code>camera</code>、<code>pixelRect</code>、<code>projectionMatrix</code>、<code>viewMatrix</code>、<code>cameraType</code>等。</p>
+<h3 id="pass类"><a class="markdownIt-Anchor" href="#pass类"></a> Pass类</h3>
+<h4 id="生命周期函数"><a class="markdownIt-Anchor" href="#生命周期函数"></a> 生命周期函数</h4>
+<p>Pass类包含下列生命周期函数。</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)</code></td>
+<td>在调用一个相机的绘制过程之前执行。每帧执行。</td>
+<td>用于改变相机的Render Target、Clear Flag，以及为临时RT分配内存</td>
+</tr>
+<tr>
+<td><code>Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)</code></td>
+<td>在执行一个Pass前执行</td>
+<td>与<code>OnCameraSetup</code>基本一致</td>
+</tr>
+<tr>
+<td><code>Execute(ScriptableRenderContext context, ref RenderingData renderingData)</code></td>
+<td>执行Pass。每帧执行。</td>
+<td>通常执行DrawMesh、Blit等操作。</td>
+</tr>
+<tr>
+<td><code>OnCameraCleanUp(CommandBuffer cmd)</code></td>
+<td>完成一个相机的绘制过程后调用。每帧执行</td>
+<td>释放任何临时资源</td>
+</tr>
+<tr>
+<td><code>OnFinishCameraStackRendering(CommandBuffer cmd)</code></td>
+<td>完成一个相机栈的绘制过程后调用</td>
+<td>一次性释放Pass中与相机栈中所有相机有关的临时资源</td>
+</tr>
+</tbody>
+</table>
+<h3 id="feature类"><a class="markdownIt-Anchor" href="#feature类"></a> Feature类</h3>
+<h4 id="生命周期函数-2"><a class="markdownIt-Anchor" href="#生命周期函数-2"></a> 生命周期函数</h4>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Create()</code></td>
+<td>Render Feature初始化时调用</td>
+<td>定义Feature名、创建材质、初始化Pass</td>
+</tr>
+<tr>
+<td><code>OnCameraPreCull(ScriptableRenderer renderer, in CameraData cameraData)</code></td>
+<td>在相机做剔除之前调用</td>
+<td>实现一些特殊效果</td>
+</tr>
+<tr>
+<td><code>AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)</code></td>
+<td>每帧调用</td>
+<td>根据Pass的<code>renderPassEvent</code>，按时机将Pass注入渲染器。此处禁止传递<code>RTHandle</code></td>
+</tr>
+<tr>
+<td><code>SetupRenderPasses(ScriptableRenderer renderer, in RenderingData renderingData)</code></td>
+<td>每帧调用</td>
+<td>将源RT（已初始化）传入Pass</td>
+</tr>
+<tr>
+<td><code>Dispose(bool disposing)</code></td>
+<td>每帧调用</td>
+<td>清理资源</td>
+</tr>
+</tbody>
+</table>
+<h3 id="应用全屏后处理"><a class="markdownIt-Anchor" href="#应用全屏后处理"></a> 应用全屏后处理</h3>
+<p>在Built-in中，我们通过<code>OnRenderImage</code>、Shader和<code>Blit</code>的结合进行后处理。</p>
+<p>在URP中，我们借助Render Feature、Render Pass和Blitter API进行后处理。</p>
+<h4 id="rthandle"><a class="markdownIt-Anchor" href="#rthandle"></a> RTHandle</h4>
+<p>在URP14+中，我们使用<code>RTHandle</code>代替<code>RenderTargetHandle</code>和<code>RenderTargetIdentifier</code>，用于标记一个Render Target。</p>
+<p>要分配一张临时RT，首先需要一个定义了RT格式的结构体，在URP中表现为<code>RenderTextureDescriptor</code>类型。在进行全屏后处理的情况下，我们直接使用下列代码：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c#">RenderTextureDescriptor opaqueDesc = renderingData.cameraData.cameraTargetDesc;<br>opaqueDesc.depthBufferBits = <span class="hljs-number">0</span>; <span class="hljs-comment">// RTHandle处理的RT无法将深度与颜色绑定在一起。</span><br></code></pre></td></tr></table></figure>
+<p>随后，使用<code>RenderingUtils</code>提供的API分配临时RT：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c#">RenderingUtils.ReAllocateIfNeeded(<span class="hljs-keyword">ref</span> destination, cameraTextureDescriptor, name: <span class="hljs-string">&quot;_BaseMap&quot;</span>);<br></code></pre></td></tr></table></figure>
+<p>我们使用<code>opaqueDesc</code>结构体描述RT参数，并指定了它的过滤、环绕模式，同时指定了该RT的属性名，用于在Frame Debugger中检视。</p>
+<p><strong>使用<code>RTHandles.Alloc</code>分配的了临时RT必须在<code>OnCameraCleanup()</code>中释放。</strong></p>
+<h4 id="blitter"><a class="markdownIt-Anchor" href="#blitter"></a> Blitter</h4>
+<p>在URP14+中，使用<code>Blitter</code> API取代<code>cmd.Blit</code>。</p>
+<p>假设我们有一个名为<code>rt_Blur01</code>的源<code>RTHandle</code>，一个名为<code>rt_Blur02</code>的目标<code>RTHandle</code>，一个名为<code>blurShader</code>的用于后处理的Shader，我们应当遵循下列步骤：</p>
+<p>在Feature的<code>AddRenderPass</code>中，使用<code>CoreUtils.CreateEngineMaterial(blurShader)</code>创建运行时材质<code>blurMat</code>。</p>
+<p>将运行时材质传入Pass的初始化方法，并给Pass的<code>m_blurMat</code>字段赋值。</p>
+<p>在Pass的<code>Execute</code>方法中，首先使用<code>cmd.SetGlobalFloat()</code>或<code>m_blurMat.SetFloat()</code>接口设置材质属性。</p>
+<p>然后，使用**<code>Blitter.BlitCameraTexture(cmd, rt_Blur01, rt_Blur02, m_blurMat, 0)</code>**接口进行<code>Blit</code>操作。</p>
+<p>此时，<code>rt_Blur02</code>存储着我们需要的Render Texture。我们可以通过<code>rt_Blur02.nameID</code>获取其<code>RenderTargetIdentifier</code>，并将其作为参数，借助<code>cmd.SetGlobalTexture</code>或<code>material.SetTexture()</code>传入Shader。</p>
+<p>需要注意的是,<code>Blitter</code> API调用后同样需要<code>context.ExecuteCommandBuffer(cmd)</code>进行提交。</p>
+<h4 id="shader"><a class="markdownIt-Anchor" href="#shader"></a> Shader</h4>
+<p>若通过<code>Blitter.BlitCameraTexture(RTHandle cameraColor, RTHandle cameraColor, Material processMat, int passIndex)</code>进行全屏后处理，有以下需要注意的点：</p>
+<ol>
+<li>设置Render Type为Opaque，RenderPipeline为UniversalPipeline</li>
+<li>引入<code>&quot;Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl&quot;</code>头文件</li>
+<li>去除原本的Attributes和Varyings结构体和原本的vert函数</li>
+<li>设置<code>#pragma vertex Vert</code></li>
+<li>使用<code>TEXTURE2D_X</code>采样<code>_CameraOpaqueTexture</code></li>
+<li>在frag中，首先调用<code>UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);</code></li>
+<li>然后，使用<code>SAMPLE_TEXTURE_2D_X</code>对<code>_CameraOpaqueTexture</code>采样</li>
+<li>撰写后处理Shader代码</li>
+</ol>
+<h4 id="模板代码"><a class="markdownIt-Anchor" href="#模板代码"></a> 模板代码</h4>
+<h5 id="renderfeature部分"><a class="markdownIt-Anchor" href="#renderfeature部分"></a> RenderFeature部分</h5>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-keyword">using</span> UnityEngine;<br><span class="hljs-keyword">using</span> UnityEngine.Experimental.Rendering;<br><span class="hljs-keyword">using</span> UnityEngine.Rendering;<br><span class="hljs-keyword">using</span> UnityEngine.Rendering.Universal;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">URPPostProcessTemplateRenderFeature</span> : <span class="hljs-title">ScriptableRendererFeature</span><br>&#123;<br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 定义了Feature的设置。</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 可以将全局材质属性和渲染事件设置在这里。</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    [<span class="hljs-meta">System.Serializable</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderFeatureSettings</span><br>    &#123;<br>        <span class="hljs-keyword">public</span> Color baseColor = Color.white;<br>        <span class="hljs-keyword">public</span> RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingOpaques;<br>        <span class="hljs-keyword">public</span> Material baseMat;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> CustomRenderFeatureSettings settings; <span class="hljs-comment">// Feature的设置</span><br>    CustomRenderPass m_ScriptablePass; <span class="hljs-comment">// 自定义的RenderPass实例</span><br><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 在这里创建Pass实例，向构造函数传递材质。</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Create</span>()</span><br>    &#123;<br>        m_ScriptablePass = <span class="hljs-keyword">new</span> CustomRenderPass(settings.baseMat, settings.renderPassEvent);<br>    &#125;<br><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 在这里初始化Pass实例</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">SetupRenderPasses</span>(<span class="hljs-params">ScriptableRenderer renderer, <span class="hljs-keyword">in</span> RenderingData renderingData</span>)</span><br>    &#123;<br>        m_ScriptablePass.InitMatParams(settings.baseColor);<br>    &#125;<br><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 在这里进行相机类型判断，并将Pass添加到渲染队列中。</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">AddRenderPasses</span>(<span class="hljs-params">ScriptableRenderer renderer, <span class="hljs-keyword">ref</span> RenderingData renderingData</span>)</span><br>    &#123;<br>        <span class="hljs-keyword">if</span> (renderingData.cameraData.cameraType == CameraType.Game)<br>        &#123;<br>            renderer.EnqueuePass(m_ScriptablePass);<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 自定义的RenderPass类</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPass</span> : <span class="hljs-title">ScriptableRenderPass</span><br>    &#123;<br>        <span class="hljs-comment">// ---这里定义材质属性和RenderTexture---</span><br>        <span class="hljs-keyword">public</span> Color baseColor = Color.white;<br>        <span class="hljs-keyword">public</span> Material baseMat;<br><br>        <span class="hljs-keyword">private</span> RTHandle m_CameraColorAttachment;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 构造函数，用于创建Pass实例，并传入基本参数。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;mat&quot;&gt;</span>进行后处理的材质<span class="hljs-doctag">&lt;/param&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">CustomRenderPass</span>(<span class="hljs-params">Material mat, RenderPassEvent passEvent</span>)</span><br>        &#123;<br>            <span class="hljs-keyword">this</span>.baseMat = mat;<br>            renderPassEvent = passEvent;<br>        &#125;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 每帧调用，用于给RT_Handle赋值。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnCameraSetup</span>(<span class="hljs-params">CommandBuffer cmd, <span class="hljs-keyword">ref</span> RenderingData renderingData</span>)</span><br>        &#123;<br>            ConfigureInput(ScriptableRenderPassInput.Color);<br>            m_CameraColorAttachment = renderingData.cameraData.renderer.cameraColorTargetHandle;<br>            <span class="hljs-comment">//----若需要分配临时RT，请在这里调用RenderingUtils.ReAllocateIfNeeded()----</span><br>            <br>            <span class="hljs-comment">//-------------------------------------------------------------------</span><br>        &#125;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 在这里初始化材质属性</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">InitMatParams</span>(<span class="hljs-params">Color color</span>)</span><br>        &#123;<br>            <span class="hljs-keyword">this</span>.baseColor = color;<br>        &#125;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 类比于OnRenderImage()，这里用于Blit操作。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;context&quot;&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;renderingData&quot;&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Execute</span>(<span class="hljs-params">ScriptableRenderContext context, <span class="hljs-keyword">ref</span> RenderingData renderingData</span>)</span><br>        &#123;<br>            <span class="hljs-comment">// 获取命令缓冲区</span><br>            CommandBuffer cmd = CommandBufferPool.Get(<span class="hljs-string">&quot;CustomRenderPass&quot;</span>);<br>            <span class="hljs-comment">// ----这里进行Blit操作----</span><br>            baseMat.SetColor(<span class="hljs-string">&quot;_BaseColor&quot;</span>, baseColor);<br>            Blitter.BlitCameraTexture(cmd, m_CameraColorAttachment, m_CameraColorAttachment, baseMat, <span class="hljs-number">0</span>);<br>            <span class="hljs-comment">// ---------------------</span><br>            <span class="hljs-comment">//执行命令</span><br>            context.ExecuteCommandBuffer(cmd);<br>            cmd.Clear(); <span class="hljs-comment">// 清空命令缓冲区</span><br>            CommandBufferPool.Release(cmd); <span class="hljs-comment">// 释放命令缓冲区</span><br>        &#125;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 如果分配了临时RT，需要在这里释放。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;cmd&quot;&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnCameraCleanup</span>(<span class="hljs-params">CommandBuffer cmd</span>)</span><br>        &#123;<br>            <br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h5 id="shader部分"><a class="markdownIt-Anchor" href="#shader部分"></a> Shader部分</h5>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs glsl">Shader &quot;YoiToolkit/URPPostProcessingTemplate&quot;<br>&#123;<br>	Properties<br>	&#123;<br>		_BaseColor(&quot;Base Color&quot;,Color) = (<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">1</span>)<br>	&#125;<br>	SubShader<br>	&#123;<br>		tags&#123;&quot;RenderType&quot;=&quot;Opaque&quot; &quot;RenderPipeline&quot;=&quot;UniversalPipeline&quot;&#125;<br>        ZWrite Off<br>		Pass<br>		&#123;<br>			HLSLINCLUDE<br>			<br>			<span class="hljs-meta">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl&quot;</span><br>			<span class="hljs-meta">#include &quot;Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl&quot;</span><br>			<br>			CBUFFER_START(UnityPerMaterial)				<br>				half4 _BaseColor;<br>			CBUFFER_END<br>			<br>			ENDHLSL<br><br><br>			HLSLPROGRAM<br>			<span class="hljs-meta">#pragma vertex Vert</span><br>			<span class="hljs-meta">#pragma fragment frag</span><br>			<br>			TEXTURE2D_X(_CameraOpaqueTexture);<br>			SAMPLER(sampler_CameraOpaqueTexture);<br>			<br>			half4 frag(Varyings IN):SV_Target<br>			&#123;<br>				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);<br>				half4 color = SAMPLE_TEXTURE2D_X(_CameraOpaqueTexture, sampler_CameraOpaqueTexture, IN.texcoord);<br>				<span class="hljs-keyword">return</span> color * _BaseColor;<br>			&#125;<br>			ENDHLSL<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="与urp-volume集成"><a class="markdownIt-Anchor" href="#与urp-volume集成"></a> 与URP Volume集成</h4>
+<p>URP提供了Volume组件，可以快速应用全屏后处理，也支持Box Volume的区域转换。</p>
+<p>要想让自己写的全屏后处理Feature与URP Volume集成，需要遵循下列步骤：</p>
+<ul>
+<li>定义Volume组件。</li>
+</ul>
+<p>首先创建继承自<code>VolumeComponent</code>、<code>IPostProcessComponent</code>的类，添加<code>[Serializable, VolumeComponent(“一级菜单/后处理名称”)]</code>。</p>
+<p>实现<code>IsActive()</code>和<code>IsTileCompatible()</code>方法。对于前者，需要额外定义一个<code>BoolParameter</code>类型的字段，并将<code>IsActive()</code>的返回值设置为该字段。对于后者，通常设置为返回false。</p>
+<p>随后，添加后处理所需的材质参数。需要注意的是，不可用普通类型定义参数，而是用诸如<code>BoolParameter</code>、<code>ColorParameter</code>、<code>IntParameter</code>、<code>FloatParamter</code>、<code>CubeParameter</code>、<code>TextureParameter</code>等类型定义，否则这些属性将无法暴露在Volume的Inspector中。</p>
+<ul>
+<li>修改Feature，使其能够获取Stack中的该组件并获取其中的属性。</li>
+</ul>
+<p>通过<code>VolumeManager.instance.stack</code>可以获取后处理Stack。对Stack使用<code>GetComponent&lt;Volume类&gt;</code>即可获取刚才定义的Volume组件。随后，便可以拿到组件中的属性。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-function"><span class="hljs-keyword">public</span> T <span class="hljs-title">GetVolume</span>&lt;<span class="hljs-title">T</span>&gt;() <span class="hljs-keyword">where</span> T : VolumeComponent</span><br>&#123;<br>    <span class="hljs-keyword">var</span> stack = VolumeManager.instance.stack;<br>    T component = stack.GetComponent&lt;T&gt;();<br>    <span class="hljs-keyword">return</span> component;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c#">URPVolumeComponentTemplate component = GetVolume&lt;URPVolumeComponentTemplate&gt;();<br><span class="hljs-keyword">if</span> (component)<br>&#123;<br>    m_ScriptablePass.InitMatParams(component.baseColor.<span class="hljs-keyword">value</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>完整的模板代码如下：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-keyword">using</span> System;<br><span class="hljs-keyword">using</span> UnityEngine;<br><span class="hljs-keyword">using</span> UnityEngine.Rendering;<br><span class="hljs-keyword">using</span> UnityEngine.Rendering.Universal;<br><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">YoiToolKit.Rendering</span><br>&#123;<br>    [<span class="hljs-meta">Serializable,VolumeComponentMenu(<span class="hljs-string">&quot;CustomPostStack/Template&quot;</span>)</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">URPVolumeComponentTemplate</span> : <span class="hljs-title">VolumeComponent</span>, <span class="hljs-title">IPostProcessComponent</span><br>    &#123;<br>        <span class="hljs-keyword">private</span> BoolParameter enableEffect = <span class="hljs-keyword">new</span>(<span class="hljs-literal">true</span>); <span class="hljs-comment">// 是否启用。必选。</span><br>        <span class="hljs-comment">// -----此处放置后处理所需的材质参数-----</span><br>        <span class="hljs-keyword">public</span> ColorParameter baseColor = <span class="hljs-keyword">new</span> ColorParameter(Color.white);<br>        <span class="hljs-comment">// --------------------------------</span><br>        <br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 是否启用。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> <span class="hljs-title">IsActive</span>()</span><br>        &#123;<br>            <span class="hljs-keyword">return</span> enableEffect.<span class="hljs-keyword">value</span>;<br>        &#125;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 是否兼容TBDR。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">bool</span> <span class="hljs-title">IsTileCompatible</span>()</span><br>        &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-keyword">using</span> UnityEngine;<br><span class="hljs-keyword">using</span> UnityEngine.Experimental.Rendering;<br><span class="hljs-keyword">using</span> UnityEngine.Rendering;<br><span class="hljs-keyword">using</span> UnityEngine.Rendering.Universal;<br><span class="hljs-keyword">using</span> YoiToolKit.Rendering;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">URPPostProcessTemplateRenderFeature</span> : <span class="hljs-title">ScriptableRendererFeature</span><br>&#123;<br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 定义了Feature的设置。</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 可以将全局材质属性和渲染事件设置在这里。</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    [<span class="hljs-meta">System.Serializable</span>]<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderFeatureSettings</span><br>    &#123;<br>        <span class="hljs-keyword">public</span> Color baseColor = Color.white;<br>        <span class="hljs-keyword">public</span> RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingOpaques;<br>        <span class="hljs-keyword">public</span> Material baseMat;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> CustomRenderFeatureSettings settings; <span class="hljs-comment">// Feature的设置</span><br>    CustomRenderPass m_ScriptablePass; <span class="hljs-comment">// 自定义的RenderPass实例</span><br><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 在这里创建Pass实例，向构造函数传递材质。</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Create</span>()</span><br>    &#123;<br>        m_ScriptablePass = <span class="hljs-keyword">new</span> CustomRenderPass(settings.baseMat, settings.renderPassEvent);<br>    &#125;<br><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 在这里初始化Pass实例</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">SetupRenderPasses</span>(<span class="hljs-params">ScriptableRenderer renderer, <span class="hljs-keyword">in</span> RenderingData renderingData</span>)</span><br>    &#123;<br>        URPVolumeComponentTemplate component = GetVolume&lt;URPVolumeComponentTemplate&gt;();<br>        <span class="hljs-keyword">if</span> (component)<br>        &#123;<br>            m_ScriptablePass.InitMatParams(component.baseColor.<span class="hljs-keyword">value</span>);<br>        &#125;<br>        <span class="hljs-keyword">else</span><br>        &#123;<br>            m_ScriptablePass.InitMatParams(settings.baseColor);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 在这里进行相机类型判断，并将Pass添加到渲染队列中。</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">AddRenderPasses</span>(<span class="hljs-params">ScriptableRenderer renderer, <span class="hljs-keyword">ref</span> RenderingData renderingData</span>)</span><br>    &#123;<br>        <span class="hljs-keyword">if</span> (renderingData.cameraData.cameraType == CameraType.Game)<br>        &#123;<br>            renderer.EnqueuePass(m_ScriptablePass);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> T <span class="hljs-title">GetVolume</span>&lt;<span class="hljs-title">T</span>&gt;() <span class="hljs-keyword">where</span> T : VolumeComponent</span><br>    &#123;<br>        <span class="hljs-keyword">var</span> stack = VolumeManager.instance.stack;<br>        T component = stack.GetComponent&lt;T&gt;();<br>        <span class="hljs-keyword">return</span> component;<br>    &#125;<br>    <br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> 自定义的RenderPass类</span><br>    <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>    <span class="hljs-keyword">class</span> <span class="hljs-title">CustomRenderPass</span> : <span class="hljs-title">ScriptableRenderPass</span><br>    &#123;<br>        <span class="hljs-comment">// ---这里定义材质属性和RenderTexture---</span><br>        <span class="hljs-keyword">public</span> Color baseColor = Color.white;<br>        <span class="hljs-keyword">public</span> Material baseMat;<br><br>        <span class="hljs-keyword">private</span> RTHandle m_CameraColorAttachment;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 构造函数，用于创建Pass实例，并传入基本参数。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;mat&quot;&gt;</span>进行后处理的材质<span class="hljs-doctag">&lt;/param&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">CustomRenderPass</span>(<span class="hljs-params">Material mat, RenderPassEvent passEvent</span>)</span><br>        &#123;<br>            <span class="hljs-keyword">this</span>.baseMat = mat;<br>            renderPassEvent = passEvent;<br>        &#125;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 每帧调用，用于给RT_Handle赋值。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnCameraSetup</span>(<span class="hljs-params">CommandBuffer cmd, <span class="hljs-keyword">ref</span> RenderingData renderingData</span>)</span><br>        &#123;<br>            ConfigureInput(ScriptableRenderPassInput.Color);<br>            m_CameraColorAttachment = renderingData.cameraData.renderer.cameraColorTargetHandle;<br>            <span class="hljs-comment">//----若需要分配临时RT，请在这里调用RenderingUtils.ReAllocateIfNeeded()----</span><br>            <br>            <span class="hljs-comment">//-------------------------------------------------------------------</span><br>        &#125;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 在这里初始化材质属性</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">InitMatParams</span>(<span class="hljs-params">Color color</span>)</span><br>        &#123;<br>            <span class="hljs-keyword">this</span>.baseColor = color;<br>        &#125;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 类比于OnRenderImage()，这里用于Blit操作。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;context&quot;&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;renderingData&quot;&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Execute</span>(<span class="hljs-params">ScriptableRenderContext context, <span class="hljs-keyword">ref</span> RenderingData renderingData</span>)</span><br>        &#123;<br>            <span class="hljs-comment">// 获取命令缓冲区</span><br>            CommandBuffer cmd = CommandBufferPool.Get(<span class="hljs-string">&quot;CustomRenderPass&quot;</span>);<br>            <span class="hljs-comment">// ----这里进行Blit操作----</span><br>            baseMat.SetColor(<span class="hljs-string">&quot;_BaseColor&quot;</span>, baseColor);<br>            Blitter.BlitCameraTexture(cmd, m_CameraColorAttachment, m_CameraColorAttachment, baseMat, <span class="hljs-number">0</span>);<br>            <span class="hljs-comment">// ---------------------</span><br>            <span class="hljs-comment">//执行命令</span><br>            context.ExecuteCommandBuffer(cmd);<br>            cmd.Clear(); <span class="hljs-comment">// 清空命令缓冲区</span><br>            CommandBufferPool.Release(cmd); <span class="hljs-comment">// 释放命令缓冲区</span><br>        &#125;<br><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> 如果分配了临时RT，需要在这里释放。</span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;/summary&gt;</span></span><br>        <span class="hljs-comment"><span class="hljs-doctag">///</span> <span class="hljs-doctag">&lt;param name=&quot;cmd&quot;&gt;</span><span class="hljs-doctag">&lt;/param&gt;</span></span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnCameraCleanup</span>(<span class="hljs-params">CommandBuffer cmd</span>)</span><br>        &#123;<br>            <br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="tips"><a class="markdownIt-Anchor" href="#tips"></a> Tips</h4>
+<ul>
+<li>通过[System.Serializable]属性，我们可以将一个自定义类作为Pass的设置，暴露在Inspector中，同时减少Pass初始化的传参数量。</li>
+<li><code>using (new ProfilingScope(cmd, m_ProfilingSampler))</code>块可以让其中的代码在Frame Dubugger上有独特标记。其中，<code>m_ProfilingSampler</code>为<code>ProfilingSampler</code>类型的字段，其构造函数仅包含一个字符串，用于Frame Debugger的标识。</li>
+<li>在<code>Execute</code>中，我们通过<code>CommandBufferPool.Get()</code>方法获取命令缓冲区，以进行<code>SetGlobalFloat</code>等操作。通过这种方式获取的<code>cmd</code>必须用<code>CommandBufferPool.Release()</code>方法进行释放。</li>
+<li>在<code>Execute</code>中，记得使用<code>cameraData.camera.cameraType</code>判断此Pass生效的相机类型。常见的是仅在<code>CameraType.Game</code>中生效。</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+        <a href="/tags/Unity/" class="print-no-link">#Unity</a>
+      
+        <a href="/tags/URP/" class="print-no-link">#URP</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>初探URP（三） - RenderFeature进阶与全屏后处理模板</div>
+      <div>http://example.com/2025/02/12/初探URP（三）-RenderFeature进阶与全屏后处理模板/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yoi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年2月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/11/%E5%88%9D%E6%8E%A2URP%EF%BC%88%E4%BA%8C%EF%BC%89-URP-SL%E7%89%B9%E6%80%A7%E3%80%81HLSL%E4%B8%8E%E5%85%89%E7%85%A7%E5%9F%BA%E7%A1%80/" title="初探URP（二） - URP SL特性、HLSL与光照基础">
+                        <span class="hidden-mobile">初探URP（二） - URP SL特性、HLSL与光照基础</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       Tech · Art · Life. |  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
