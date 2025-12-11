@@ -1,104 +1,197 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Vulkan-Tutorial学习笔记 | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoigu.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
   <meta name="description" content="Vulkan Tutorial学习笔记绘制三角形初始化Vulkan中的对象创建遵循下述范式：  提供指向Create Info结构体的指针。 提供指向自定义分配器回调的指针，通常为nullptr。 提供指向存储对象句柄的变量指针。  几乎所有Vulkan函数都会返回VkResult类型的值。该值要么是VK_SUCCESS，要么是一个错误码。 创建实例VkInstance是VK程序的基础。 通过vk">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vulkan-Tutorial学习笔记">
-<meta property="og:url" content="http://example.com/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:url" content="https://yoigu.github.io/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="攸一的文书档案">
 <meta property="og:description" content="Vulkan Tutorial学习笔记绘制三角形初始化Vulkan中的对象创建遵循下述范式：  提供指向Create Info结构体的指针。 提供指向自定义分配器回调的指针，通常为nullptr。 提供指向存储对象句柄的变量指针。  几乎所有Vulkan函数都会返回VkResult类型的值。该值要么是VK_SUCCESS，要么是一个错误码。 创建实例VkInstance是VK程序的基础。 通过vk">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/vulkan_simplified_pipeline.svg">
 <meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/image-20251206112308755.png">
 <meta property="og:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/202512081430810.png">
 <meta property="article:published_time" content="2025-12-11T03:31:14.000Z">
 <meta property="article:modified_time" content="2025-12-11T03:32:12.507Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:author" content="攸一">
 <meta property="article:tag" content="图形学">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://yoi-note.oss-cn-chengdu.aliyuncs.com/vulkan_simplified_pipeline.svg">
-  
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
 
-  
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+<link rel="canonical" href="https://yoigu.github.io/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 
-  
-  
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
+  <title>Vulkan-Tutorial学习笔记 | 攸一的文书档案</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
-</header>
 
-      <div class="outer">
-        <section id="main"><article id="post-Vulkan-Tutorial学习笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
-  <time class="dt-published" datetime="2025-12-11T03:31:14.000Z" itemprop="datePublished">2025-12-11</time>
-</a>
-    
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">攸一的文书档案</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
   </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Vulkan-Tutorial学习笔记
-    </h1>
-  
 
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yoigu.github.io/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="攸一">
+      <meta itemprop="description" content="在过去，在现在，在未来。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="攸一的文书档案">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vulkan-Tutorial学习笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-12-11 11:31:14 / 修改时间：11:32:12" itemprop="dateCreated datePublished" datetime="2025-12-11T11:31:14+08:00">2025-12-11</time>
+            </span>
+
+          
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
         <h1 id="Vulkan-Tutorial学习笔记"><a href="#Vulkan-Tutorial学习笔记" class="headerlink" title="Vulkan Tutorial学习笔记"></a>Vulkan Tutorial学习笔记</h1><h2 id="绘制三角形"><a href="#绘制三角形" class="headerlink" title="绘制三角形"></a>绘制三角形</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>Vulkan中的对象创建遵循下述范式：</p>
 <ul>
@@ -558,115 +651,183 @@
 <p>使用<code>vkCreateFramebuffer</code>创建<code>vkFramebuffer</code>实例。</p>
 <p>使用<code>vkDestroyFramebuffer</code>销毁。</p>
 <h4 id="命令缓冲区"><a href="#命令缓冲区" class="headerlink" title="命令缓冲区"></a>命令缓冲区</h4>
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="cuidwnLWE5I7igOHH6JH8OXaM" data-title="Vulkan-Tutorial学习笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag">图形学</a></li></ul>
 
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag"># 图形学</a>
+          </div>
+
+        
+
+
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">Vulkan Tutorial学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%98%E5%88%B6%E4%B8%89%E8%A7%92%E5%BD%A2"><span class="nav-number">1.1.</span> <span class="nav-text">绘制三角形</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.1.1.</span> <span class="nav-text">初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">创建实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%AA%8C%E8%AF%81%E5%B1%82"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">使用验证层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BADebug-Messenger"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">创建Debug Messenger</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%89%A9%E7%90%86%E8%AE%BE%E5%A4%87%E4%B8%8E%E9%98%9F%E5%88%97%E6%97%8F"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">创建物理设备与队列族</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%98%9F%E5%88%97%E6%97%8F"><span class="nav-number">1.1.1.4.1.</span> <span class="nav-text">队列族</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87%E4%B8%8E%E9%98%9F%E5%88%97"><span class="nav-number">1.1.1.5.</span> <span class="nav-text">逻辑设备与队列</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%98%9F%E5%88%97"><span class="nav-number">1.1.1.5.1.</span> <span class="nav-text">创建队列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E6%89%80%E9%9C%80%E7%9A%84%E8%AE%BE%E5%A4%87Feature"><span class="nav-number">1.1.1.5.2.</span> <span class="nav-text">指定所需的设备Feature</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%80%BB%E8%BE%91%E8%AE%BE%E5%A4%87"><span class="nav-number">1.1.1.5.3.</span> <span class="nav-text">创建逻辑设备</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%98%9F%E5%88%97%E5%8F%A5%E6%9F%84"><span class="nav-number">1.1.1.5.4.</span> <span class="nav-text">获取队列句柄</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%86%E5%8F%A3%E5%91%88%E7%8E%B0"><span class="nav-number">1.1.2.</span> <span class="nav-text">视口呈现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AA%97%E5%8F%A3Surface"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">窗口Surface</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Presentation%E9%98%9F%E5%88%97%E6%97%8F"><span class="nav-number">1.1.2.1.1.</span> <span class="nav-text">Presentation队列族</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E9%93%BE"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">交换链</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%94%AF%E6%8C%81"><span class="nav-number">1.1.2.2.1.</span> <span class="nav-text">检查支持</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.1.2.2.2.</span> <span class="nav-text">选择设置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Image-View"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">Image View</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%BD%A2%E7%AE%A1%E7%BA%BF%E5%9F%BA%E7%A1%80"><span class="nav-number">1.1.3.</span> <span class="nav-text">图形管线基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9D%80%E8%89%B2%E5%99%A8%E6%A8%A1%E5%9D%97"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">着色器模块</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8"><span class="nav-number">1.1.3.1.1.</span> <span class="nav-text">顶点着色器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%87%E6%AE%B5%E7%9D%80%E8%89%B2%E5%99%A8"><span class="nav-number">1.1.3.1.2.</span> <span class="nav-text">片段着色器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%96%E8%AF%91"><span class="nav-number">1.1.3.1.3.</span> <span class="nav-text">编译</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E7%9D%80%E8%89%B2%E5%99%A8"><span class="nav-number">1.1.3.1.4.</span> <span class="nav-text">读取着色器</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">固定功能</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.3.2.1.</span> <span class="nav-text">动态状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A1%B6%E7%82%B9%E8%BE%93%E5%85%A5"><span class="nav-number">1.1.3.2.2.</span> <span class="nav-text">顶点输入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Input-Assembly"><span class="nav-number">1.1.3.2.3.</span> <span class="nav-text">Input Assembly</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%86%E5%8F%A3%E4%B8%8E%E8%A3%81%E5%89%AA%E7%9F%A9%E5%BD%A2"><span class="nav-number">1.1.3.2.4.</span> <span class="nav-text">视口与裁剪矩形</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%89%E6%A0%85%E5%8C%96"><span class="nav-number">1.1.3.2.5.</span> <span class="nav-text">光栅化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E9%87%87%E6%A0%B7"><span class="nav-number">1.1.3.2.6.</span> <span class="nav-text">多重采样</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E6%A8%A1%E6%9D%BF%E6%B5%8B%E8%AF%95"><span class="nav-number">1.1.3.2.7.</span> <span class="nav-text">深度模板测试</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%9C%E8%89%B2%E6%B7%B7%E5%90%88"><span class="nav-number">1.1.3.2.8.</span> <span class="nav-text">颜色混合</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#VkPipelineColorBlendAttachmentState"><span class="nav-number">1.1.3.2.8.1.</span> <span class="nav-text">VkPipelineColorBlendAttachmentState</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#VkPipelineColorBlendState"><span class="nav-number">1.1.3.2.8.2.</span> <span class="nav-text">VkPipelineColorBlendState</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AE%A1%E7%BA%BF%E5%B8%83%E5%B1%80"><span class="nav-number">1.1.3.2.9.</span> <span class="nav-text">管线布局</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B8%B2%E6%9F%93Pass"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">渲染Pass</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#VkAttachmentDescription"><span class="nav-number">1.1.3.3.1.</span> <span class="nav-text">VkAttachmentDescription</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AttachmentReference%E4%B8%8ESubpass"><span class="nav-number">1.1.3.3.2.</span> <span class="nav-text">AttachmentReference与Subpass</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA"><span class="nav-number">1.1.3.3.3.</span> <span class="nav-text">创建</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%BA%BF"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">创建管线</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%98%E5%88%B6"><span class="nav-number">1.1.4.</span> <span class="nav-text">绘制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%A7%E7%BC%93%E5%86%B2"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">帧缓冲</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">命令缓冲区</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">攸一</p>
+  <div class="site-description" itemprop="description">在过去，在现在，在未来。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">攸一</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
     </footer>
   </div>
-  
-    
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
 
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag">图形学</a></li></ul>
-    </div>
-  </div>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" style="font-size: 10px;">图形学</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">December 2025</a></li></ul>
-    </div>
-  </div>
+<script src="/js/schemes/muse.js"></script>
 
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Vulkan-Tutorial学习笔记</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
+<script src="/js/next-boot.js"></script>
 
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2025 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
 
 
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
 
 
 
 
 
-  </div>
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
 </body>
 </html>
