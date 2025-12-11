@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-Vulkan-Tutorial学习笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time class="dt-published" datetime="2025-12-11T03:31:14.000Z" itemprop="datePublished">2025-12-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Vulkan-Tutorial学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Vulkan-Tutorial学习笔记"><a href="#Vulkan-Tutorial学习笔记" class="headerlink" title="Vulkan Tutorial学习笔记"></a>Vulkan Tutorial学习笔记</h1><h2 id="绘制三角形"><a href="#绘制三角形" class="headerlink" title="绘制三角形"></a>绘制三角形</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>Vulkan中的对象创建遵循下述范式：</p>
+<ul>
+<li>提供指向Create Info结构体的指针。</li>
+<li>提供指向自定义分配器回调的指针，通常为<code>nullptr</code>。</li>
+<li>提供指向存储对象句柄的变量指针。</li>
+</ul>
+<p>几乎所有Vulkan函数都会返回<code>VkResult</code>类型的值。该值要么是<code>VK_SUCCESS</code>，要么是一个错误码。</p>
+<h4 id="创建实例"><a href="#创建实例" class="headerlink" title="创建实例"></a>创建实例</h4><p><code>VkInstance</code>是VK程序的基础。</p>
+<p>通过<code>vkCreateInstance</code>函数创建vk实例对象。</p>
+<p>为此，我们需要填充<code>VkApplicationInfo</code>和<code>VkInstanceCreateInfo</code>结构体，指定需要使用的Vulkan API版本、所需的扩展和层。</p>
+<p>此外，我们可通过<code>vkEnumerateInstanceExtensionProperties</code>函数来获取当前VK版本支持的所有扩展数量和名称，还可通过改变参数3来对结果按所属的层进行过滤。</p>
+<p>程序关闭时，通过<code>vkDestroyInstance</code>函数销毁vk实例。</p>
+<h4 id="使用验证层"><a href="#使用验证层" class="headerlink" title="使用验证层"></a>使用验证层</h4><p>Vulkan的设计思想是尽可能减少驱动的负载，所以它在错误检查上做的非常少。为了弥补这一缺陷，LunarG提供了验证层（Validation Layers）。验证层可以：</p>
+<ul>
+<li>检查参数是否符合规范</li>
+<li>追踪对象的创建和销毁，以此来发现资源泄露</li>
+<li>通过追踪线程来检查线程安全性</li>
+<li>将每次函数调用与其参数记录到标准输出</li>
+<li>追踪Vulkan调用来进行性能分析与回放。</li>
+</ul>
+<p>验证层仅在安装了Vulkan SDK的PC上可用，其名称为<code>VK_LAYER_KHRONOS_validation</code>。</p>
+<p>通过在创建Vk实例时，给<code>VkInstanceCreateInfo</code>的<code>ppEnabledLayerNames</code>与<code>enabledLayerCount</code>赋值，来启用某个层。若某层不存在，则<code>vkCreateInstance</code>会返回<code>VK_ERROR_LAYER_NOT_PRESENT</code>错误码。</p>
+<h4 id="创建Debug-Messenger"><a href="#创建Debug-Messenger" class="headerlink" title="创建Debug Messenger"></a>创建Debug Messenger</h4><p>Debug Messenger用于过滤验证层的错误输出，让我们只取自己预期的日志输出。</p>
+<p>Debug Messenger的相关功能由扩展<code>VK_EXT_debug_utils</code>提供，可通过<code>VK_EXT_DEBUG_UTILS_EXTENSION_NAME</code>枚举获得其名称。</p>
+<p>Debug Messenger表现为<code>VkDebugUtilsMessengerEXT</code>类，通过<code>VkDebugUtilsMessengerCreateInfoEXT</code>结构体创建。</p>
+<p>调用<code>vkCreateDebugUtilsMessengerEXT</code>函数，以VK实例、创建结构体、日志输出方法指针和debugMessenger实例指针为参，创建debugMessenger实例。</p>
+<p>在程序结束时，需要调用<code>vkDestroyDebugUtilsMessengerEXT</code>方法销毁debugMessenger实例。</p>
+<blockquote>
+<p>由于该销毁方法需要VK实例作为传参，故应当在<code>vkDestroyInstance</code>之前调用。但这带来了一个问题：创建vk实例和销毁vk实例时的错误日志无法通过debugMessenger输出。</p>
+<p>为了解决这一问题，我们可以为这两个过程创建一个独立的Debug Utils Messenger。我们只需要在调用VK实例创建方法时，让创建结构体<code>VkInstanceCreateInfo</code>的<code>pNext</code>成员指向一个填写好的<code>VkDebugUtilsMessengerCreateInfoEXT</code>结构体即可。</p>
+</blockquote>
+<h4 id="创建物理设备与队列族"><a href="#创建物理设备与队列族" class="headerlink" title="创建物理设备与队列族"></a>创建物理设备与队列族</h4><p>物理设备指的是诸如显卡之类的显示适配器。不同的显示适配器可能支持不同的Vulkan特性，在本项目中，我们将寻找第一个满足我们要求的显示适配器。</p>
+<p>物理设备由<code>VkPhysicalDevice</code>表示。当VK实例被销毁时，物理设备也会随之销毁，所以我们不需要在<code>cleanup</code>函数中清理物理设备。</p>
+<p>通过<code>vkEnumeratePhysicalDevices</code>函数，传入VK实例与用于存储设备数量和名称的指针，即可获取物理设备数量与名称。</p>
+<p>获取到所有物理设备后，我们需要检查一个物理设备是否符合我们的要求。我们新建一个名为<code>isDeviceSutiable</code>的返回布尔值的函数来实现这一点。</p>
+<p><code>VkPhysicalDevice</code>类本身并不存储设备属性。我们需要先通过<code>vkGetPhysicalDeviceProperties</code>函数传入<code>VkPhysicalDevice</code>实例，然后才能拿到<code>VkPhysicalDeviceProperties</code>实例。该实例包含了设备的名称、类型和支持的Vulkan版本，</p>
+<p>通过<code>VkGetPhysicalDeviceFeatures</code>函数，可拿到物理设备支持的“可选特性”，例如纹理压缩、64位浮点数、多视口渲染等，以<code>VkPhysicalDeviceFeatures</code>的形式呈现。</p>
+<h5 id="队列族"><a href="#队列族" class="headerlink" title="队列族"></a>队列族</h5><p>Vulkan中，几乎所有操作都需要将命令提交到队列。不同的队列族衍生出不同类型的队列，例如计算队列、图形队列、传输队列等。</p>
+<p>为了正确执行渲染命令，我们需要确定选取的物理设备是否支持图形队列。</p>
+<p>通过<code>vkGetPhysicalDeviceQueueFamilyProperties</code>，我们可以获取该物理设备的队列族的属性（<code>VkQueueFamilyProperties</code>）。该属性的<code>queueFlags</code>方法表明了该队列族的类型。通过将其与<code>VkQueueFlagBits</code>类型的枚举实例做与操作，即可得出该队列族的类型。</p>
+<h4 id="逻辑设备与队列"><a href="#逻辑设备与队列" class="headerlink" title="逻辑设备与队列"></a>逻辑设备与队列</h4><p>完成物理设备的选择后，需要创建一个逻辑设备与其对接。逻辑设备的创建过程类似于VK实例创建过程，需要明确所需Feature。同时，完成查询可用队列族后，还需要指定当前要创建的队列。</p>
+<p>可以从单个物理设备创建多个逻辑设备。</p>
+<p>逻辑设备表现为<code>VkDevice</code>类。</p>
+<h5 id="创建队列"><a href="#创建队列" class="headerlink" title="创建队列"></a>创建队列</h5><p>首先，填写<code>VkDeviceQueueCreateInfo</code>结构体。其<code>sType</code>为<code>VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</code>。</p>
+<p>该结构体包含三个需要额外填写的成员变量：<code>queueFamilyIndex</code>、<code>queueCount</code>与<code>pQueuePriorities</code>。第一个为物理设备上我们所需队列族的索引，第二个为我们将在该队列族上创建的队列实例数量，第三个为此队列的优先级。</p>
+<blockquote>
+<p>单个队列族可以创建多个队列实例。存在多个队列实例时，程序需要在多个队列中进行协调、调度，而优先级属性可以协助程序实现这一点。优先级越高的队列将被优先提交。</p>
+<p>优先级是0.0-1.0之间的浮点数。</p>
+</blockquote>
+<h5 id="指定所需的设备Feature"><a href="#指定所需的设备Feature" class="headerlink" title="指定所需的设备Feature"></a>指定所需的设备Feature</h5><p>设备Feature是物理设备层面的属性，通过<code>VkGetPhysicalDeviceFeatures</code>函数得到，表现为<code>VkPhysicalDeviceFeatures</code>类。后续我们将在创建逻辑设备时使用该结构体。</p>
+<p>该结构体中包含了若干<code>VkBool32</code>变量，每个变量都代表一个设备特性的启用状态。</p>
+<h5 id="创建逻辑设备"><a href="#创建逻辑设备" class="headerlink" title="创建逻辑设备"></a>创建逻辑设备</h5><p>我们通过填写<code>VkDeviceCreateInfo</code>结构体来创建<code>VkDevice</code>实例。该结构体的<code>sType</code>为<code>VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</code>。此外，该结构体包含下列成员变量：</p>
+<ul>
+<li><code>pQueueCreateInfos</code>：所有待创建队列实例的<code>VkDeviceQueueCreateInfo</code>。</li>
+<li><code>queueCreateInfoCount</code>：待创建队列实例的数量。</li>
+<li><code>pEnabledFeatures</code>：所需的设备特性。</li>
+<li><code>enabledExtensionCount</code>：所需启用的设备级扩展。</li>
+<li><code>enabledLayerCount</code>：所需启用的设备级层数量。</li>
+<li><code>ppEnabledLayerNames</code>：所需启用的设备级层的名称数组的指针。</li>
+</ul>
+<blockquote>
+<p>早期Vulkan区分实例与设备级验证层，但新版本已不再区分。因此，这里其实可以不设置<code>enabledLayerCount</code>和<code>ppEnabledLayerNames</code>。</p>
+</blockquote>
+<p>通过调用<code>vkCreateDevice</code>，即可创建逻辑设备。</p>
+<p>逻辑设备需要使用<code>vkDestroyDevice</code>，在程序结束运行时销毁。</p>
+<h5 id="获取队列句柄"><a href="#获取队列句柄" class="headerlink" title="获取队列句柄"></a>获取队列句柄</h5><p>我们在创建逻辑设备时，会同时创建队列实例。为了拿到队列实例的<code>VkQueue</code>类型，我们需要调用<code>VkGetDeviceQueue</code>，将逻辑设备实例、队列族序号、队列实例序号和<code>VkQueue</code>指针。</p>
+<h3 id="视口呈现"><a href="#视口呈现" class="headerlink" title="视口呈现"></a>视口呈现</h3><h4 id="窗口Surface"><a href="#窗口Surface" class="headerlink" title="窗口Surface"></a>窗口Surface</h4><p>Vulkan是平台无关的API，需要使用Window System Integration(WSI)扩展将渲染结果呈现到视口上。<code>VK_KHR_surface</code>是WSI扩展之一，该扩展提供<code>VkSurfaceKHR</code>对象，用于呈现渲染图像。</p>
+<p><code>VK_KHR_surface</code>为实例级扩展，目前，我们已经通过<code>glfwGetRequiredInstanceExtensions</code>函数启用该功能。其余必需的WSI扩展也已由该函数一并启用。</p>
+<p>窗口Surface必须要<strong>在实例创建后立即创建</strong>，因为Surface会影响物理设备的选取。</p>
+<p><code>VkSurfaceKHR</code>类表示窗口Surface实例。</p>
+<blockquote>
+<p>尽管<code>VkSurfaceKHR</code>对象及其使用方式与平台无关，但其创建过程却存在平台依赖性，因为它需要窗口系统的具体细节。例如在Windows系统中，它需要<code>HWND</code>和<code>HMODULE</code>句柄。因此该扩展包含平台特有的补充内容，在Windows平台上称为<code>VK_KHR_win32_surface</code>，该扩展也会自动包含在<code>glfwGetRequiredInstanceExtensions</code>返回的列表中。</p>
+<p>GLFW自带的<code>glfwCreateWindowSurface</code>函数会帮我们自动处理平台特异性代码。但我们最好还是了解一下底层差异。</p>
+<p>为了访问原生平台函数，我们需要包含下列代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> VK_USE_PLATFORM_WIN32_KHR</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GLFW_INCLUDE_VULKAN</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;GLFW/glfw3.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GLFW_EXPOSE_NATIVE_WIN32</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;GLFW/glfw3native.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>窗口Surface是一个Vulkan对象，所以它需要一个<code>VkWin32SurfaceCreateInfoKHR</code>结构体来创建。该结构体的<code>sType</code>为<code>VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR</code>，同时需要填充<code>hwnd</code>与<code>hinstance</code>两个变量。前者通过<code>glfwGetWin32Window</code>方法获取，后者通过<code>GetModuleHandle</code>获取。</p>
+<p>随后，通过<code>vkCreateWin32SurfaceKHR</code>函数创建原生窗口Surface。</p>
+</blockquote>
+<p>通过调用<code>glfwCreateWindowSurface</code>函数创建窗口surface。</p>
+<p>窗口Surface需要在clean up期间，在销毁VK实例之前调用<code>vkDestroySurfaceKHR</code>函数清除。</p>
+<h5 id="Presentation队列族"><a href="#Presentation队列族" class="headerlink" title="Presentation队列族"></a>Presentation队列族</h5><p>前面提到，需要在实例创建之后立即创建窗口Surface，因为它会影响物理设备的选取。之所以这么说，是因为窗口Surface需要Presentation队列族支持。因此，我们必须选取具备Presentation队列族的物理设备。</p>
+<p>与Graphics队列族不同的是，我们仅需调用<code>vkGetPhysicalDeviceSurfaceSupportKHR</code>函数即可查询一个物理设备的特定队列族是否满足给定Surface实例的要求。</p>
+<h4 id="交换链"><a href="#交换链" class="headerlink" title="交换链"></a>交换链</h4><p>交换链（Swap Chain）是用于管理渲染缓冲区的基础设施，它本质上是一组等待呈现至屏幕的图像队列，其主要目的是让渲染图像的呈现与屏幕刷新率同步。</p>
+<h5 id="检查支持"><a href="#检查支持" class="headerlink" title="检查支持"></a>检查支持</h5><p>为启用交换链，需要检查下列条件：</p>
+<ol>
+<li>物理设备支持<code>VK_KHR_swapchain</code>扩展</li>
+<li>逻辑设备启用<code>VK_KHR_swapchain</code>扩展</li>
+<li>物理设备具有可用的<code>VkSurfaceCapabilitiesKHR</code>（交换链的基本属性，如交换链中的图片数量、尺寸等）、<code>VkSurfaceFormatKHR</code>（交换链中图片的颜色空间和格式）与<code>VkPresentModeKHR</code>（交换链中图片的进入、出去的策略）。</li>
+</ol>
+<p>对于第三点，我们分别用下列函数获取：</p>
+<ul>
+<li><code>vkGetPhysicalDeviceSurfaceCapabilitiesKHR</code></li>
+<li><code>vkGetPhysicalDeviceSurfaceFormatsKHR</code></li>
+<li><code>vkGetPhysicalDeviceSurfacePresentModesKHR</code></li>
+</ul>
+<h5 id="选择设置"><a href="#选择设置" class="headerlink" title="选择设置"></a>选择设置</h5><p>获取第三点中提到的三个属性（<code>Capabilities</code>、<code>Surface Format</code>和<code>Present Mode</code>）后，我们需要在后两者中选择合适的选项，用于创建交换链。</p>
+<p>为了填充交换链的Create Info结构体，我们需要获取如下属性：</p>
+<ol>
+<li>Image Count，交换链内图片的数量，通过Capabilities的min&#x2F;maxImageCount获取</li>
+<li>Surface Format， 交换链内图片格式，从先前取得的列表内获取</li>
+<li>Present Mode，交换链内图片移入、移出策略，从先前取得的列表内获取</li>
+<li>Extent，交换链内图片的分辨率，通过Capabilities的currentExtent属性与<code>glfwGetFrameBufferSize</code>函数获取</li>
+</ol>
+<blockquote>
+<p>通常情况下我们直接采用currentExtent作为分辨率，但若currentExtent属性为<code>std::numeric_limits&lt;uint32_t&gt;::max()</code>，则需要在<code>minImageExtent</code>和<code>maxImageExtent</code>之间获取理想的分辨率。</p>
+</blockquote>
+<p>交换链的CreateInfo <code>VkSwapchainCreateInfoKHR</code>包含下列属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sType</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>surface</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>imageFormat</code></td>
+<td><code>VkSurfaceFormat</code>的成员属性</td>
+</tr>
+<tr>
+<td><code>imageColorSpace</code></td>
+<td><code>VkSurfaceFormat</code>的成员属性</td>
+</tr>
+<tr>
+<td><code>minImageCount</code></td>
+<td>交换链内的最小图片数量</td>
+</tr>
+<tr>
+<td><code>imageArrayLayers</code></td>
+<td>每张图片由几层构成。仅在构建3D立体应用时不为1</td>
+</tr>
+<tr>
+<td><code>imageUsage</code></td>
+<td>图片的作用，常见的有<code>VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</code>（颜色附件）和<code>VK_IMAGE_USAGE_TRANSFER_DST_BIT</code>（离屏渲染）</td>
+</tr>
+<tr>
+<td><code>presentMode</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>imageSharingMode</code></td>
+<td>图片是否能在多个队列族内共享，无需显式传输。</td>
+</tr>
+<tr>
+<td><code>queueFamilyIndexCount</code></td>
+<td>若能共享，可共享的队列族数量</td>
+</tr>
+<tr>
+<td><code>pQueueFamilyIndices</code></td>
+<td>若能共享，在哪几个队列族间共享</td>
+</tr>
+<tr>
+<td><code>preTransform</code></td>
+<td>指定链内图像的预变换（如旋转90度等）</td>
+</tr>
+<tr>
+<td><code>compositeAlpha</code></td>
+<td>若窗口需要使用透明通道以与其他窗口混合渲染，则改为其他，否则默认为OPAQUE</td>
+</tr>
+<tr>
+<td><code>clipped</code></td>
+<td>当此窗口被其他窗口遮挡时，是否剔除被遮挡的像素。开启可提高性能</td>
+</tr>
+<tr>
+<td><code>oldSwapChain</code></td>
+<td>当由于窗口分辨率改变而需要重建交换链时，将旧的交换链赋值给该属性</td>
+</tr>
+</tbody></table>
+<p><code>VkSwapchainKHR</code>实例创建后应调用<code>vkDestroySwapchainKHR</code>函数销毁。</p>
+<p>可通过<code>vkGetSwapchainImagesKHR</code>函数获取交换链内的<code>VkImage</code>句柄。</p>
+<h4 id="Image-View"><a href="#Image-View" class="headerlink" title="Image View"></a>Image View</h4><p><code>VkImage</code>实例无法直接作为图像使用，我们必须为它们创建<code>VkImageView</code>，它描述了如何访问图像，以及该访问图像的哪个部分。举个例子，通过<code>VkImageView</code>，我们可以知道一个<code>VkImage</code>是否是不带任何MIPMAP的2D深度纹理。</p>
+<p>下面，我们将为交换链的<code>VkImage</code>创建<code>VkImageView</code>，以便将它们作为Color Target。</p>
+<p><code>VkImageView</code>的Create Info包含下列成员：</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sType</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td><code>VkImage</code>实例</td>
+</tr>
+<tr>
+<td><code>viewType</code></td>
+<td>该纹理应当被视作2D、3D或CUBE等</td>
+</tr>
+<tr>
+<td><code>format</code></td>
+<td>即交换链的format</td>
+</tr>
+<tr>
+<td><code>components</code></td>
+<td>通道映射，无特殊情况均为<code>VK_COMPONENT_SWIZZLE_IDENTITY</code></td>
+</tr>
+<tr>
+<td><code>subresourceRange.aspectMask</code></td>
+<td>图像用途，一般为<code>VK_IMAGE_ASPECT_COLOR_BIT</code>或<code>VK_IMAGE_ASPECT_DEPTH_BIT</code></td>
+</tr>
+<tr>
+<td><code>subresourceRange.baseMipLevel</code></td>
+<td>图像的MIP映射级别，无MIP则为0</td>
+</tr>
+<tr>
+<td><code>subresourceRange.levelCount</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>subresourceRange.baseArrayLayer</code></td>
+<td>图像是否包含多层结构，一般为0</td>
+</tr>
+<tr>
+<td><code>subresourceRange.layerCount</code></td>
+<td>一般为1</td>
+</tr>
+</tbody></table>
+<p>调用<code>vkCreateImageView</code>创建<code>VkImageView</code>实例。</p>
+<p>每个<code>VkImageView</code>实例均需要调用<code>vkDestroyImageView</code>函数清除。</p>
+<h3 id="图形管线基础"><a href="#图形管线基础" class="headerlink" title="图形管线基础"></a>图形管线基础</h3><p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/vulkan_simplified_pipeline.svg" alt="img"></p>
+<p>其中，橙色为可编程阶段，橘色为固定阶段。</p>
+<p>Vulkan中的图形管线是<strong>不可变更</strong>的。若你需要更改管线参数，更换着色器等，需要重建管线。因此，我们需要建立多个管线以覆盖可能的组合情况。</p>
+<p>一些可编程阶段可以根据需求选择性启用。例如，如果只需要绘制简单几何体，可以禁用曲面细分与几何着色器。若仅需深度，则可禁用片段着色器。</p>
+<p>图形管线的创建需要在<code>ImageView</code>创建完毕后进行。</p>
+<h4 id="着色器模块"><a href="#着色器模块" class="headerlink" title="着色器模块"></a>着色器模块</h4><p>Vulkan中的着色器必须用被称为SPIR-V的字节码格式编写，这是为了同时支持Vulkan和OpenCL。</p>
+<p>我们无需手动编写SPIR-V，而是使用编译器将GLSW编译为SPIR-V。本项目中我们使用谷歌的<code>glslc.exe</code>编译器。</p>
+<h5 id="顶点着色器"><a href="#顶点着色器" class="headerlink" title="顶点着色器"></a>顶点着色器</h5><p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/image-20251206112308755.png" alt="image-20251206112308755"></p>
+<p>注意坐标与OpenGL中的异同。Z取值为[0,1]</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 450</span></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">location</span> = <span class="number">0</span>) <span class="keyword">out</span> <span class="type">vec3</span> fragColor;</span><br><span class="line"><span class="type">vec2</span> positions[<span class="number">3</span>] = <span class="type">vec2</span>[](</span><br><span class="line">    <span class="type">vec2</span>(<span class="number">0.0</span>, <span class="number">-0.5</span>),</span><br><span class="line">    <span class="type">vec2</span>(<span class="number">0.5</span>, <span class="number">0.5</span>),</span><br><span class="line">    <span class="type">vec2</span>(<span class="number">-0.5</span>, <span class="number">0.5</span>)</span><br><span class="line">);</span><br><span class="line"><span class="type">vec3</span> colors[<span class="number">3</span>] = <span class="type">vec3</span>[](</span><br><span class="line">    <span class="type">vec3</span>(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>),</span><br><span class="line">    <span class="type">vec3</span>(<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>),</span><br><span class="line">    <span class="type">vec3</span>(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>)</span><br><span class="line">);</span><br><span class="line"><span class="type">void</span> main() &#123;</span><br><span class="line">    <span class="comment">// gl_Position：内建变量，作为VS的输出，应当被赋值为变换后的顶点裁剪坐标</span></span><br><span class="line">    <span class="comment">// gl_VertexIndex：当前顶点的索引</span></span><br><span class="line">    <span class="built_in">gl_Position</span> = <span class="type">vec4</span>(positions[gl_VertexIndex], <span class="number">0.0</span>, <span class="number">1.0</span>);</span><br><span class="line">    fragColor = colors[gl_VertexIndex];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="片段着色器"><a href="#片段着色器" class="headerlink" title="片段着色器"></a>片段着色器</h5><figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 450</span></span><br><span class="line"><span class="comment">// 颜色值将写入索引0处首个帧缓冲区关联的outColor变量</span></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">location</span> = <span class="number">0</span>) <span class="keyword">out</span> <span class="type">vec4</span> outColor;</span><br><span class="line"><span class="comment">// fragColor接收VS的输出</span></span><br><span class="line"><span class="keyword">layout</span>(<span class="keyword">location</span> = <span class="number">0</span>) <span class="keyword">in</span> <span class="type">vec3</span> fragColor; <span class="comment">// 变量通过索引而非变量名关联，因此VS的out和FS的in变量名无需一致</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> main() &#123;</span><br><span class="line">    outColor = <span class="type">vec4</span>(fragColor, <span class="number">1.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h5><p>使用cmd命令将glsl文件编译为.spv文件。</p>
+<p>Windows下为：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">C:/<span class="title">VulkanSDK</span>/<span class="title">x.x.x.x</span>/<span class="title">Bin</span>/<span class="title">glslc.exe</span> <span class="title">shader.vert</span> -<span class="title">o</span> <span class="title">vert.spv</span></span></span><br><span class="line"><span class="function"><span class="title">C</span>:/<span class="title">VulkanSDK</span>/<span class="title">x.x.x.x</span>/<span class="title">Bin</span>/<span class="title">glslc.exe</span> <span class="title">shader.frag</span> -<span class="title">o</span> <span class="title">frag.spv</span></span></span><br><span class="line"><span class="function"><span class="title">pause</span></span></span><br></pre></td></tr></table></figure>
+
+<p>也可使用<code>shaderc</code>库：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::vector&lt;<span class="type">uint32_t</span>&gt; <span class="title">compileShader</span><span class="params">(<span class="type">const</span> std::string&amp; source_name,</span></span></span><br><span class="line"><span class="params"><span class="function">    shaderc_shader_kind kind,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> std::string&amp; source,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">bool</span> optimize = <span class="literal">false</span>)</span> </span>&#123;</span><br><span class="line">    shaderc::Compiler compiler;</span><br><span class="line">    shaderc::CompileOptions options;</span><br><span class="line">    <span class="comment">// 开启优化</span></span><br><span class="line">    <span class="keyword">if</span> (optimize) &#123;</span><br><span class="line">        options.<span class="built_in">SetOptimizationLevel</span>(shaderc_optimization_level_performance);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 执行编译</span></span><br><span class="line">    shaderc::SpvCompilationResult <span class="keyword">module</span> = compiler.<span class="built_in">CompileGlslToSpv</span>(</span><br><span class="line">        source, kind, source_name.<span class="built_in">c_str</span>(), options);</span><br><span class="line">    <span class="comment">// 检查编译错误</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">module</span>.<span class="built_in">GetCompilationStatus</span>() != shaderc_compilation_status_success) &#123;</span><br><span class="line">        std::cerr &lt;&lt; <span class="string">&quot;Shader compilation error in &quot;</span> &lt;&lt; source_name &lt;&lt; <span class="string">&quot;:\n&quot;</span></span><br><span class="line">            &lt;&lt; <span class="keyword">module</span>.<span class="built_in">GetErrorMessage</span>() &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> std::<span class="built_in">vector</span>&lt;<span class="type">uint32_t</span>&gt;(); <span class="comment">// 返回空 vector 表示失败</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 返回编译后的二进制数据</span></span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="keyword">module</span>.<span class="built_in">cbegin</span>(), <span class="keyword">module</span>.<span class="built_in">cend</span>() &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="读取着色器"><a href="#读取着色器" class="headerlink" title="读取着色器"></a>读取着色器</h5><p>Vulkan中，着色器表现为<code>VkShaderModule</code>实例。</p>
+<p>创建该实例的Create Info接收下列参数：</p>
+<ul>
+<li><code>sType</code>：为<code>VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO</code></li>
+<li><code>codeSize</code>：源代码的<strong>字节数</strong></li>
+<li><code>pCode</code>：指向<code>uint32_t</code>类型数组的指针。该数组为完成编译的着色器源代码。</li>
+</ul>
+<p>调用<code>vkCreateShaderModule</code>创建实例，调用<code>vkDestroyShaderModule</code>销毁实例。</p>
+<p><code>VkShaderModule</code>需要通过<code>VkPipelineShaderStageCreateInfo</code>结构体注入Pipeline。该结构体包含下列成员：</p>
+<ul>
+<li><code>sType</code>：为<code>VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO</code></li>
+<li><code>stage</code>：为<code>VK_SHADER_STAGE_</code>开头的枚举。包括<code>VERTEX_BIT</code>、<code>FRAGMENT_BIT</code>等，指明了该着色器作用的阶段。</li>
+<li><code>module</code>：<code>VkShaderModule</code>实例</li>
+<li><code>pName</code>：glsl中的主函数名，通常为<code>main</code></li>
+<li><code>pSpecializationInfo</code>：着色器常量，在创建管线时定义着色器常量比渲染时配置着色器性能更优，若无可为<code>nullptr</code>。</li>
+</ul>
+<h4 id="固定功能"><a href="#固定功能" class="headerlink" title="固定功能"></a>固定功能</h4><p>与OpenGL不同的是，Vulkan中大部分管线状态都是无法随时更改的，而是被写入一个不可变的管线状态对象（Pipeline State Object）。我们需要在管线创建时显式创建这些状态。</p>
+<h5 id="动态状态"><a href="#动态状态" class="headerlink" title="动态状态"></a>动态状态</h5><p>小部分状态在渲染时可以在不重建管线的前提下进行改变，它们被称为动态状态（Dynamic State），表现为<code>VkDynamicState</code>枚举。我们可以通过<code>VkPipelineDynamicStateCreateInfo</code>将其注入管线。</p>
+<p>常见的动态状态有：</p>
+<ul>
+<li><code>VK_DYNAMIC_STATE_VIEWPORT</code>：视口状态</li>
+<li><code>VK_DYNAMIC_STATE_SCISSOR</code>：裁剪矩形状态</li>
+</ul>
+<p><code>VkPipelineDynamicStateCreateInfo</code>的成员有：</p>
+<ul>
+<li><code>sType</code>：为<code>VK_STRUCTRUE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO</code></li>
+<li><code>pDynamicStates</code>：<code>VkDynamicState</code>数组</li>
+<li><code>dynamicStateCount</code></li>
+</ul>
+<h5 id="顶点输入"><a href="#顶点输入" class="headerlink" title="顶点输入"></a>顶点输入</h5><p><code>VkPipelineVertexInputStateCreateInfo</code>结构体描述了将要传递给VS的顶点数据格式。其描述主要包含：</p>
+<ul>
+<li>绑定（Binding）：数据的间距，以及是按顶点还是实例（Instancing需要）分配。表现为<code>vertexBindingDescriptionCount</code>与<code>pVertexBindingDescriptions</code>。</li>
+<li>属性描述（Attribute Description）：将要传递给VS的属性的类型，该从哪个绑定加载这些属性，以及在什么偏移量下加载。表现为<code>vertexAttributeDescriptionCount</code>与<code>pVertexAttributeDescriptions</code>。</li>
+</ul>
+<p>目前，我们尚未从外部提供顶点数据，而是把它们硬编码在着色器里。所以目前我们不需要填写绑定与属性描述。</p>
+<h5 id="Input-Assembly"><a href="#Input-Assembly" class="headerlink" title="Input Assembly"></a>Input Assembly</h5><p><code>VkPipelineInputAssemblyStateCreateInfo</code>结构体描述了：我们将从顶点中绘制哪种几何体（点、线、三角），以及是否启用图元重启（Primitive Restart）。</p>
+<blockquote>
+<p><strong>图元重启</strong>指：使用<code>_STRIP</code>后缀的图元进行绘制时，若读到一个特殊索引（如<code>0xFFFF</code>），则将索引前后的索引视作两个独立图元进行绘制，而非原先的增量绘制。</p>
+</blockquote>
+<p>该结构体包含下列属性：</p>
+<ul>
+<li><code>sType</code>：为<code>VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO</code></li>
+<li><code>topology</code>：将要使用的图元，为<code>VK_PRIMITIVE_TOPOLOGY</code>开头的枚举，常用<code>VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST</code>与<code>VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP</code></li>
+<li><code>primitiveRestart</code>：是否应用图元重启</li>
+</ul>
+<h5 id="视口与裁剪矩形"><a href="#视口与裁剪矩形" class="headerlink" title="视口与裁剪矩形"></a>视口与裁剪矩形</h5><p>视口（Viewport）描述了帧缓冲的位置与尺寸，表现为<code>VkViewport</code>实例。它包含下列成员：</p>
+<ul>
+<li>x：视口在窗口内的起点的横坐标</li>
+<li>y：视口在窗口内的起点的纵坐标</li>
+<li><code>width</code>：视口的宽度，单位为像素，一般与交换链Extent宽度一致</li>
+<li><code>height</code>：视口的高度，单位为像素，一般与交换链Extent高度一致</li>
+<li><code>minDepth</code>：深度取值的最小值，一般为0.0f</li>
+<li><code>maxDepth</code>：深度取值的最大值，一般为1.0f</li>
+</ul>
+<p>视口定义了图像到帧缓冲的转换，裁剪矩形则定义了实际存储像素的区域，位于裁剪矩形以外的像素都会被丢弃。下图展示了二者的区别：</p>
+<p><img src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/202512081430810.png" alt="image-20251208143007664"></p>
+<p>裁剪矩形表现为<code>VkRect2D</code>实例，该类包含<code>offset</code>和<code>extent</code>两个成员，前者为包含两个整形元素，表示裁剪矩形相对于帧缓冲区的原点的偏移量；后者表示裁剪矩形的尺寸，一般赋值为交换链的<code>Extent</code>。</p>
+<p>视口和裁剪矩形既可以被设为管线的静态组件，也可作为命令缓冲区的动态状态进行设置。渲染时对这两者进行设置不会损失性能。</p>
+<p>如果我们想写死视口和裁剪矩形状态，则需要填充<code>VkPipelineViewportStateCreateInfo</code>结构体，它包含下列成员：</p>
+<ul>
+<li><code>sType</code>：<code>VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_iNFO</code></li>
+<li><code>viewportCount</code>：部分设备支持多视口和多裁剪矩形，此成员为视口数量</li>
+<li><code>pViewports</code>：<code>VkViewport</code>数组</li>
+<li><code>scissorCount</code>：裁剪矩形数量</li>
+<li><code>pScissors</code>：<code>VkRect2D</code>数组</li>
+</ul>
+<h5 id="光栅化"><a href="#光栅化" class="headerlink" title="光栅化"></a>光栅化</h5><p>光栅接受V生成的几何体，并把它们变为可由FS着色的片段。光栅化期间会执行Depth Test、Face Culling与Scissor Test。我们可以配置光栅，使其填充多边形或仅输出线框。通过填写<code>VkPipelineRasterizationStateCreateInfo</code>结构体，我们可以执行这些配置。它包含下列成员：</p>
+<ul>
+<li><code>sType</code>：<code>VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO</code></li>
+<li><code>depthClampEnable</code>：<code>VkBool32</code>，是否保留近于近平面、远于远平面的片段，把它们的深度clamp到最近的界限。在ShadowMap中比较有用</li>
+<li><code>polygonMode</code>：<code>VK_POLYGON_MODE_</code>开头的枚举。可以为<code>FILL</code>、<code>LINE</code>与<code>POINT</code></li>
+<li><code>lineWidth</code>：顶点之间的线段粗细。大于1.0f的值需要开启<code>wideLines</code>特性</li>
+<li><code>cullMode</code>：<code>VK_CULL_MODE_</code>开头的枚举，可以为<code>BACK_BIT</code>、<code>FRONT_AND_BACK</code>、<code>FRONT_BIT</code>与<code>NONE</code>，表示背面&#x2F;双面&#x2F;正面&#x2F;不剔除</li>
+<li><code>frontFace</code>：<code>VK_FRONT_FACE</code>开头的枚举，可以为<code>CLOCKWISE</code>、<code>COUNTER_CLOCKWISE</code>，表示三角形的顶点顺序为顺时针&#x2F;逆时针时，认定该面为正面。</li>
+<li><code>depthBiasEnable</code>：是否启用深度偏移（即在原本的深度值上添加一个常量。这里用<code>VK_FALSE</code>），这在Shadow Map上有些用。</li>
+</ul>
+<h5 id="多重采样"><a href="#多重采样" class="headerlink" title="多重采样"></a>多重采样</h5><p><code>VkPipelineMultiSampleStateCreateInfo</code>用于配置多重采样，主要用于实现MSAA。其工作原理主要是把渲染到同一像素的多边形片段的FS结果进行合并。启用此功能需要激活GPU相关特性。</p>
+<p>结构体成员：</p>
+<ul>
+<li><code>sType</code>：<code>VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO</code></li>
+<li><code>sampleShadingEnable</code>：目前设置为<code>VK_FALSE</code></li>
+<li><code>rasterizationSamples</code>：目前设置为<code>VK_SAMPLE_COUNT_1_BIT</code></li>
+</ul>
+<h5 id="深度模板测试"><a href="#深度模板测试" class="headerlink" title="深度模板测试"></a>深度模板测试</h5><p>我们使用<code>VkPipelineDepthStencilStateCreateInfo</code>结构体配置深度模板测试。</p>
+<h5 id="颜色混合"><a href="#颜色混合" class="headerlink" title="颜色混合"></a>颜色混合</h5><p>颜色混合有两种实现方式：1. 将旧值与新值混合 2. 通过位运算将新旧值进行组合</p>
+<p>为了配置颜色混合，我们需要填充两个结构体：<code>VkPipelineColorBlendAttachmentState</code>和<code>VkPipelineColorBlendStateCreateInfo</code>。前者用于配置每个帧缓冲附件，后者用于配置全局颜色混合设定。</p>
+<h6 id="VkPipelineColorBlendAttachmentState"><a href="#VkPipelineColorBlendAttachmentState" class="headerlink" title="VkPipelineColorBlendAttachmentState"></a><code>VkPipelineColorBlendAttachmentState</code></h6><p>使用<code>VkPipelineColorBlendAttachmentState</code>结构体直接创建，用于配置逐Color Attachment的混合模式。每个Color Attachment都需要配置一次该类。</p>
+<ul>
+<li><code>sType</code>：<code>VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ATTACHMENT_STATE</code></li>
+<li><code>colorWriteMask</code>：<code>VK_COLOR_COMPONENT_</code>开头的枚举。表示写入哪些颜色通道，有<code>R_BIT</code>、<code>G_BIT</code>、<code>B_BIT</code>和<code>A_BIT</code>。</li>
+<li><code>blendEnable</code>：是否开启颜色混合</li>
+<li><code>srcColorBlendFactor</code>：<code>VK_BLEND_FACTOR_</code>开头的枚举，如何处理当前片段颜色</li>
+<li><code>dstColorBlendFactor</code>：如何处理旧的片段颜色</li>
+<li><code>colorBlendOp</code>：<code>VK_BLEND_OP_</code>开头的枚举，如何操作处理后的新旧片段颜色</li>
+<li><code>srcAlphaBlendFactor</code>：如何处理当前片段透明度</li>
+<li><code>dstAlphaBlendFacotr</code>：如何处理旧的片段透明度</li>
+<li><code>alphaBlendOp</code>：如何操作处理后的新旧片段透明度</li>
+</ul>
+<blockquote>
+<p>距离，若我们想实现经典的透明渲染，如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">finalColor.rgb = newAlpha * newColor + (<span class="number">1</span> - newAlpha) * oldColor;</span><br><span class="line">finalColor.a = newAlpha.a;</span><br></pre></td></tr></table></figure>
+
+<p>就这样设置：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">colorBlendAttachment.blendEnable = VK_TRUE;</span><br><span class="line">colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;</span><br><span class="line">colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;</span><br><span class="line">colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;</span><br><span class="line">colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;</span><br><span class="line">colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;</span><br><span class="line">colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;</span><br></pre></td></tr></table></figure></blockquote>
+<h6 id="VkPipelineColorBlendState"><a href="#VkPipelineColorBlendState" class="headerlink" title="VkPipelineColorBlendState"></a><code>VkPipelineColorBlendState</code></h6><p>使用<code>VkPipelineColorBlendStateCreateInfo</code>结构体创建，用于配置PSO的全局混合逻辑操作，持有<code>VkPipelineColorBlendAttachmentState</code>数组的指针。</p>
+<p>结构体包含：</p>
+<ul>
+<li><code>sType</code>：<code>VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO</code></li>
+<li><code>logicOpEnable</code>：是否开启全局位运算混合，开启后逐Attachment混合配置失效</li>
+<li><code>logicOp</code>：若开启位运算混合，该如何进行混合。为<code>VK_LOGIC_OP_</code>开头的枚举</li>
+<li><code>pAttachments</code>：指向<code>VkPipelineColorBlendAttachmentState</code>数组的指针</li>
+<li><code>attachmentCount</code></li>
+<li><code>blendConstants</code>：固定4个元素的数组，表示一个颜色，各元素分别对应着R、G、B、A四个颜色通道。若<code>VkPipelineColorBlendAttachmentState</code>的Color Blend Factor被设置为<code>VK_BLEND_FACTOR_CONSTANT_COLOR</code>或<code>VK_BLEND_FACTOR_CONSTANT_ALPHA</code>，则会选用这里的颜色值进行混合。</li>
+</ul>
+<h5 id="管线布局"><a href="#管线布局" class="headerlink" title="管线布局"></a>管线布局</h5><p>我们可以在着色器代码中定义<code>uniform</code>，从而从外部传递数据到着色器。为了让Vulkan程序能识别uniform的结构，我们需要创建<code>VkPipelineLayout</code>对象。</p>
+<p>通过填写<code>VkPipelineLayoutCreateInfo</code>结构体来创建，它包含下列成员：</p>
+<ul>
+<li><code>sType</code>：<code>VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO</code></li>
+<li><code>setLayoutCount</code>：**描述符集（Descriptor Set）**的数量</li>
+<li><code>pSetLayouts</code>：指向 <code>VkDescriptorSetLayout</code> 数组的指针。每个 <code>VkDescriptorSetLayout</code> 描述了某一个 set 里包含了具体哪些绑定（Binding）。</li>
+<li><code>pushConstantRangeCount</code>：**推送常量（Push Constant）**的数量</li>
+<li><code>pPushConstantRanges</code>：指向 <code>VkPushConstantRange</code> 数组的指针。</li>
+</ul>
+<blockquote>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// set 0: 这是一个 Uniform Buffer，通过描述符集配置</span></span><br><span class="line"><span class="keyword">layout</span>(set = <span class="number">0</span>, <span class="keyword">binding</span> = <span class="number">0</span>) <span class="keyword">uniform</span> MyUniforms &#123; ... &#125; ubo;</span><br><span class="line"><span class="comment">// push constant: 通过Push Constant配置</span></span><br><span class="line"><span class="keyword">layout</span>(push_constant) <span class="keyword">uniform</span> MyPushConsts &#123; <span class="type">mat4</span> model; &#125; pc;</span><br></pre></td></tr></table></figure></blockquote>
+<p>通过<code>vkCreatePipelineLayout</code>函数创建<code>VkPipelineLayout</code>实例。</p>
+<p>管线布局需要通过<code>vkDestroyPipelineLayout</code>进行清理。</p>
+<h4 id="渲染Pass"><a href="#渲染Pass" class="headerlink" title="渲染Pass"></a>渲染Pass</h4><p>在创建管道之前，我们需要告知Vulkan渲染中将要用到的帧缓冲Attachment。我们需要指定颜色缓冲区和深度缓冲区的数量、每个缓冲区的采样数，以及在渲染中如何处理这些缓冲区。这些信息被封装在<code>VkRenderPass</code>类中。</p>
+<p>为了创建<code>VkRenderPass</code>实例，我们需要首先创建<code>VkAttachmentDescription</code>、<code>VkAttachmentReference</code>以及<code>VkSubpassDescription</code>实例。</p>
+<blockquote>
+<p>我们可以认为，<code>VkRenderPass</code>是Attachment的呈现形式。</p>
+</blockquote>
+<h5 id="VkAttachmentDescription"><a href="#VkAttachmentDescription" class="headerlink" title="VkAttachmentDescription"></a><code>VkAttachmentDescription</code></h5><p>用于描述Attachment的格式、采样数以及对Attachment中的数据的预处理与后处理。</p>
+<ul>
+<li><code>format</code>：<code>VkFormat</code>，一般与交换链的<code>format</code>一致。</li>
+<li><code>samples</code>：<code>VK_SAMPLE_COUNT_</code>开头的枚举，单个像素采样几次。若不开启MSAA，则为<code>VK_SAMPLE_COUNT_1_BIT</code></li>
+<li><code>loadOp</code>：<code>VK_ATTACHMENT_LOAD_OP_</code>开头的枚举，加载帧缓冲时对其中内容做何种操作。包括<code>LOAD</code>、<code>CLEAR</code>、<code>DONT_CARE</code>，分别代表“保留内容”、“清除内容”以及“不关心”。</li>
+<li><code>storeOp</code>：<code>VK_ATTACHMENT_STORE_OP_</code>开头的枚举，完成渲染后对Attachment内容做何种操作。包括<code>STORE</code>和<code>DONT_CARE</code></li>
+<li><code>stencilLoadOp</code>：<code>VK_ATTACHMENT_LOAD_OP_</code>，渲染前如何处理模板值</li>
+<li><code>stencilStoreOp</code>：<code>VK_ATTACHMENT_STORE_OP_</code>，渲染后如何处理模板值</li>
+<li><code>initialLayout</code>：<code>VK_IMAGE_LAYOUT_</code>，此渲染Pass初始化时，Attachment内数据的布局状态（即图像的用途） 。包括<code>UNDEFINED</code> <code>COLOR_ATTACHMENT_OPTIMAL</code>、<code>PRESENT_SRC_KHR</code>和<code>TRANSFER_DST_OPTIMAL</code>，分别表示“无所谓”、“用作Color Attachment”、”用作交换链中呈现的图片”和”用作内存拷贝操作的目标“。</li>
+<li><code>finalLayout</code>：<code>VK_IMAGE_LAYOUT_</code>，此渲染Pass完成渲染后，Attachment内数据的布局状态。</li>
+</ul>
+<blockquote>
+<p>通常，<code>initialLayout</code>为<code>VK_IMAGE_LAYOUT_UNDEFINED</code>，<code>finalLayout</code>为<code>VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</code>。因为我们写入数据前不关心图片的内存是如何组织的，写入数据后希望图片呈现到交换链上。</p>
+</blockquote>
+<h5 id="AttachmentReference与Subpass"><a href="#AttachmentReference与Subpass" class="headerlink" title="AttachmentReference与Subpass"></a><code>AttachmentReference</code>与<code>Subpass</code></h5><p>单个Pass可包含多个SubPass。SubPass是依赖于前序流程中帧缓冲内容的后续渲染操作，例如一系列依次应用的后处理特效。如果将这些渲染操作组合到同一个渲染流程中，Vulkan 就能对操作进行重排序并节省显存带宽，从而带来更好的性能。目前，我们只使用一个SubPass。我们通过<code>VkSubpassDescription</code>定义<code>SubPass</code>。</p>
+<p>每个SubPass会引用一个或多个Attachment。所以我们要先定义<code>VkAttachmentReference</code>实例，便于<code>VkSubpassDescription</code>引用。<code>VkAttachmentReference</code>实例包括下列成员：</p>
+<ul>
+<li><code>attachment</code>：当前的<code>AttachmentReference</code>实例所引用的Attachment在数组内的索引</li>
+<li><code>layout</code>：<code>VK_IMAGE_LAYOUT_</code>，所引用的Attachment的内存布局</li>
+</ul>
+<p><code>VkSubpassDescription</code>包括：</p>
+<ul>
+<li><code>pipelineBindPoint</code>：Vulkan支持计算SubPass（类似于Compute Shader），所以目前我们需要为其指定SubPass的用途。<code>VK_PIPELINE_BIND_POINT_</code>，包括<code>GRAPHICS</code>、<code>COMPUTE</code>、<code>RAYTRAICING</code>等</li>
+<li><code>colorAttachmentCont</code>：引用的Attachment数量</li>
+<li><code>pColorAttachments</code>：引用的<code>VkAttachmentReference</code>数组。我们可以直接在片段着色器中，通过<code>layout(location=0) out vec4 outColor</code>语句，访问该数组的第0个颜色附件。</li>
+</ul>
+<blockquote>
+<p>除了<code>pColorAttachments</code>，还有<code>pInputAttachments</code>、<code>pResolveAttachments</code>、<code>pDepthStencilAttachment</code>、<code>pPreserveAttachments</code>。</p>
+</blockquote>
+<h5 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h5><p>有了Attachment描述与SubPass描述后，我们就可以开始创建Render Pass了。</p>
+<p>我们通过<code>VkRenderPassCreateInfo</code>结构体描述Render Pass。它包括：</p>
+<ul>
+<li><code>sType</code>：<code>VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO</code></li>
+<li><code>attachmentCount</code>：整个Render Pass持有的Attachment数量</li>
+<li><code>pAttachments</code>：<code>VkAttachmentDescription</code>数组</li>
+<li><code>subpassCount</code>：此Pass包含的SubPass数量</li>
+<li><code>pSubpasses</code>：<code>VkSubpass</code>数组</li>
+</ul>
+<p>通过<code>vkCreateRenderPass</code>创建<code>VkRenderPass</code>实例。</p>
+<p><code>VkRenderPass</code>实例需要通过<code>vkDestroyRenderPass</code>函数销毁。</p>
+<h4 id="创建管线"><a href="#创建管线" class="headerlink" title="创建管线"></a>创建管线</h4><p>有了上述实例后，我们就可以开始填写<code>VkGraphicsPipelineCreateInfo</code>了。它包含下列成员：</p>
+<ul>
+<li><code>sType</code>：<code>VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO</code></li>
+<li><code>stageCount</code>：<code>uint32_t</code>，该图形管线包含几个着色器阶段</li>
+<li><code>pStages</code>：<code>VkPipelineShaderStageCreateInfo</code>数组</li>
+<li><code>pVertexInputStage</code>：<code>VkPipelineVertexInputStateCreateInfo</code>指针</li>
+<li><code>pInputAssemblyState</code>：<code>VkPipelineInputAssemblyStateCreateInfo</code>指针</li>
+<li><code> pViewportState</code>：<code>VkPipelineViewportStateCreateInfo</code>指针</li>
+<li><code>pRasterizationState</code>：<code>VkPipelineRasterizationStateCreateInfo</code>指针</li>
+<li><code>pMultisampleState</code>：<code>VkPipelineMultisampleStateCreateInfo</code>指针</li>
+<li><code>pDepthStencilState</code>：<code>VkPipelineDepthStencilStateCreateInfo</code>指针</li>
+<li><code>pColorBlendState</code>：<code>VkPipelineColorBlendStateCreateInfo</code>指针</li>
+<li><code>pDynamicState</code>：<code>VkPipelineDynamicStateCreateInfo</code>指针</li>
+<li><code>layout</code>：<code>VkPipelineLayout</code>实例</li>
+<li><code>renderPass</code>：<code>VkRenderPass</code>实例</li>
+<li><code>subpass</code>：初始要使用的<code>subpass</code>在<code>renderPass</code>中的索引</li>
+<li><code>basePipelineHandle</code>：是否从现有管道派生新的管道，若是，则在此填写现有管道的句柄，否则<code>VK_NULL_HANDLE</code>。若要使用该属性，当前Create Info的<code>flags</code>字段必须包含<code>VK_PIPELINE_CREATE_DERIVATIVE_BIT</code></li>
+<li><code>basePipelineIndex</code>：即将创建的零一管道的索引</li>
+</ul>
+<p>通过<code>vkCreateGraphicsPipelines</code>创建图形管线。该方法允许同时创建多个<code>VkPipeline</code>实例。</p>
+<p>需要通过<code>vkDestroyPipeline</code>在程序结束时销毁管线实例。</p>
+<h3 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h3><h4 id="帧缓冲"><a href="#帧缓冲" class="headerlink" title="帧缓冲"></a>帧缓冲</h4><p>Render Pass创建时指定的Attachment需要将其绑定到<code>VkFramebuffer</code>对象。该对象会引用所有代表Attachment的<code>VkImageView</code>对象。我们必须为交换链中的所有图像创建<code>VkFramebuffer</code>，并在绘制时选用与当前获取图像匹配的帧缓冲区。</p>
+<p>我们通过填写<code>VkFramebufferCreateInfo</code>创建帧缓冲。它包含：</p>
+<ul>
+<li><code>sType</code>：<code>VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO</code></li>
+<li><code>attachmentCount</code>：此帧缓冲包含几个Attachment（<code>VkImageView</code>）</li>
+<li><code>pAttachment</code>：<code>VkImageView</code>数组</li>
+<li><code>height</code>：帧缓冲的高度，通常与swapchain的extent.height一致</li>
+<li><code>width</code>：帧缓冲的宽度</li>
+<li><code>layers</code>：帧缓冲的层数，一般为1</li>
+<li><code>renderPass</code>：帧缓冲使用的<code>VkRenderPass</code></li>
+</ul>
+<p>使用<code>vkCreateFramebuffer</code>创建<code>vkFramebuffer</code>实例。</p>
+<p>使用<code>vkDestroyFramebuffer</code>销毁。</p>
+<h4 id="命令缓冲区"><a href="#命令缓冲区" class="headerlink" title="命令缓冲区"></a>命令缓冲区</h4>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="cuidwnLWE5I7igOHH6JH8OXaM" data-title="Vulkan-Tutorial学习笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag">图形学</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag">图形学</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/" style="font-size: 10px;">图形学</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">December 2025</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/12/11/Vulkan-Tutorial%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Vulkan-Tutorial学习笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
