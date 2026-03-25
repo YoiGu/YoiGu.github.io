@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search - 攸一的文书档案</title>
+  <meta name="description" content="随心记录。">
+  <meta name="author" content="攸一">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="攸一的文书档案">
+  <meta property="og:description" content="随心记录。">
+  <meta property="og:type" content="website">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/atom+xml" title="攸一的文书档案 - Atom Feed" href="/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="攸一的文书档案 - RSS Feed" href="/rss.xml">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- KaTeX (math rendering) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError: false
+    });"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/highlight.css">
+  
+
+  <!-- Theme initialization (prevent flash) -->
+  <script>
+    (function(){
+      var t = localStorage.getItem('yoiblog-theme') ||
+        (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+  <!-- Reading progress bar -->
+  <div class="reading-progress" id="reading-progress"></div>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="site-title">攸一的文书档案</a>
+      <button class="mobile-menu-btn" aria-label="Menu">
+        <span class="hamburger"></span>
+      </button>
+      <nav class="nav">
+        
+        
+        <a href="/" >Home</a>
+        <a href="/archive/" >Archive</a>
+        <a href="/tags/" >Tags</a>
+        <a href="/categories/" >Categories</a>
+        <a href="/search/" class="active">Search</a>
+        <a href="/profile/" >About</a>
+        
+        <button class="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main ">
+    
+<h1 class="page-title">Search</h1>
+
+<input type="text" id="search-input" class="search-input" placeholder="Type to search posts..." autofocus>
+
+<div id="search-results" class="search-results"></div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>&copy; 攸一 &middot; Powered by <a href="https://github.com/YoiGu/yoiblog">YoiBlog</a></p>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <script src="/static/js/main.js"></script>
+  
+<script src="/static/js/search.js"></script>
+
+</body>
+</html>
