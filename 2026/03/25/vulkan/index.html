@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vulkan 学习笔记 | 简单版 - 攸一的文书档案</title>
+  <meta name="description" content="根据How to Vulkan in 2026系列教程撰写。">
+  <meta name="author" content="攸一">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Vulkan 学习笔记 | 简单版">
+  <meta property="og:description" content="根据How to Vulkan in 2026系列教程撰写。">
+  <meta property="og:type" content="article">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/atom+xml" title="攸一的文书档案 - Atom Feed" href="/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="攸一的文书档案 - RSS Feed" href="/rss.xml">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- KaTeX (math rendering) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError: false
+    });"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/highlight.css">
+  
+
+  <!-- Theme initialization (prevent flash) -->
+  <script>
+    (function(){
+      var t = localStorage.getItem('yoiblog-theme') ||
+        (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+  <!-- Reading progress bar -->
+  <div class="reading-progress" id="reading-progress"></div>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="site-title">攸一的文书档案</a>
+      <button class="mobile-menu-btn" aria-label="Menu">
+        <span class="hamburger"></span>
+      </button>
+      <nav class="nav">
+        
+        
+        <a href="/" >Home</a>
+        <a href="/archive/" >Archive</a>
+        <a href="/tags/" >Tags</a>
+        <a href="/categories/" >Categories</a>
+        <a href="/search/" >Search</a>
+        <a href="/profile/" >About</a>
+        
+        <a href="/about/" >About</a>
+        
+        <button class="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main post-layout">
+    
+<div class="post-container">
+  <article class="post-article">
+    <header class="post-header">
+      
+      <div class="post-categories-bar">
+        
+        <a href="/categories/图形学/" class="post-category-link">图形学</a>
+        
+        <a href="/categories/vulkan/" class="post-category-link">Vulkan</a>
+        
+      </div>
+      
+      <h1 class="post-title">Vulkan 学习笔记 | 简单版</h1>
+      <div class="post-meta-bar">
+        <span class="post-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          March 25, 2026
+        </span>
+        
+        <span class="post-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Updated March 25, 2026
+        </span>
+        
+        <span class="post-meta-item" id="reading-time">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="reading-time-text"></span>
+        </span>
+      </div>
+      
+      <div class="post-tags-bar">
+        
+        <a href="/tags/图形学/" class="tag">图形学</a>
+        
+        <a href="/tags/vulkan/" class="tag">Vulkan</a>
+        
+        <a href="/tags/学习笔记/" class="tag">学习笔记</a>
+        
+      </div>
+      
+    </header>
+
+    <div class="post-content" id="post-content">
+      <h1 id="vulkan">Vulkan 简单学习笔记<a class="headerlink" href="#vulkan" title="Permanent link">&para;</a></h1>
+<p><img alt="" src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/20260324164832329.png" />
+<img alt="" src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/20260324164842128.png" />
+<img alt="" src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/20260324164851490.png" />
+<img alt="" src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/20260324164903261.png" />
+<img alt="" src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/20260324164918037.png" /></p>
+<h2 id="_1">实例与设备设置<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p><strong>Vulkan实例</strong>（<code>VkInstance</code>）是应用程序与Vulkan之间的桥梁。Vulkan程序运行的第一步是创建Vulkan实例。</p>
+<h3 id="vulkan_1">创建Vulkan实例<a class="headerlink" href="#vulkan_1" title="Permanent link">&para;</a></h3>
+<p>先填写<code>VkApplicationInfo</code>，再填写<code>VkInstanceCreateInfo</code>，最后调用<code>vkCreateInstance</code>来创建实例。</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkApplicationInfo</span><span class="w"> </span><span class="n">appInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="n">appInfo</span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_APPLICATION_INFO</span><span class="p">;</span>
+<span class="n">appInfo</span><span class="p">.</span><span class="n">pApplicationName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Hello Triangle&quot;</span><span class="p">;</span>
+<span class="n">appInfo</span><span class="p">.</span><span class="n">apiVersion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_API_VERSION_1_3</span><span class="p">;</span>
+</code></pre></div>
+<blockquote>
+<p>注意，这是Minimal的<code>VkApplicationInfo</code>结构体填写方式。</p>
+</blockquote>
+<p>随后，指定要启用的实例级扩展。实例级扩展是平台相关的，我们可以从glfw或SDL等库中获取所需的扩展名称。</p>
+<div class="highlight"><pre><span></span><code><span class="kt">uint32_t</span><span class="w"> </span><span class="n">glfwExtensionCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">**</span><span class="w"> </span><span class="n">glfwExtensions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glfwGetRequiredInstanceExtensions</span><span class="p">(</span><span class="o">&amp;</span><span class="n">glfwExtensionCount</span><span class="p">);</span>
+</code></pre></div>
+<p>接下来，创建<code>VkInstanceCreateInfo</code>结构体，并将之前填写的应用程序信息和扩展信息传入。</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkInstanceCreateInfo</span><span class="w"> </span><span class="n">createInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span><span class="p">;</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">pApplicationInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">appInfo</span><span class="p">;</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">enabledExtensionCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glfwExtensionCount</span><span class="p">;</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">ppEnabledExtensionNames</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glfwExtensions</span><span class="p">;</span>
+
+<span class="n">chk</span><span class="p">(</span><span class="n">vkCreateInstance</span><span class="p">(</span><span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">instance</span><span class="p">));</span>
+</code></pre></div>
+<blockquote>
+<p>这里的<code>chk</code>函数是一个错误检查函数，用于检查Vulkan函数调用的返回值是否为<code>VK_SUCCESS</code>。</p>
+</blockquote>
+<h3 id="_2">物理设备选择<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>当一台电脑上有多张显卡，或者同时存在集显和独显时，就存在多个Vulkan物理设备。我们需要选择一个物理设备来使用。</p>
+<p>在Vulkan中，“选择”这一过程是通过枚举物理设备实现的：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">uint32_t</span><span class="w"> </span><span class="n">deviceCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkEnumeratePhysicalDevices</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">deviceCount</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">));</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkPhysicalDevice</span><span class="o">&gt;</span><span class="w"> </span><span class="n">devices</span><span class="p">(</span><span class="n">deviceCount</span><span class="p">);</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkEnumeratePhysicalDevices</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">deviceCount</span><span class="p">,</span><span class="w"> </span><span class="n">devices</span><span class="p">.</span><span class="n">data</span><span class="p">()));</span>
+</code></pre></div>
+<p>我们可以通过<code>vkGetPhysicalDeviceProperties</code>函数获取每个物理设备的属性信息：</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkPhysicalDeviceProperties2</span><span class="w"> </span><span class="n">deviceProperties</span><span class="p">;</span>
+<span class="n">deviceProperties</span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2</span><span class="p">;</span>
+<span class="n">vkGetPhysicalDeviceProperties2</span><span class="p">(</span><span class="n">device</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">deviceProperties</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Device Name: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">deviceProperties</span><span class="p">.</span><span class="n">properties</span><span class="p">.</span><span class="n">deviceName</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</code></pre></div>
+<p>除了<code>deviceName</code>外，还有<code>deviceType</code>、<code>vendorID</code>、<code>deviceID</code>等属性可以参考。</p>
+<h4 id="_3">队列<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
+<p>Vulkan中的命令提交是通过队列（Queue）来完成的。</p>
+<p>队列不能简单理解为数据结构中的队列。Vulkan中，队列是对硬件功能的抽象。</p>
+<p>队列按族进行划分，同族的队列具有相同的功能。不同GPU可能有不同的队列族和队列数量。</p>
+<p>我们通过<code>vkGetPhysicalDeviceQueueFamilyProperties</code>函数获取物理设备的队列族信息：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">uint32_t</span><span class="w"> </span><span class="n">queueFamilyCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">vkGetPhysicalDeviceQueueFamilyProperties</span><span class="p">(</span><span class="n">device</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">queueFamilyCount</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkQueueFamilyProperties</span><span class="o">&gt;</span><span class="w"> </span><span class="n">queueFamilies</span><span class="p">(</span><span class="n">queueFamilyCount</span><span class="p">);</span>
+<span class="n">vkGetPhysicalDeviceQueueFamilyProperties</span><span class="p">(</span><span class="n">device</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">queueFamilyCount</span><span class="p">,</span><span class="w"> </span><span class="n">queueFamilies</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+</code></pre></div>
+<p>队列族的<code>queueFlags</code>字段表示该队列族支持的功能。假设我们要判断一个队列族是否支持图形功能：</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">queueFamilies</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">queueFlags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">VK_QUEUE_GRAPHICS_BIT</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 该队列族支持图形功能</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>此外，还需要查看队列族是否支持呈现功能。我们可以使用<code>vkGetPhysicalDeviceSurfaceSupportKHR</code>函数：</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkBool32</span><span class="w"> </span><span class="n">presentSupport</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="n">vkGetPhysicalDeviceSurfaceSupportKHR</span><span class="p">(</span><span class="n">device</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">surface</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">presentSupport</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">presentSupport</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 该队列族支持呈现功能</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>通过填写<code>VkDeviceQueueCreateInfo</code>结构体，我们可以指定要创建的逻辑设备需要哪些队列：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">queuePriority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">;</span>
+<span class="n">VkDeviceQueueCreateInfo</span><span class="w"> </span><span class="n">queueCreateInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="n">queueCreateInfo</span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO</span><span class="p">;</span>
+<span class="n">queueCreateInfo</span><span class="p">.</span><span class="n">queueFamilyIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="c1">// 队列族索引</span>
+<span class="n">queueCreateInfo</span><span class="p">.</span><span class="n">queueCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// 创建一个队列</span>
+<span class="n">queueCreateInfo</span><span class="p">.</span><span class="n">pQueuePriorities</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">queuePriority</span><span class="p">;</span><span class="w"> </span><span class="c1">// 队列优先级</span>
+</code></pre></div>
+<h3 id="_4">创建逻辑设备<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>物理设备是实际的GPU，逻辑设备则是我们与物理设备交互的接口。创建逻辑设备时，我们需要指定要使用的队列和要启用的设备级扩展。</p>
+<p>通常，这里我们只需要<code>VK_KHR_swapchain</code>扩展来支持交换链功能：</p>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">deviceExtensions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">VK_KHR_SWAPCHAIN_EXTENSION_NAME</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>还有另一些我们需要的功能，已经集成在Vulkan 1.3核心规范中，不需要单独启用扩展：</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkPhysicalDeviceVulkan12Features</span><span class="w"> </span><span class="n">enabledVk12Features</span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">descriptorIndexing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">shaderSampledImageArrayNonUniformIndexing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">descriptorBindingVariableDescriptorCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">runtimeDescriptorArray</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">bufferDeviceAddress</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="p">};</span>
+<span class="k">const</span><span class="w"> </span><span class="n">VkPhysicalDeviceVulkan13Features</span><span class="w"> </span><span class="n">enabledVk13Features</span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">pNext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">enabledVk12Features</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">synchronization2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dynamicRendering</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="k">const</span><span class="w"> </span><span class="n">VkPhysicalDeviceFeatures</span><span class="w"> </span><span class="n">enabledVk10Features</span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">samplerAnisotropy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_TRUE</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>确定了要使用的队列、扩展以及需要启用的功能后，我们就可以创建逻辑设备了：</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkDeviceCreateInfo</span><span class="w"> </span><span class="n">createInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO</span><span class="p">;</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">queueCreateInfoCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">pQueueCreateInfos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">queueCreateInfo</span><span class="p">;</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">enabledExtensionCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">deviceExtensions</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">ppEnabledExtensionNames</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deviceExtensions</span><span class="p">.</span><span class="n">data</span><span class="p">();</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">pEnabledFeatures</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">enabledVk10Features</span><span class="p">;</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">pNext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">enabledVk13Features</span><span class="p">;</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkCreateDevice</span><span class="p">(</span><span class="n">device</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">logicalDevice</span><span class="p">));</span>
+</code></pre></div>
+<p>随后，从逻辑设备中获取创建好的队列：</p>
+<div class="highlight"><pre><span></span><code><span class="n">vkGetDeviceQueue</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">graphicsQueue</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="vma">设置VMA<a class="headerlink" href="#vma" title="Permanent link">&para;</a></h3>
+<p>原生Vulkan的内存管理需要开发者手动管理内存分配和释放，这非常麻烦。Vulkan Memory Allocator（VMA）是一个第三方库，提供了更高层次的内存管理接口，简化了内存分配和资源绑定的过程。</p>
+<p>在项目初始化时，我们需要创建VMA分配器：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 传递函数指针</span>
+<span class="n">VmaVulkanFunctions</span><span class="w"> </span><span class="n">vulkanFunctions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="n">vulkanFunctions</span><span class="p">.</span><span class="n">vkGetInstanceProcAddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vkGetInstanceProcAddr</span><span class="p">;</span>
+<span class="n">vulkanFunctions</span><span class="p">.</span><span class="n">vkGetDeviceProcAddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vkGetDeviceProcAddr</span><span class="p">;</span>
+<span class="n">vulkanFunctions</span><span class="p">.</span><span class="n">vkCreateImage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vkCreateImage</span><span class="p">;</span>
+
+<span class="n">VmaAllocatorCreateInfo</span><span class="w"> </span><span class="n">allocatorInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="n">allocatorInfo</span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT</span><span class="p">;</span>
+<span class="n">allocatorInfo</span><span class="p">.</span><span class="n">physicalDevice</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">physicalDevice</span><span class="p">;</span>
+<span class="n">allocatorInfo</span><span class="p">.</span><span class="n">device</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">logicalDevice</span><span class="p">;</span>
+<span class="n">allocatorInfo</span><span class="p">.</span><span class="n">pVulkanFunctions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">vulkanFunctions</span><span class="p">;</span>
+<span class="n">allocatorInfo</span><span class="p">.</span><span class="n">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instance</span><span class="p">;</span>
+
+<span class="n">chk</span><span class="p">(</span><span class="n">vmaCreateAllocator</span><span class="p">(</span><span class="o">&amp;</span><span class="n">allocatorInfo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">allocator</span><span class="p">));</span>
+</code></pre></div>
+<h2 id="_5">窗口与渲染目标<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_6">表面<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>Vulkan中的表面（Surface）是一个抽象概念，表示一个可以被Vulkan渲染的目标。表面通常与窗口系统相关联，例如在Windows上是一个窗口句柄，在Linux上是一个X11或Wayland表面。</p>
+<p>通常，我们使用第三方库（如GLFW或SDL）来创建窗口和表面：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 先创建一个GLFW窗口</span>
+<span class="n">GLFWwindow</span><span class="o">*</span><span class="w"> </span><span class="n">window</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glfwCreateWindow</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span><span class="w"> </span><span class="mi">600</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Vulkan Window&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="c1">// 然后创建Vulkan表面</span>
+<span class="n">VkSurfaceKHR</span><span class="w"> </span><span class="n">surface</span><span class="p">;</span>
+<span class="n">glfwCreateWindowSurface</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">surface</span><span class="p">);</span>
+<span class="c1">// 保存表面属性到变量，便于后续使用</span>
+<span class="n">VkSurfaceCapabilitiesKHR</span><span class="w"> </span><span class="n">surfaceCapabilities</span><span class="p">;</span>
+<span class="n">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span><span class="w"> </span><span class="n">surface</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">surfaceCapabilities</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="_7">交换链<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>交换链（Swapchain）是Vulkan中用于管理帧缓冲的机制。它负责在渲染完成后将图像呈现到屏幕上。</p>
+<p>交换链本质上是一组图像，排着队等待被渲染和呈现。我们需要根据表面属性来创建交换链。</p>
+<p>创建交换链所需的参数较多：
+<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">VkFormat</span><span class="w"> </span><span class="n">swapchainImageFormat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_FORMAT_B8G8R8A8_SRGB</span><span class="p">;</span>
+<span class="n">VkSwapchainCreateInfoKHR</span><span class="w"> </span><span class="n">createInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">surface</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">surface</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 交换链中的图像数量必须至少为表面支持的最小值加1，以确保有足够的图像进行渲染和呈现</span>
+<span class="w">    </span><span class="c1">// 双缓冲则为2，三缓冲则为3</span>
+<span class="w">    </span><span class="c1">// 设备相关，需要从表面属性中获取</span>
+<span class="w">    </span><span class="p">.</span><span class="n">minImageCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">surfaceCapabilities</span><span class="p">.</span><span class="n">minImageCount</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// B8G8R8A8_SRGB配合VK_COLOR_SPACE_SRGB_NONLINEAR_KHR的组合所有平台必定支持</span>
+<span class="w">    </span><span class="p">.</span><span class="n">imageFormat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">swapchainImageFormat</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">imageColorSpace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 交换链图像的分辨率必须与表面当前的分辨率匹配</span>
+<span class="w">    </span><span class="p">.</span><span class="n">imageExtent</span><span class="p">{.</span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">surfaceCapabilities</span><span class="p">.</span><span class="n">currentExtent</span><span class="p">.</span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">surfaceCapabilities</span><span class="p">.</span><span class="n">currentExtent</span><span class="p">.</span><span class="n">height</span><span class="p">},</span>
+<span class="w">    </span><span class="c1">// 交换链图像的层数，普通为1，VR为2</span>
+<span class="w">    </span><span class="p">.</span><span class="n">imageArrayLayers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 交换链图像的使用方式为颜色附件</span>
+<span class="w">    </span><span class="p">.</span><span class="n">imageUsage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 在图像被呈现前的预变换</span>
+<span class="w">    </span><span class="p">.</span><span class="n">preTransform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 交换链图像的复合Alpha模式，表示图像如何与其他窗口内容进行混合</span>
+<span class="w">    </span><span class="p">.</span><span class="n">compositeAlpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 交换链图像的呈现模式，包含IMMEDIATE、MAILBOX、FIFO等。FIFO强制支持，MAILBOX延迟最低，IMMEDIATE可能会有撕裂</span>
+<span class="w">    </span><span class="p">.</span><span class="n">presentMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_PRESENT_MODE_FIFO_KHR</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkCreateSwapchainKHR</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">createInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">swapchain</span><span class="p">));</span>
+</code></pre></div></p>
+<p>交换链创建成功后，我们可以获取交换链中的图像。</p>
+<blockquote>
+<p>通常，对于图像资源，我们需要为它们分配内存并绑定内存，但交换链图像由Vulkan管理，我们不需要手动分配和绑定内存。</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="kt">uint32_t</span><span class="w"> </span><span class="n">swapchainImageCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">vkGetSwapchainImagesKHR</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="n">swapchain</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">swapchainImageCount</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkImage</span><span class="o">&gt;</span><span class="w"> </span><span class="n">swapchainImages</span><span class="p">(</span><span class="n">swapchainImageCount</span><span class="p">);</span>
+<span class="n">vkGetSwapchainImagesKHR</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="n">swapchain</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">swapchainImageCount</span><span class="p">,</span><span class="w"> </span><span class="n">swapchainImages</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+</code></pre></div>
+<h3 id="_8">深度附件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>与交换链图像不同，深度附件需要自己创建和管理。</p>
+<p>创建深度附件的过程为：查询物理设备支持的深度格式，创建深度图像，分配内存并绑定内存，创建图像视图。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 查询支持的深度格式</span>
+<span class="c1">// Vulkan规范保证至少支持VK_FORMAT_D32_SFLOAT_S8_UINT和VK_FORMAT_D24_UNORM_S8_UINT这两种深度格式中的一个</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkFormat</span><span class="o">&gt;</span><span class="w"> </span><span class="n">depthFormats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">VK_FORMAT_D32_SFLOAT_S8_UINT</span><span class="p">,</span><span class="w"> </span><span class="n">VK_FORMAT_D24_UNORM_S8_UINT</span><span class="p">};</span>
+<span class="n">VkFormat</span><span class="w"> </span><span class="n">depthFormat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_FORMAT_UNDEFINED</span><span class="p">;</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">VkFormat</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">depthFormats</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">VkFormatProperties</span><span class="w"> </span><span class="n">formatProperties</span><span class="p">;</span>
+<span class="w">    </span><span class="n">vkGetPhysicalDeviceFormatProperties</span><span class="p">(</span><span class="n">physicalDevice</span><span class="p">,</span><span class="w"> </span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">formatProperties</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">formatProperties</span><span class="p">.</span><span class="n">optimalTilingFeatures</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">depthFormat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">format</span><span class="p">;</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// 创建深度图像</span>
+<span class="n">VkImageCreateInfo</span><span class="w"> </span><span class="n">depthImageInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">imageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_TYPE_2D</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">depthFormat</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">extent</span><span class="p">{.</span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">surfaceCapabilities</span><span class="p">.</span><span class="n">currentExtent</span><span class="p">.</span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">surfaceCapabilities</span><span class="p">.</span><span class="n">currentExtent</span><span class="p">.</span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="n">depth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">},</span>
+<span class="w">    </span><span class="p">.</span><span class="n">mipLevels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">arrayLayers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">samples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_SAMPLE_COUNT_1_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 让图像以GPU最优的方式进行布局和内存访问</span>
+<span class="w">    </span><span class="p">.</span><span class="n">tiling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_TILING_OPTIMAL</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 不关心图像的初始内容，允许Vulkan以最优的方式处理图像内存</span>
+<span class="w">    </span><span class="p">.</span><span class="n">initialLayout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_LAYOUT_UNDEFINED</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="c1">//使用VMA创建深度图像并分配内存</span>
+<span class="n">VmaAllocationCreateInfo</span><span class="w"> </span><span class="n">depthImageAllocInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 给此图像分配独立的内存块，避免与其他资源共享内存。大图像或频繁访问的图像建议使用独立内存。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 根据其他参数自动选择内存类型</span>
+<span class="w">    </span><span class="p">.</span><span class="n">usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VMA_MEMORY_USAGE_AUTO</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">VmaAllocation</span><span class="w"> </span><span class="n">depthImageAllocation</span><span class="p">;</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vmaCreateImage</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">depthImageInfo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">depthImageAllocInfo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">depthImage</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">depthImageAllocation</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">));</span>
+<span class="c1">// 因为深度附件是GPU独占的，与CPU无关，所以不需要多个图像进行帧同步，直接创建一个深度图像即可。</span>
+
+<span class="c1">// 创建深度图像视图</span>
+<span class="n">VkImageViewCreateInfo</span><span class="w"> </span><span class="n">depthImageViewInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">depthImage</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">viewType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_VIEW_TYPE_2D</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">depthFormat</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 指定视图能访问图像的哪些部分。</span>
+<span class="w">    </span><span class="c1">// 例如，多Mip图像可以创建不同视图，每个视图访问不同的Mip级别。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">subresourceRange</span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">aspectMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_ASPECT_DEPTH_BIT</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">levelCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">layerCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkCreateImageView</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">depthImageViewInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">depthImageView</span><span class="p">));</span>
+</code></pre></div>
+<h2 id="_9">资源加载与同步<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>为了尽可能减少CPU与GPU之间的相互等待，我们使用多缓冲的方式，让所有CPU和GPU共享的资源都有多个副本。这样，CPU在更新资源时可以使用一个副本，而GPU在渲染时可以使用另一个副本，从而避免了CPU和GPU之间的直接等待。</p>
+<p>在Vulkan中，这些副本被称为飞行中的帧（In-flight Frame）。每个飞行中的帧都有自己的命令缓冲、同步对象和资源副本。</p>
+<p>飞行中的帧越多，从渲染到呈现的延迟就越大。一般我们使用双缓冲或三缓冲来平衡性能和延迟。</p>
+<p>CPU和GPU共享的资源有：着色器数据缓冲区（ShaderDataBuffer）和命令缓冲区（CommandBuffer）。</p>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">MAX_FRAMES_IN_FLIGHT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">ShaderDataBuffer</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_FRAMES_IN_FLIGHT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shaderDataBuffers</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">VkCommandBuffer</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_FRAMES_IN_FLIGHT</span><span class="o">&gt;</span><span class="w"> </span><span class="n">commandBuffers</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="_10">着色器数据缓冲区<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>着色器数据缓冲区是一个GPU缓冲区，用于存储CPU更新的着色器数据，例如变换矩阵、材质参数等。</p>
+<p>CPU向着色器数据缓冲区写入数据，GPU读取这些数据。GPU保证在Drawcall期间，着色器数据缓冲区的数据不会被修改。</p>
+<p>例如，在CPU端：
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">ShaderData</span><span class="p">{</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">model</span><span class="p">;</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">view</span><span class="p">;</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">projection</span><span class="p">;</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">vec4</span><span class="w"> </span><span class="n">lightPos</span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">-10.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">10.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">};</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">selected</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+<span class="p">}</span><span class="w"> </span><span class="n">shaderData</span><span class="p">{};</span>
+</code></pre></div></p>
+<p>Vulkan 1.3新增的<strong>缓冲区设备地址</strong>功能允许我们直接在GPU上访问缓冲区内存，而不需要绑定和复制数据。使用缓冲区设备地址时，我们不需要设置描述符。</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">MAX_FRAMES_IN_FLIGHT</span><span class="p">;</span><span class="o">++</span><span class="n">i</span><span class="p">){</span>
+<span class="w">    </span><span class="n">VkBufferCreateInfo</span><span class="w"> </span><span class="n">uBufferCI</span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">ShaderData</span><span class="p">),</span>
+<span class="w">        </span><span class="c1">// 通过设备地址访问缓冲区，允许GPU直接访问缓冲区内存，而不需要绑定和复制数据。</span>
+<span class="w">        </span><span class="p">.</span><span class="n">usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">VmaAllocationCreateInfo</span><span class="w"> </span><span class="n">uBufferAllocCI</span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VMA_MEMORY_USAGE_AUTO</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">        </span><span class="c1">// 当存在HOST_VISIBLE内存类型时，VMA会优先选择HOST_VISIBLE内存类型，这样CPU可以直接访问缓冲区内存，无需额外的映射步骤。</span>
+<span class="w">        </span><span class="n">VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>
+<span class="w">        </span><span class="c1">// 允许VMA在HOST_VISIBLE内存类型不可用时，选择DEVICE_LOCAL内存类型，并通过Staging Buffer的方式实现CPU访问。这种方式会增加一些开销，但在某些平台上可能是唯一的选择。</span>
+<span class="w">        </span><span class="n">VMA_ALLOCATION_CREATE_HOST_ACCESS_ALLOW_TRANSFER_INSTEAD_BIT</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>
+<span class="w">        </span><span class="c1">// 分配完成后立即将内存映射到CPU地址空间，允许CPU直接访问缓冲区内存，无需额外的映射步骤。</span>
+<span class="w">        </span><span class="c1">// 通过VmaAllocationInfo::pMappedData指针，CPU可以直接访问缓冲区内存</span>
+<span class="w">        </span><span class="n">VMA_ALLOCATION_CREATE_MAPPED_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">chk</span><span class="p">(</span><span class="n">vmaCreateBuffer</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">uBufferCI</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">uBufferAllocCI</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">shaderDataBuffers</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">shaderDataBuffers</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">allocation</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">));</span>
+<span class="w">    </span><span class="n">chk</span><span class="p">(</span><span class="n">vmaMapMemory</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="n">shaderDataBuffers</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">allocation</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">shaderDataBuffers</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">mapped</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="_11">同步对象<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>为了检查同步相关问题，可以开启验证层的同步验证预设。</p>
+<p>具体开启方法为：在创建Vulkan实例时，启用<code>VK_EXT_validation_features</code>扩展，并在实例创建信息中指定要启用的验证功能：
+<div class="highlight"><pre><span></span><code><span class="n">VkValidationFeatureEnableEXT</span><span class="w"> </span><span class="n">validationFeatures</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT</span>
+<span class="p">};</span>
+
+<span class="n">VkValidationFeaturesEXT</span><span class="w"> </span><span class="n">validationFeaturesInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT</span><span class="p">,</span>
+<span class="w">   </span><span class="p">.</span><span class="n">enabledValidationFeatureCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="p">.</span><span class="n">pEnabledValidationFeatures</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">validationFeatures</span>
+<span class="p">};</span>
+<span class="c1">// VkInstanceCreateInfo结构体中设置pNext指针，指向验证功能信息结构体</span>
+<span class="n">createInfo</span><span class="p">.</span><span class="n">pNext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">validationFeaturesInfo</span><span class="p">;</span>
+</code></pre></div></p>
+</blockquote>
+<p>Vulkan包含下面三大同步方式：</p>
+<ol>
+<li><strong>栅栏</strong>（Fence）：GPU通知CPU工作完成。主要用于<strong>CPU等待GPU完成某些工作</strong>的情况，例如等待GPU完成当前帧的渲染工作，才能开始下一帧的资源更新和命令录制。</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nl">CPU</span><span class="p">:</span><span class="w">  </span><span class="n">vkQueueSubmit</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">fence</span><span class="p">)</span><span class="w">   </span><span class="err">←</span><span class="w"> </span><span class="n">提交命令</span><span class="err">，</span><span class="n">顺带递给GPU一面旗子</span>
+<span class="nl">CPU</span><span class="p">:</span><span class="w">  </span><span class="n">vkWaitForFences</span><span class="p">(</span><span class="n">fence</span><span class="p">)</span><span class="w">             </span><span class="err">←</span><span class="w"> </span><span class="n">CPU</span><span class="w"> </span><span class="n">在这里阻塞等待</span>
+<span class="w">      </span><span class="p">...</span><span class="err">（</span><span class="n">CPU</span><span class="w"> </span><span class="n">睡着了</span><span class="err">）</span><span class="p">...</span>
+<span class="nl">GPU</span><span class="p">:</span><span class="w">  </span><span class="n">执行完命令</span><span class="w">                          </span><span class="err">←</span><span class="w"> </span><span class="n">GPU</span><span class="w"> </span><span class="n">把旗子立起来</span>
+<span class="nl">CPU</span><span class="p">:</span><span class="w">  </span><span class="err">（</span><span class="n">旗子立了</span><span class="err">，</span><span class="n">醒来继续</span><span class="err">）</span>
+<span class="w">      </span><span class="n">vkResetFences</span><span class="p">(</span><span class="n">fence</span><span class="p">)</span><span class="w">               </span><span class="err">←</span><span class="w"> </span><span class="n">把旗子放倒</span><span class="err">，</span><span class="n">下次再用</span>
+</code></pre></div>
+<ol>
+<li><strong>信号量</strong>（Semaphore）：控制GPU端资源访问，保证呈现顺序，主要用于<strong>GPU等待GPU内部完成某些工作</strong>的情况，比如图形队列和呈现队列之间的同步。</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="n">vkQueueSubmit</span><span class="p">(</span><span class="n">graphicsQueue</span><span class="p">,</span>
+<span class="w">    </span><span class="n">waitSemaphores</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">    </span><span class="n">signalSemaphores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">semaphore</span><span class="p">})</span><span class="w">    </span><span class="err">←</span><span class="w"> </span><span class="n">图形队列</span><span class="err">：</span><span class="n">完成后发信号</span>
+
+<span class="n">vkQueueSubmit</span><span class="p">(</span><span class="n">presentQueue</span><span class="p">,</span>
+<span class="w">    </span><span class="n">waitSemaphores</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">semaphore</span><span class="p">},</span><span class="w">    </span><span class="err">←</span><span class="w"> </span><span class="n">呈现队列</span><span class="err">：</span><span class="n">收到信号才开始</span>
+<span class="w">    </span><span class="n">signalSemaphores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{})</span>
+</code></pre></div>
+<ol>
+<li><strong>管线屏障</strong>（Pipeline Barrier）：控制GPU队列内的资源访问，做图像布局转换，主要用于<strong>GPU等待GPU内部完成某些工作</strong>的情况，例如在同一条命令缓冲中，前一个操作完成后才能进行下一个操作。</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="n">操作1</span><span class="p">]</span><span class="w"> </span><span class="n">用布局</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">渲染到图像</span>
+<span class="w">    </span><span class="err">↓</span>
+<span class="p">[</span><span class="n">vkCmdPipelineBarrier</span><span class="p">]</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">转换点</span><span class="err">：</span><span class="n">A</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">B</span>
+<span class="w">    </span><span class="err">↓</span>
+<span class="p">[</span><span class="n">操作2</span><span class="p">]</span><span class="w"> </span><span class="n">用布局</span><span class="w"> </span><span class="n">B</span><span class="w"> </span><span class="n">采样这个图像</span>
+</code></pre></div>
+<blockquote>
+<p>简单来说：</p>
+<p>栅栏：GPU，你把这批命令执行完之后，给我（CPU）插一面旗子。我会在某个时刻过来看这面旗子立起来没有，立起来了我才继续往下走。</p>
+<p>信号量：GPU，你把队列A的这批命令执行完之后，给队列B发一个信号。队列B收到信号之前，不许开始干活。</p>
+<p>管线屏障：在我这条屏障指令之前提交的操作全部完成后，把这个图像从布局 A 转换到布局 B，然后后续操作才能开始。</p>
+</blockquote>
+<p>对于栅栏与信号量：
+<div class="highlight"><pre><span></span><code><span class="n">VkSemaphoreCreateInfo</span><span class="w"> </span><span class="n">semaphoreInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO</span>
+<span class="p">};</span>
+<span class="n">VkFenceCreateInfo</span><span class="w"> </span><span class="n">fenceInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_FENCE_CREATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 创建时就让栅栏处于已信号状态，这样第一次提交命令时就不需要等待了。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_FENCE_CREATE_SIGNALED_BIT</span>
+<span class="p">};</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkSemaphore</span><span class="o">&gt;</span><span class="w"> </span><span class="n">presentSemaphores</span><span class="p">(</span><span class="n">MAX_FRAMES_IN_FLIGHT</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkFence</span><span class="o">&gt;</span><span class="w"> </span><span class="n">inFlightFences</span><span class="p">(</span><span class="n">MAX_FRAMES_IN_FLIGHT</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkSemaphore</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renderSemaphores</span><span class="p">;</span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">MAX_FRAMES_IN_FLIGHT</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">chk</span><span class="p">(</span><span class="n">vkCreateSemaphore</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">semaphoreInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">presentSemaphores</span><span class="p">[</span><span class="n">i</span><span class="p">]));</span>
+<span class="w">    </span><span class="n">chk</span><span class="p">(</span><span class="n">vkCreateFence</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">fenceInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">inFlightFences</span><span class="p">[</span><span class="n">i</span><span class="p">]));</span>
+<span class="p">}</span>
+
+<span class="n">renderSemaphores</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">swapchainImageCount</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">swapchainImageCount</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">chk</span><span class="p">(</span><span class="n">vkCreateSemaphore</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">semaphoreInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">renderSemaphores</span><span class="p">[</span><span class="n">i</span><span class="p">]));</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="_12">命令缓冲区<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p>Vulkan需要先把命令记录到命令缓冲区，提交到队列后才能执行命令。</p>
+<blockquote>
+<p>这么做的目的是让驱动能优化命令的执行方式，比如把多个绘制命令合并成一个批次，或者重新排序命令以提高性能。</p>
+<p>此外，我们还可以多线程录制命令缓冲区，充分利用多核CPU的性能。</p>
+</blockquote>
+<p>我们需要从命令池（Command Pool）中分配命令缓冲区：</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkCommandPoolCreateInfo</span><span class="w"> </span><span class="n">poolInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">queueFamilyIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">graphicsQueueFamilyIndex</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 允许命令缓冲区被重置，这样我们就不需要每次都销毁和重新创建命令缓冲区了。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkCreateCommandPool</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">poolInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">commandPool</span><span class="p">));</span>
+
+<span class="n">VkCommandBufferAllocateInfo</span><span class="w"> </span><span class="n">allocInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">commandPool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">commandPool</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">commandBufferCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MAX_FRAMES_IN_FLIGHT</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkAllocateCommandBuffers</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">allocInfo</span><span class="p">,</span><span class="w"> </span><span class="n">commandBuffers</span><span class="p">.</span><span class="n">data</span><span class="p">()));</span>
+</code></pre></div>
+<h3 id="_13">纹理加载<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<p>纹理在Vulkan中也是一种图像资源。图像资源本质上就是一块存储数据的内存。与缓冲区不同的是，图像资源还包含了布局和访问权限等信息，因此图像的上传比缓冲区更复杂。</p>
+<p>KTX格式是一种专门为GPU纹理设计的文件格式，支持多种压缩格式和MIP级别，可以直接上传到GPU而无需转换。可以使用PVRTexTool创建KTX文件。</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">textures</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++&gt;</span><span class="p">){</span>
+<span class="w">    </span><span class="n">ktxTexture</span><span class="o">*</span><span class="w"> </span><span class="n">ktxTexture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;assets/textures&quot;</span><span class="o">+</span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;.ktx&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT表示在创建纹理时直接加载图像数据，这样我们就不需要手动读取文件并上传数据了。</span>
+<span class="w">    </span><span class="n">ktxTextureCreateFromNamedFile</span><span class="p">(</span><span class="n">filename</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ktxTexture</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>加载好图像后，创建图像资源：</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkImageCreateInfo</span><span class="w"> </span><span class="n">imageInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">imageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_TYPE_2D</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ktxTexture_GetVkFormat</span><span class="p">(</span><span class="n">ktxTexture</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">extent</span><span class="p">{.</span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">baseWidth</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">baseHeight</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="n">depth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">},</span>
+<span class="w">    </span><span class="p">.</span><span class="n">mipLevels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">numLevels</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">arrayLayers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 多采样图像需要更多的内存和带宽，但可以提供更好的抗锯齿效果。对于纹理图像来说，通常不需要多采样，所以设置为1。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">samples</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_SAMPLE_COUNT_1_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 让图像以GPU最优的方式进行布局和内存访问</span>
+<span class="w">    </span><span class="p">.</span><span class="n">tiling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_TILING_OPTIMAL</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 纹理图像需要作为着色器资源被采样，所以使用SAMPLED_BIT</span>
+<span class="w">    </span><span class="p">.</span><span class="n">usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_USAGE_SAMPLED_BIT</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>
+<span class="w">    </span><span class="c1">// TRANSFER_DST_BIT表示我们要传数据进去</span>
+<span class="w">    </span><span class="n">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 不关心图像的初始内容，允许Vulkan以最优的方式处理图像内存</span>
+<span class="w">    </span><span class="p">.</span><span class="n">initialLayout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_LAYOUT_UNDEFINED</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">VmaAllocationCreateInfo</span><span class="w"> </span><span class="n">texImageAllocInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VMA_MEMORY_USAGE_AUTO</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vmaCreateImage</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">imageInfo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">texImageAllocInfo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">texture</span><span class="p">.</span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">texture</span><span class="p">.</span><span class="n">allocation</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">));</span>
+</code></pre></div>
+<p>创建视图以访问图像：</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">VkImageViewCreateInfo</span><span class="w"> </span><span class="n">imageViewInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">texture</span><span class="p">.</span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">viewType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_VIEW_TYPE_2D</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imageInfo</span><span class="p">.</span><span class="n">format</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 指定视图能访问图像的哪些部分。</span>
+<span class="w">    </span><span class="c1">// 例如，多Mip图像可以创建不同视图，每个视图访问不同的Mip级别。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">subresourceRange</span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">aspectMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_ASPECT_COLOR_BIT</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">levelCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">numLevels</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">layerCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkCreateImageView</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">imageViewInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">texture</span><span class="p">.</span><span class="n">imageView</span><span class="p">));</span>
+</code></pre></div>
+图像不像缓冲区能直接memcpy，因为图像的内存布局可能不连续，或者需要特定的格式转换。我们需要使用一个中间缓冲区来上传数据：</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkBuffer</span><span class="w"> </span><span class="n">imgSrcBuffer</span><span class="p">{};</span>
+<span class="n">VmaAllocation</span><span class="w"> </span><span class="n">imgSrcBufferAlloc</span><span class="p">{};</span>
+<span class="n">VkBufferCreateInfo</span><span class="w"> </span><span class="n">imgSrcBufferInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">dataSize</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// TRANSFER_SRC_BIT表示这个缓冲区只会作为 vkCmdCopyBufferToImage 的数据来源，不会用来渲染或着色器读取。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_BUFFER_USAGE_TRANSFER_SRC_BIT</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">VmaAllocationCreateInfo</span><span class="w"> </span><span class="n">imgSrcBufferAllocInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">usage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VMA_MEMORY_USAGE_AUTO</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// HOST_VISIBLE_BIT表示这个缓冲区的内存可以被CPU访问，这样我们就可以直接把图像数据写入这个缓冲区了。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT</span><span class="w"> </span><span class="o">|</span>
+<span class="w">    </span><span class="c1">// 让VMA分配完就把内存映射到CPU地址空间，这样我们就不需要额外的映射步骤了。</span>
+<span class="w">    </span><span class="n">VMA_ALLOCATION_CREATE_MAPPED_BIT</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vmaCreateBuffer</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">imgSrcBufferInfo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">imgSrcBufferAllocInfo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">imgSrcBuffer</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">imgSrcBufferAlloc</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">));</span>
+
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">imgSrcBufferPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="c1">// 这里其实不需要调用vmaMapMemory了，因为我们在分配缓冲区时已经使用了VMA_ALLOCATION_CREATE_MAPPED_BIT标志，VMA会自动将内存映射到CPU地址空间，并通过VmaAllocationInfo::pMappedData指针提供访问。但是为了代码的清晰和一致性，我们还是调用一下vmaMapMemory来获取映射指针。</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vmaMapMemory</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="n">imgSrcBufferAlloc</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">imgSrcBufferPtr</span><span class="p">));</span>
+<span class="c1">// 将KTX纹理数据复制到暂存缓冲区</span>
+<span class="n">memcpy</span><span class="p">(</span><span class="n">imgSrcBufferPtr</span><span class="p">,</span><span class="w"> </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">pData</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="p">)</span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">dataSize</span><span class="p">);</span>
+</code></pre></div>
+<p>随后，用命令缓冲区把数据从缓冲区复制到图像：</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkFenceCreateInfo</span><span class="w"> </span><span class="n">fenceInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_FENCE_CREATE_INFO</span><span class="p">,</span>
+<span class="p">};</span>
+<span class="n">VkFence</span><span class="w"> </span><span class="n">fenceOneTime</span><span class="p">;</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkCreateFence</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">fenceInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">fenceOneTime</span><span class="p">));</span>
+<span class="n">VkCommandBuffer</span><span class="w"> </span><span class="n">cbOneTime</span><span class="p">;</span>
+<span class="n">VkCommandBufferAllocateInfo</span><span class="w"> </span><span class="n">allocInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">commandPool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">commandPool</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">commandBufferCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkAllocateCommandBuffers</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">allocInfo</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cbOneTime</span><span class="p">));</span>
+</code></pre></div>
+<blockquote>
+<p>创建栅栏和命令缓冲区的开销可以忽略不计。</p>
+</blockquote>
+<p>随后，开始录制命令缓冲区。先转换图像布局，然后复制数据，最后再转换回着色器可访问的布局。</p>
+<p>流程：布局转换（UNDEFINED → TRANSFER_DST_OPTIMAL）→ 按Mip级别复制数据 → 布局转换（TRANSFER_DST_OPTIMAL → SHADER_READ_ONLY_OPTIMAL）→ 提交命令 → 等待完成</p>
+<blockquote>
+<p>为什么要布局转换？</p>
+<p>图像资源在Vulkan中有不同的布局，表示图像当前的使用状态。不同的操作需要图像处于特定的布局才能正确执行。
+复制数据到图像需要图像处于TRANSFER_DST_OPTIMAL布局，而着色器读取图像需要图像处于SHADER_READ_ONLY_OPTIMAL布局。</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="n">VkCommandBufferBeginInfo</span><span class="w"> </span><span class="n">beginInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// ONE_TIME_SUBMIT_BIT表示这个命令缓冲区只会被提交一次，这样驱动可以进行一些优化。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkBeginCommandBuffer</span><span class="p">(</span><span class="n">cbOneTime</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">beginInfo</span><span class="p">));</span>
+<span class="c1">// 图像布局转换：UNDEFINED → TRANSFER_DST_OPTIMAL</span>
+<span class="n">VkImageMemoryBarrier2</span><span class="w"> </span><span class="n">barrierToTransfer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">srcStageMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_PIPELINE_STAGE_2_NONE</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">srcAccessMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_ACCESS_2_NONE</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dstStageMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_PIPELINE_STAGE_2_TRANSFER_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dstAccessMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_ACCESS_2_TRANSFER_WRITE_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">oldLayout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_LAYOUT_UNDEFINED</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">newLayout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">texture</span><span class="p">.</span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">subresourceRange</span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">aspectMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_ASPECT_COLOR_BIT</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">levelCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">numLevels</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">layerCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">};</span>
+<span class="c1">// 使用vkCmdPipelineBarrier2进行图像布局转换，确保在复制数据之前，图像已经处于TRANSFER_DST_OPTIMAL布局，并且GPU知道我们将要写入这个图像。</span>
+<span class="n">VkDependencyInfo</span><span class="w"> </span><span class="n">depInfoToTransfer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_DEPENDENCY_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">imageMemoryBarrierCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">pImageMemoryBarriers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">barrierToTransfer</span>
+<span class="p">};</span>
+<span class="n">vkCmdPipelineBarrier2</span><span class="p">(</span><span class="n">cbOneTime</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">depInfoToTransfer</span><span class="p">);</span>
+<span class="c1">// 从缓冲区复制数据到图像</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkBufferImageCopy</span><span class="o">&gt;</span><span class="w"> </span><span class="n">copyRegions</span><span class="p">;</span>
+<span class="c1">// KTX纹理可能包含多个MIP级别，我们需要为每个MIP级别设置一个复制区域。</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">level</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">numLevels</span><span class="p">;</span><span class="w"> </span><span class="n">level</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ktx_size_t</span><span class="w"> </span><span class="n">mipOffset</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">    </span><span class="n">KTX_error_code</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ktxTexture_GetImageOffset</span><span class="p">(</span><span class="n">ktxTexture</span><span class="p">,</span><span class="w"> </span><span class="n">level</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mipOffset</span><span class="p">);</span>
+<span class="w">    </span><span class="n">copyRegions</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span>
+<span class="w">        </span><span class="p">.</span><span class="n">bufferOffset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mipOffset</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">imageSubresource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="p">.</span><span class="n">aspectMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_ASPECT_COLOR_BIT</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">mipLevel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">level</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">baseArrayLayer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">layerCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="c1">// 纹理的每个MIP级别的尺寸是原始尺寸的1/2，依次类推</span>
+<span class="w">        </span><span class="p">.</span><span class="n">imageExtent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">baseWidth</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">level</span><span class="p">,</span>
+<span class="w">            </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">baseHeight</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">level</span><span class="p">,</span>
+<span class="w">            </span><span class="mi">1</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
+<span class="n">vkCmdCopyBufferToImage</span><span class="p">(</span><span class="n">cbOneTime</span><span class="p">,</span><span class="w"> </span><span class="n">imgSrcBuffer</span><span class="p">,</span><span class="w"> </span><span class="n">texture</span><span class="p">.</span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="n">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">copyRegions</span><span class="p">.</span><span class="n">size</span><span class="p">()),</span><span class="w"> </span><span class="n">copyRegions</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+
+<span class="n">VkImageMemoryBarrier2</span><span class="w"> </span><span class="n">barrierToShaderRead</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">srcStageMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_PIPELINE_STAGE_2_TRANSFER_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">srcAccessMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_ACCESS_2_TRANSFER_WRITE_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dstStageMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dstAccessMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_ACCESS_SHADER_READ_BIT</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">oldLayout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">newLayout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">texture</span><span class="p">.</span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">subresourceRange</span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">aspectMask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_ASPECT_COLOR_BIT</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">levelCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">numLevels</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">layerCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">};</span>
+<span class="n">depInfoToTransfer</span><span class="p">.</span><span class="n">pImageMemoryBarriers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">barrierToShaderRead</span><span class="p">;</span>
+<span class="n">vkCmdPipelineBarrier2</span><span class="p">(</span><span class="n">cbOneTime</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">depInfoToTransfer</span><span class="p">);</span>
+
+<span class="n">chk</span><span class="p">(</span><span class="n">vkEndCommandBuffer</span><span class="p">(</span><span class="n">cbOneTime</span><span class="p">));</span>
+<span class="n">VkSubmitInfo</span><span class="w"> </span><span class="n">oneTimeSubmitInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_SUBMIT_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">commandBufferCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">pCommandBuffers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cbOneTime</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkQueueSubmit</span><span class="p">(</span><span class="n">graphicsQueue</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">oneTimeSubmitInfo</span><span class="p">,</span><span class="w"> </span><span class="n">fenceOneTime</span><span class="p">));</span>
+<span class="c1">// 等待命令执行完成</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkWaitForFences</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">fenceOneTime</span><span class="p">,</span><span class="w"> </span><span class="n">VK_TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">UINT64_MAX</span><span class="p">));</span>
+</code></pre></div>
+<p>完成纹理的布局转换和数据传输后，需要定义纹理采样器。</p>
+<p>纹理采样器（Sampler）定义了纹理在着色器中被采样时的行为，例如过滤模式、地址模式等。</p>
+<div class="highlight"><pre><span></span><code><span class="n">VkSamplerCreateInfo</span><span class="w"> </span><span class="n">samplerInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">sType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// 线性过滤表示在采样时会对相邻的像素进行插值，提供更平滑的结果。对于大多数纹理来说，线性过滤是更好的选择。</span>
+<span class="w">    </span><span class="p">.</span><span class="n">magFilter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_FILTER_LINEAR</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">minFilter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_FILTER_LINEAR</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">mipmapMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_SAMPLER_MIPMAP_MODE_LINEAR</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">anisotropyEnable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_TRUE</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">maxAnisotropy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">8.0f</span><span class="p">,</span>
+<span class="w">    </span><span class="p">.</span><span class="n">maxLod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ktxTexture</span><span class="o">-&gt;</span><span class="n">numLevels</span><span class="p">),</span>
+<span class="p">};</span>
+<span class="n">chk</span><span class="p">(</span><span class="n">vkCreateSampler</span><span class="p">(</span><span class="n">logicalDevice</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">samplerInfo</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">texture</span><span class="p">.</span><span class="n">sampler</span><span class="p">));</span>
+</code></pre></div>
+<p>纹理资源需要使用描述符来绑定到着色器中。描述符是Vulkan中用于连接着色器资源和实际GPU资源的机制。描述符集（Descriptor Set）是描述符的集合，描述符池（Descriptor Pool）是用于分配描述符集的对象。</p>
+<p>这里我们清空加载的纹理数据，并保存描述符信息
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">VkDescriptorImageInfo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">textureDescriptors</span><span class="p">;</span>
+<span class="n">ktxTexture_Destroy</span><span class="p">(</span><span class="n">ktxTexture</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">texture</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">textures</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 保存描述符信息</span>
+<span class="w">    </span><span class="n">textureDescriptors</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span>
+<span class="w">        </span><span class="p">.</span><span class="n">sampler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">texture</span><span class="p">.</span><span class="n">sampler</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">imageView</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">texture</span><span class="p">.</span><span class="n">imageView</span><span class="p">,</span>
+<span class="w">        </span><span class="p">.</span><span class="n">imageLayout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></p>
+    </div>
+
+    <!-- Post footer -->
+    <div class="post-footer">
+      <div class="post-share">
+        <span class="post-share-label">Share:</span>
+        <a href="https://twitter.com/intent/tweet?text=Vulkan%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20%7C%20%E7%AE%80%E5%8D%95%E7%89%88&url=https://yoigu.github.io//2026/03/25/vulkan/" target="_blank" rel="noopener" class="post-share-btn">Twitter</a>
+      </div>
+    </div>
+  </article>
+
+  <!-- Floating TOC sidebar -->
+  
+  <aside class="toc-sidebar" id="toc-sidebar">
+    <div class="toc-sidebar-inner">
+      <div class="toc-sidebar-title">Contents</div>
+      <div class="toc-sidebar-content">
+        <div class="toc">
+<ul>
+<li><a href="#vulkan">Vulkan 简单学习笔记</a><ul>
+<li><a href="#_1">实例与设备设置</a><ul>
+<li><a href="#vulkan_1">创建Vulkan实例</a></li>
+<li><a href="#_2">物理设备选择</a><ul>
+<li><a href="#_3">队列</a></li>
+</ul>
+</li>
+<li><a href="#_4">创建逻辑设备</a></li>
+<li><a href="#vma">设置VMA</a></li>
+</ul>
+</li>
+<li><a href="#_5">窗口与渲染目标</a><ul>
+<li><a href="#_6">表面</a></li>
+<li><a href="#_7">交换链</a></li>
+<li><a href="#_8">深度附件</a></li>
+</ul>
+</li>
+<li><a href="#_9">资源加载与同步</a><ul>
+<li><a href="#_10">着色器数据缓冲区</a></li>
+<li><a href="#_11">同步对象</a></li>
+<li><a href="#_12">命令缓冲区</a></li>
+<li><a href="#_13">纹理加载</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+      </div>
+    </div>
+  </aside>
+  
+</div>
+
+<nav class="post-nav">
+  
+  <a href="/2026/03/25/c/" class="post-nav-item">
+    <div class="post-nav-label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Previous
+    </div>
+    <div class="post-nav-title">C++相关知识总结</div>
+  </a>
+  
+
+  
+  <div></div>
+  
+</nav>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>&copy; 攸一 &middot; Powered by <a href="https://github.com/YoiGu/yoiblog">YoiBlog</a></p>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <script src="/static/js/main.js"></script>
+  
+<script>
+(function() {
+  // Reading time estimation
+  const content = document.getElementById('post-content');
+  if (content) {
+    const text = content.textContent || '';
+    const cjk = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
+    const words = text.replace(/[\u4e00-\u9fff\u3400-\u4dbf]/g, '').split(/\s+/).filter(Boolean).length;
+    const minutes = Math.max(1, Math.round((cjk / 300) + (words / 200)));
+    const lang = 'en';
+    document.getElementById('reading-time-text').textContent =
+      lang === 'zh' ? minutes + ' 分钟阅读' : minutes + ' min read';
+  }
+
+  // TOC active tracking
+  const tocSidebar = document.getElementById('toc-sidebar');
+  if (tocSidebar) {
+    const tocLinks = tocSidebar.querySelectorAll('a');
+    const headings = [];
+    tocLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const el = document.getElementById(decodeURIComponent(href.slice(1)));
+        if (el) headings.push({ el: el, link: link });
+      }
+    });
+
+    let ticking = false;
+    function updateTocActive() {
+      const scrollY = window.scrollY + 100;
+      let active = null;
+      for (let i = headings.length - 1; i >= 0; i--) {
+        if (headings[i].el.offsetTop <= scrollY) {
+          active = headings[i];
+          break;
+        }
+      }
+      tocLinks.forEach(l => l.classList.remove('toc-active'));
+      if (active) active.link.classList.add('toc-active');
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(updateTocActive);
+        ticking = true;
+      }
+    });
+    updateTocActive();
+  }
+})();
+</script>
+
+</body>
+</html>

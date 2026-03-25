@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C++相关知识总结 - 攸一的文书档案</title>
+  <meta name="description" content="总结了C++一些特性相关的知识点。">
+  <meta name="author" content="攸一">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="C++相关知识总结">
+  <meta property="og:description" content="总结了C++一些特性相关的知识点。">
+  <meta property="og:type" content="article">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/atom+xml" title="攸一的文书档案 - Atom Feed" href="/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="攸一的文书档案 - RSS Feed" href="/rss.xml">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- KaTeX (math rendering) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError: false
+    });"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/highlight.css">
+  
+
+  <!-- Theme initialization (prevent flash) -->
+  <script>
+    (function(){
+      var t = localStorage.getItem('yoiblog-theme') ||
+        (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+  <!-- Reading progress bar -->
+  <div class="reading-progress" id="reading-progress"></div>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="site-title">攸一的文书档案</a>
+      <button class="mobile-menu-btn" aria-label="Menu">
+        <span class="hamburger"></span>
+      </button>
+      <nav class="nav">
+        
+        
+        <a href="/" >Home</a>
+        <a href="/archive/" >Archive</a>
+        <a href="/tags/" >Tags</a>
+        <a href="/categories/" >Categories</a>
+        <a href="/search/" >Search</a>
+        <a href="/profile/" >About</a>
+        
+        <a href="/about/" >About</a>
+        
+        <button class="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main post-layout">
+    
+<div class="post-container">
+  <article class="post-article">
+    <header class="post-header">
+      
+      <div class="post-categories-bar">
+        
+        <a href="/categories/c++/" class="post-category-link">C++</a>
+        
+      </div>
+      
+      <h1 class="post-title">C++相关知识总结</h1>
+      <div class="post-meta-bar">
+        <span class="post-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          March 25, 2026
+        </span>
+        
+        <span class="post-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Updated March 25, 2026
+        </span>
+        
+        <span class="post-meta-item" id="reading-time">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="reading-time-text"></span>
+        </span>
+      </div>
+      
+      <div class="post-tags-bar">
+        
+        <a href="/tags/c++/" class="tag">C++</a>
+        
+        <a href="/tags/八股/" class="tag">八股</a>
+        
+      </div>
+      
+    </header>
+
+    <div class="post-content" id="post-content">
+      <div class="arithmatex">\[ Yoi\ 's \ Note \]</div>
+<h1 id="c">C++相关知识总结<a class="headerlink" href="#c" title="Permanent link">&para;</a></h1>
+<h2 id="_1">内存区域<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h3 id="_2">栈<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>由编译器自动管理，函数调用时分配、函数返回时自动释放。容量有限（通常几 MB），但分配极快（只需移动栈指针）。存放的变量包括：局部变量、函数参数、函数返回地址、局部数组（定长）。</p>
+<h3 id="_3">堆<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>程序员通过 new/delete（或 malloc/free）手动管理，生命周期可跨函数。容量大（受系统内存限制），但分配较慢，且必须手动释放，否则内存泄漏。</p>
+<h3 id="_4">数据段<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>分为两部分。.data 存放有初始值的全局变量和 static 变量；.bss 存放未显式初始化的同类变量（操作系统会自动零初始化）。两者均在程序启动时分配，程序退出时销毁。</p>
+<h3 id="_5">代码段<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>存放函数的机器码指令，以及字符串字面量（只读）。通常是只读的，写入会触发段错误。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>栈</th>
+<th>堆</th>
+<th>数据段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分配方式</td>
+<td>自动</td>
+<td>手动</td>
+<td>自动</td>
+</tr>
+<tr>
+<td>生命周期</td>
+<td>函数调用期间</td>
+<td>手动控制</td>
+<td>程序运行期间</td>
+</tr>
+<tr>
+<td>速度</td>
+<td>快</td>
+<td>慢</td>
+<td>--</td>
+</tr>
+<tr>
+<td>大小</td>
+<td>受限</td>
+<td>大</td>
+<td>静态，编译时确定</td>
+</tr>
+<tr>
+<td>风险</td>
+<td>栈溢出</td>
+<td>内存泄漏</td>
+<td>全局状态难管理</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_6">常见关键字<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="extern">extern<a class="headerlink" href="#extern" title="Permanent link">&para;</a></h3>
+<p><code>extern</code>是一个关键字，用于声明一个变量或函数在其他文件中定义。它告诉编译器该变量或函数的定义在其他地方，编译器会在链接阶段找到它们的定义并进行链接。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// file1.cpp</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">globalVar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"> </span><span class="c1">// 定义一个全局变量</span>
+<span class="c1">// file2.cpp</span>
+<span class="k">extern</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">globalVar</span><span class="p">;</span><span class="w"> </span><span class="c1">// 声明在其他文件中定义的全局变量</span>
+</code></pre></div>
+<p><code>extern C</code>是一个特殊的声明，用于告诉编译器按照C语言的方式来链接函数。这通常用于在C++代码中调用C语言编写的函数，或者在C语言代码中调用C++编写的函数。</p>
+<div class="highlight"><pre><span></span><code><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">strcmp</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">str1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">str2</span><span class="p">);</span><span class="w"> </span><span class="c1">// 声明一个C语言函数</span>
+<span class="p">}</span>
+</code></pre></div>
+<blockquote>
+<p>值得注意的是，全局变量具有全局可见性，但静态变量的作用域仅限于定义它的文件，无法被其他文件访问。因此，<code>extern</code>关键字不能用于声明静态变量，因为它们无法在其他文件中访问。</p>
+</blockquote>
+<h3 id="static">static<a class="headerlink" href="#static" title="Permanent link">&para;</a></h3>
+<p>静态变量是指在函数内部或类中使用<code>static</code>关键字声明的变量。它们具有以下特点：</p>
+<ol>
+<li>生命周期：静态变量在程序运行期间一直存在，直到程序结束才会被销毁。</li>
+<li>作用域：静态变量的作用域取决于它们的定义位置。函数内部的静态变量只能在该函数内访问，而类中的静态成员变量可以通过类名或对象来访问。</li>
+<li>初始化：静态变量在程序启动时被初始化，如果没有显式初始化，则会被自动初始化为零（对于基本类型）或调用默认构造函数（对于类类型）。</li>
+</ol>
+<p>对于类的静态成员变量，需要<strong>在类外进行定义和初始化</strong>。例如：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"> </span><span class="c1">// 声明静态成员变量</span>
+<span class="p">};</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">// 定义和初始化静态成员变量</span>
+</code></pre></div>
+<p><strong>静态成员函数不可以被定义为虚函数</strong>，因为它们不属于任何对象，而虚函数需要通过对象来调用。</p>
+<p><strong>静态成员变量不可以作为成员函数的默认参数</strong>，因为默认参数是在编译时解析的，而静态成员变量是在运行时初始化的。</p>
+<h3 id="const">const<a class="headerlink" href="#const" title="Permanent link">&para;</a></h3>
+<p><code>const</code>包含下列作用：
+1. 修饰成员变量，表示该成员变量的值不能被修改。相比于宏，<code>const</code>变量具有类型安全，且能节省内存空间。
+2. 修饰函数参数，表示该参数在函数内部不能被修改。
+3. 修饰成员函数，表示该函数不会修改对象的状态（即不会修改成员变量，用<code>mutable</code>关键字修饰的变量除外）。在<code>const</code>成员函数中，<code>this</code>指针被隐式地转换为一个指向常量对象的指针，因此不能通过<code>this</code>指针修改对象的成员变量。</p>
+<h2 id="_7">指针<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>指针是指向内存地址的变量。</p>
+<p>在64位系统中，指针的大小为8字节（64位）。</p>
+<p>悬空指针是原本指向的内存空间被释放后，指针仍然指向那个地址的情况。</p>
+<p>野指针是指未初始化的指针，或者指向一个不合法地址的指针。</p>
+<blockquote>
+<p>与引用的区别：</p>
+<p>是否可变：指针可以被重新赋值，指向不同的对象；而引用一旦绑定到一个对象，就不能再绑定到另一个对象。</p>
+<p>是否可以为null：指针可以为null，表示不指向任何对象；而引用必须绑定到一个有效的对象，不能为null。</p>
+<p>是否占内存：指针本身在内存中占有空间，而引用仅仅是一个别名，不占用额外的内存空间。</p>
+<p>是否能为多级：指针可以有多级指针，但引用只能是一级引用。</p>
+</blockquote>
+<p>常量指针是指向一个由<code>const</code>修饰的对象的指针，表示指针所指向的对象是不可修改的。指针常量则是指针本身是常量，表示指针的值（即指向的地址）不能被修改，但指针所指向的对象可以被修改。</p>
+<h2 id="_8">模板<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>函数模板是C++中的一种泛型编程机制，允许我们编写与类型无关的函数。通过使用模板参数，我们可以创建一个函数模板，该模板可以接受不同类型的参数，并在编译时生成相应的函数实例。</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">T</span><span class="w"> </span><span class="n">max</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">max</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">max</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span><span class="w"> </span><span class="mf">5.5</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>尖括号内的<code>typename</code>可以替换为<code>class</code>，两者在模板参数列表中是等价的：</p>
+<p>可以存在多个模板参数：
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T2</span><span class="o">&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">(</span><span class="n">T1</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">T2</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>本质上，模板就是编译器在编译时根据模板参数生成具体的函数或类实例。模板参数可以是类型参数（如上例中的<code>T</code>）或非类型参数（如整数、指针等）。这种自动生成代码的机制被称为隐式实例化。</p>
+<p>显式实例化是指程序员手动指定模板参数来生成特定类型的函数或类实例。例如：
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 显式实例化MyClass&lt;int&gt;</span>
+</code></pre></div>
+显式实例化可以用于减少编译时间或控制生成的代码量，例如，在头文件中对显式实例化进行声明：
+<div class="highlight"><pre><span></span><code><span class="c1">// MyClass.h</span>
+<span class="k">extern</span><span class="w"> </span><span class="k">template</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 声明显式实例化</span>
+</code></pre></div>
+随后，在源文件中进行定义：
+<div class="highlight"><pre><span></span><code><span class="c1">// MyClass.cpp</span>
+<span class="k">template</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 定义显式实例化</span>
+</code></pre></div></p>
+<p>这样，即使有复数文件包含了<code>MyClass&lt;int&gt;</code>的使用，编译器也只会生成一个实例，从而减少编译时间和代码冗余。</p>
+<p><strong>特化</strong>（Specialization）是指为特定类型或特定条件提供不同的实现。C++支持两种特化：完全特化和部分特化。完全特化是指为特定类型提供一个完全不同的实现。例如：
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">display</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;This is a specialization for int.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+对于类模板，特化需要对构造函数和成员变量、成员函数等进行重新定义。
+特化模板类可以包含原模板类不曾有的成员函数或成员变量，但不能删除原模板类中的成员函数或成员变量。</p>
+<p><strong>部分特化</strong>（又称<strong>偏特化</strong>）是指为满足特定条件的类型提供一个不同的实现。例如：
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">display</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;This is a partial specialization for pointer types.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+此外，在具有两个模板参数的类模板中，把其中一个参数固定为特定类型，而另一个参数保持为模板参数的特化也属于偏特化。例如：
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">display</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;This is a partial specialization for T and int.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+对于有复数个模板参数的类模板，如果一个偏特化模板把第M个模板参数固定为类型A，另一个偏特化模板把第N个模板参数固定为类型B，而编写代码时定义了第M个模板参数类型为A，第N个模板参数类型为B的实例，此时会发生<strong>二义性错误</strong>，因为编译器无法确定应该使用哪个偏特化模板。这种情况下，需要定义一个更具体的偏特化模板来解决二义性问题。</p>
+<p>偏特化仅适用于类模板，函数模板不支持偏特化。</p>
+<p>当同时存在函数模板和普通函数时，具体使用哪个取决于是否需要进行自动类型转换。如果调用函数时提供的参数类型与普通函数完全匹配，编译器会优先选择普通函数。如果需要进行自动类型转换，编译器会选择函数模板。</p>
+<p><img alt="" src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/20260318092934129.png" /></p>
+<p>对于类模板，模板之内的成员函数定义可以放在类定义内，也可以放在类定义外。如果成员函数定义在类定义内，则该函数会被隐式地视为内联模板成员函数；如果成员函数定义在类定义外，则需要使用<code>template</code>关键字来指明这是一个模板成员函数。例如：
+<div class="highlight"><pre><span></span><code><span class="c1">// MyClass.h</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">display</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div></p>
+<div class="highlight"><pre><span></span><code><span class="c1">// MyClass.cpp</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">MyClass</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">display</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Value: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>非类型参数</strong>是指模板参数列表中除了类型参数之外的参数，例如整数、指针等。这些参数在编译时必须是常量表达式。例如：
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyArray</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">arr</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="p">};</span>
+</code></pre></div>
+在这个例子中，<code>N</code>是一个非类型参数，表示数组的大小。使用时需要提供一个常量表达式作为参数，例如：</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">MyArray</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="o">&gt;</span><span class="w"> </span><span class="n">myArray</span><span class="p">;</span><span class="w"> </span><span class="c1">// 创建一个包含10个整数的数组</span>
+</code></pre></div>
+非类型参数可以用于控制模板的行为，例如指定数组的大小、控制循环次数等。需要注意的是，非类型参数必须是编译时常量，这意味着它们必须在编译时能够确定其值。</p>
+<p>模板类型参数和非类型参数都可以有默认值。例如：
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyArray</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">arr</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="p">};</span>
+</code></pre></div>
+在这个例子中，如果用户在实例化<code>MyArray</code>时没有提供模板参数，编译器会使用默认值<code>int</code>和<code>10</code>。</p>
+<p>模板参数可以是模板。例如，如果我们想把std::vector作为一个模板参数，可以这样定义：
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;</span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="o">&gt;</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Container</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">Container</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+在这个例子中，<code>Container</code>是一个模板参数，它接受一个类型参数<code>T</code>。我们可以使用<code>MyClass</code>来创建一个包含<code>std::vector&lt;int&gt;</code>的实例：
+<div class="highlight"><pre><span></span><code><span class="n">MyClass</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">myClass</span><span class="p">;</span>
+</code></pre></div></p>
+<h2 id="_9">类型转换<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>为了使两个不相关的类可以进行隐式转换，我们需要定义转换构造函数或转换运算符。转换构造函数是指一个类的构造函数接受一个参数，并且没有使用<code>explicit</code>关键字修饰，这样就允许编译器在需要该类型的地方自动调用这个构造函数进行类型转换。例如：
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">A</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 构造函数实现</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">operator</span><span class="w"> </span><span class="n">A</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 转换运算符实现</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">A</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// 返回一个A类型的对象</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+在这个例子中，类<code>A</code>有一个接受<code>int</code>参数的构造函数，而类<code>B</code>定义了一个转换运算符，可以将<code>B</code>类型的对象转换为<code>A</code>类型的对象。当我们需要将一个<code>B</code>类型的对象赋值给一个<code>A</code>类型的变量时，编译器会自动调用这个转换运算符进行类型转换。</p>
+<p>拷贝构造函数是指一个类的构造函数接受一个同类型的对象作为参数，用于创建一个新的对象并将其初始化为传入对象的副本。<strong>拷贝构造函数是转换构造函数的一种特殊情况</strong>。</p>
+<p>为了避免显式转换带来的问题，C++提供了四种类型转换运算符：<code>static_cast</code>、<code>dynamic_cast</code>、<code>const_cast</code>和<code>reinterpret_cast</code>。这些运算符提供了更安全和明确的类型转换方式，避免了隐式转换可能引起的错误。
+- <code>static_cast</code>：用于进行<strong>基本类型</strong>之间的转换，例如从<code>int</code>转换为<code>float</code>，或者从一个类类型转换为另一个类类型（<strong>如果存在合适的转换构造函数或转换运算符</strong>）。<code>static_cast</code>在<strong>编译时</strong>进行检查，如果转换不合法会产生编译错误。</p>
+<blockquote>
+<ol>
+<li>static_cast既可以用于类和派生类的向下转换，也可以用于向上转换。</li>
+<li>static_cast仅在编译时进行类型检查，不会进行运行时检查，因此在进行向下转换时需要确保转换是合法的，否则可能会导致未定义行为。</li>
+<li>静态转换不要求基类必须具有虚函数，因此可以用于非多态类型之间的转换。</li>
+</ol>
+</blockquote>
+<ul>
+<li>
+<p><code>dynamic_cast</code>：用于进行多态类型之间的转换，主要用于将<strong>基类指针或引用转换为派生类指针或引用</strong>。<code>dynamic_cast</code>在运行时进行检查，如果转换不合法会返回<code>nullptr</code>（对于指针）或抛出<code>std::bad_cast</code>异常（对于引用）。</p>
+<blockquote>
+<p>使用dynamic_cast时需要注意：
+1. 只有当基类具有至少一个虚函数时，dynamic_cast才有效。
+2. dynamic_cast只能用于指针或引用类型，不能用于基本类型。
+3. 当转换失败时，dynamic_cast会返回nullptr（对于指针）或抛出std::bad_cast异常（对于引用），因此在使用dynamic_cast时需要进行适当的错误处理。
+4. dynamic_cast依赖于RTTI（Run-Time Type Information）机制，RTTI信息在编译时生成，需要在编译器选项中启用RTTI支持。</p>
+</blockquote>
+</li>
+<li>
+<p><code>const_cast</code>：用于<strong>去除对象的<code>const</code>或<code>volatile</code>属性</strong>。<code>const_cast</code>只能用于<strong>指针或引用类型</strong>，不能用于基本类型。如果尝试使用<code>const_cast</code>去除一个对象的<code>const</code>属性，并且该对象原本是一个常量，那么对该对象的修改将导致未定义行为。</p>
+<blockquote>
+<p>主要用于调用一些需要非const参数的函数，但我们只有一个const对象的指针或引用时，可以使用const_cast来去除const属性。</p>
+</blockquote>
+</li>
+<li><code>reinterpret_cast</code>：用于进行低级别的类型转换，例如将一个指针转换为一个整数，或者将一个整数转换为一个指针。<code>reinterpret_cast</code><strong>不进行任何类型检查</strong>，因此使用时需要非常小心，避免引起未定义行为。</li>
+</ul>
+<h2 id="_10">类与成员<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">类与结构体<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p>C++中，类与结构体的功能相似，差异主要体现在默认访问权限和默认继承方式上。类的默认访问权限是<code>private</code>，而结构体的默认访问权限是<code>public</code>。</p>
+<p>此外，类的默认继承方式是<code>private</code>，而结构体的默认继承方式是<code>public</code>（即外部无法通过子类访问父类的成员）。</p>
+<h3 id="_12">多态<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p>多态是面向对象编程中的一个重要特性，指的是同一操作作用于不同的对象时，可以产生不同的行为。</p>
+<p>C++ 的多态分为两种：</p>
+<p><strong>编译期多态</strong>，通过函数重载和模板实现。编译器在编译阶段就确定了调用哪个函数。</p>
+<p><strong>运行时多态</strong>，通过继承和虚函数实现。基类中用<code>virtual</code>声明虚函数，派生类<code>override</code>重写，通过基类指针或引用调用时，程序在运行时根据对象的实际类型决定调用哪个版本。其底层机制是<strong>虚函数表</strong>（vtable）——每个含虚函数的类维护一张函数指针表，对象内部有一个 vptr 指向它，调用虚函数时通过 vptr 查表跳转到正确的实现。</p>
+<h4 id="_13">虚函数表<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<p>每个含有虚函数的类，编译器会为它生成一张虚函数表（vtable），本质上就是一个函数指针数组，按声明顺序存放该类所有虚函数的地址。同时，每个对象的内存布局中会隐含一个 vptr（虚表指针），指向所属类的 vtable。</p>
+<p><div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">f</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Base::f&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">g</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Base::g&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Derived</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">f</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Derived::f&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">h</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Derived::h&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+编译器会生成两张 vtable：
+<div class="highlight"><pre><span></span><code>Base 的 vtable:       [0] -&gt; Base::f
+                      [1] -&gt; Base::g
+
+Derived 的 vtable:    [0] -&gt; Derived::f   // 重写了，替换为派生类版本
+                      [1] -&gt; Base::g       // 未重写，继承基类版本
+                      [2] -&gt; Derived::h    // 新增的虚函数追加在后面
+</code></pre></div></p>
+<p>vptr在对象构造时被初始化为指向所属类的vtable。因此，构造函数中调用虚函数时，vptr已经指向正确的vtable，可以实现多态行为。</p>
+<p>vtable是每个类共享的静态数据结构，而vptr是每个对象独有的成员变量。</p>
+<h3 id="overridefinal">override和final<a class="headerlink" href="#overridefinal" title="Permanent link">&para;</a></h3>
+<p><code>override</code>和<code>final</code>是C++11引入的两个关键字，用于增强类的继承和多态性。
+- <code>override</code>：用于标识一个成员函数是重写（override）基类中的虚函数。当我们在派生类中重写基类的虚函数时，使用<code>override</code>关键字可以让编译器检查我们是否正确地重写了基类的函数。如果我们没有正确地重写（例如，函数签名不匹配），编译器会产生一个错误。这有助于避免由于拼写错误或参数类型不匹配而导致的意外行为。
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Base::foo&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Derived</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 正确重写了Base::foo</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Derived::foo&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+- <code>final</code>：用于标识一个成员函数或一个类不能被进一步重写或继承。当我们在一个成员函数上使用<code>final</code>关键字时，表示这个函数不能被派生类重写；当我们在一个类上使用<code>final</code>关键字时，表示这个类不能被继承。这有助于防止意外的重写或继承，增强代码的安全性和可维护性。
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span><span class="w"> </span><span class="k">final</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 这个函数不能被重写</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Base::foo&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></p>
+<h3 id="_14">静态成员<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<p>静态成员是指属于类而不是属于某个对象的成员。静态成员在内存中只有一份，无论创建多少个对象，所有对象共享同一个静态成员。静态成员可以是变量、函数或嵌套类型。
+静态成员变量需要在类外进行定义和初始化。例如：
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"> </span><span class="c1">// 声明静态成员变量</span>
+<span class="p">};</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">// 定义和初始化静态成员变量</span>
+</code></pre></div>
+对于静态函数，则只能访问静态成员变量和其他静态函数，不能访问非静态成员变量或非静态函数。</p>
+<h3 id="const_1">const成员函数<a class="headerlink" href="#const_1" title="Permanent link">&para;</a></h3>
+<p><code>const</code>成员函数是指在成员函数的声明后面加上<code>const</code>关键字，表示该函数不会修改对象的状态（即不会修改成员变量）。在<code>const</code>成员函数中，<code>this</code>指针被隐式地转换为一个指向常量对象的指针，因此不能通过<code>this</code>指针修改对象的成员变量。
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setValue</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w"> </span><span class="c1">// 可以修改成员变量</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getValue</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="c1">// 不能修改成员变量</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+<code>const</code>对象只能调用<code>const</code>成员函数，因为<code>const</code>对象的状态不能被修改，而非<code>const</code>成员函数可能会修改对象的状态，因此不能被<code>const</code>对象调用。</p>
+<h3 id="_15">子类访问父类函数<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<p>当子类需要访问父类的函数时，可以使用作用域解析运算符<code>::</code>来指定要调用的父类函数。例如：
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Base::foo&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Derived</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Base</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Derived::foo&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">callBaseFoo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Base</span><span class="o">::</span><span class="n">foo</span><span class="p">();</span><span class="w"> </span><span class="c1">// 调用父类的foo函数</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+在这个例子中，<code>Derived</code>类重写了<code>Base</code>类的<code>foo</code>函数，但在<code>callBaseFoo</code>函数中，我们使用<code>Base::foo()</code>来调用父类的版本。</p>
+<h3 id="_16">友元<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<p>友元（friend）是C++中的一个特性，允许一个函数或一个类访问另一个类的私有成员和保护成员。友元关系是单向的，即被声明为友元的函数或类可以访问另一个类的私有成员，但反过来不成立。
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">secret</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">secret</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="k">friend</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">revealSecret</span><span class="p">(</span><span class="n">MyClass</span><span class="o">&amp;</span><span class="w"> </span><span class="n">obj</span><span class="p">);</span><span class="w"> </span><span class="c1">// 声明友元函数</span>
+<span class="p">};</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">revealSecret</span><span class="p">(</span><span class="n">MyClass</span><span class="o">&amp;</span><span class="w"> </span><span class="n">obj</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;The secret is: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">obj</span><span class="p">.</span><span class="n">secret</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// 访问私有成员</span>
+<span class="p">}</span>
+</code></pre></div>
+在这个例子中，<code>revealSecret</code>函数被声明为<code>MyClass</code>的友元函数，因此它可以访问<code>MyClass</code>的私有成员<code>secret</code>。友元函数可以是普通函数、成员函数或其他类的成员函数。友元关系可以跨越类之间的层次结构，即一个类可以是另一个类的友元，而不需要它们之间存在继承关系。</p>
+<h3 id="_17">运算符重载<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p>运算符重载是C++中的一个特性，允许我们为自定义类型定义自己的运算符行为。通过重载运算符，我们可以使自定义类型的对象能够使用常见的运算符进行操作，例如加法、减法、乘法等。
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Complex</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">real</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">imag</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Complex</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">real</span><span class="p">(</span><span class="n">r</span><span class="p">),</span><span class="w"> </span><span class="n">imag</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="n">Complex</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Complex</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Complex</span><span class="p">(</span><span class="n">real</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">real</span><span class="p">,</span><span class="w"> </span><span class="n">imag</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">imag</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+在这个例子中，我们定义了一个<code>Complex</code>类，并重载了加法运算符<code>+</code>，使得我们可以直接使用<code>+</code>运算符来相加两个<code>Complex</code>对象。
+重载运算符不一定非得在类内定义，也可以在类外定义。例如：
+<div class="highlight"><pre><span></span><code><span class="n">Complex</span><span class="w"> </span><span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Complex</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c1</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Complex</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Complex</span><span class="p">(</span><span class="n">c1</span><span class="p">.</span><span class="n">real</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c2</span><span class="p">.</span><span class="n">real</span><span class="p">,</span><span class="w"> </span><span class="n">c1</span><span class="p">.</span><span class="n">imag</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c2</span><span class="p">.</span><span class="n">imag</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+在这个例子中，我们在类外定义了加法运算符<code>+</code>，并且接受两个<code>Complex</code>对象作为参数。</p>
+<h3 id="_18">特殊成员函数<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><img alt="" src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/20260322122340548.png" /></p>
+<h4 id="delete"><code>delete</code><a class="headerlink" href="#delete" title="Permanent link">&para;</a></h4>
+<p><code>delete</code>是C++11引入的一个关键字，用于显式地删除一个函数或一个成员函数，使其无法被调用。当我们在函数声明后面使用<code>= delete</code>时，表示该函数被删除，编译器会禁止对该函数的调用。</p>
+<p><code>delete</code>通常用于禁止某些不合理的函数调用，例如禁止拷贝构造函数或拷贝赋值运算符，以防止对象被意外地复制。此外，也可以用于禁止特定类型的编译期多态函数。
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span><span class="w"> </span><span class="c1">// 禁止拷贝构造函数</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span><span class="w"> </span><span class="c1">// 禁止拷贝赋值运算符</span>
+<span class="p">};</span>
+</code></pre></div></p>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="nf">isEven</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">bool</span><span class="w"> </span><span class="nf">isEven</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span><span class="w"> </span><span class="c1">// 禁止对double类型调用isEven函数</span>
+</code></pre></div>
+<h4 id="default"><code>default</code><a class="headerlink" href="#default" title="Permanent link">&para;</a></h4>
+<p><code>default</code>是C++11引入的一个关键字，用于显式地指定一个函数或一个成员函数使用编译器生成的默认实现。</p>
+<p><div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"> </span><span class="c1">// 默认构造函数</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"> </span><span class="c1">// 默认拷贝构造函数</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"> </span><span class="c1">// 默认拷贝赋值运算符</span>
+<span class="p">};</span>
+</code></pre></div>
+当我们显式声明一个构造函数时，编译器就不会生成默认构造函数。此时，如果我们需要一个默认构造函数，就可以使用<code>= default</code>来告诉编译器生成一个默认构造函数。</p>
+<p>声明类的成员变量时，可以给它赋予一个默认值。调用默认构造函数时，就会使用这个默认值来初始化成员变量。</p>
+<h4 id="_19">拷贝构造函数和拷贝赋值运算符<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h4>
+<p>拷贝构造函数是指一个类的构造函数接受一个同类型的对象作为参数，用于创建一个新的对象并将其初始化为传入对象的副本。</p>
+<p>拷贝构造函数的定义有以下几种形式：
+<div class="highlight"><pre><span></span><code><span class="n">A</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">A</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w"> </span><span class="c1">// 以const引用的形式接受参数，这是最常见的形式</span>
+<span class="n">A</span><span class="p">(</span><span class="n">A</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w"> </span><span class="c1">// 以非常量引用的形式接受参数</span>
+<span class="n">A</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">A</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">默认值</span><span class="p">...);</span><span class="w"> </span><span class="c1">// 以const引用的形式接受参数，并且有默认参数</span>
+</code></pre></div></p>
+<p>若未显式定义，编译器会自动生成一个默认的拷贝构造函数，该函数会逐成员地复制对象的成员变量。对于类类型的成员变量，默认的拷贝构造函数会<strong>调用它们的拷贝构造函数进行复制</strong>。</p>
+<p>调用默认拷贝构造函数的初始化方式叫做<strong>直接初始化（direct initialization）</strong>或<strong>拷贝初始化（copy initialization）</strong>，二者有细微的差别：
+<div class="highlight"><pre><span></span><code><span class="n">A</span><span class="w"> </span><span class="n">a1</span><span class="p">;</span><span class="w"> </span><span class="c1">// 默认构造函数</span>
+<span class="n">A</span><span class="w"> </span><span class="n">a2</span><span class="p">{</span><span class="n">a1</span><span class="p">};</span><span class="w"> </span><span class="c1">// 直接初始化，调用默认拷贝构造函数</span>
+<span class="n">A</span><span class="w"> </span><span class="n">a3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a1</span><span class="p">;</span><span class="w"> </span><span class="c1">// 拷贝初始化，调用默认拷贝构造函数</span>
+</code></pre></div></p>
+<p>拷贝赋值运算符是指一个类的成员函数，用于将一个对象的值赋给另一个对象。它的定义形式如下：</p>
+<div class="highlight"><pre><span></span><code><span class="n">A</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">A</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w"> </span><span class="c1">// 以const引用的形式接受参数</span>
+
+<span class="n">A</span><span class="w"> </span><span class="nf">obj1</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+<span class="n">A</span><span class="w"> </span><span class="n">obj2</span><span class="p">;</span>
+<span class="n">obj2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obj1</span><span class="p">;</span><span class="w"> </span><span class="c1">// 调用拷贝赋值运算符，将obj1的值赋给obj2</span>
+</code></pre></div>
+<p>同样地，当我们没有显式定义拷贝赋值运算符时，编译器会自动生成一个默认的拷贝赋值运算符，该函数会逐成员地复制对象的成员变量。对于类类型的成员变量，默认的拷贝赋值运算符会<strong>调用它们的拷贝赋值运算符进行复制</strong>。</p>
+<p><strong>当我们自定义拷贝构造函数时，通常也需要自定义拷贝赋值运算符以及析构函数，以确保对象的正确复制和资源管理</strong>。</p>
+<h4 id="_20">移动构造函数和移动赋值运算符<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h4>
+<p>移动构造函数是指一个类的构造函数接受一个右值引用作为参数，用于创建一个新的对象并将其资源从传入对象转移到新对象。</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">A</span><span class="p">(</span><span class="n">A</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w"> </span><span class="c1">// 以右值引用的形式接受参数</span>
+</code></pre></div>
+移动赋值运算符是指一个类的成员函数，用于将一个对象的资源从另一个对象转移到当前对象。它的定义形式如下：</p>
+<div class="highlight"><pre><span></span><code><span class="n">A</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">A</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w"> </span><span class="c1">// 以右值引用的形式接受参数</span>
+</code></pre></div>
+<h4 id="_21">可平凡复制类型<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h4>
+<p>枚举、指针、内置类型和满足特定条件的类类型都属于可平凡复制类型。
+当类满足以下条件，就属于可平凡复制类型：</p>
+<ol>
+<li>该类没有虚函数。</li>
+</ol>
+<blockquote>
+<p>这是因为虚函数会引入虚表指针，它不能简单地通过内存复制来复制对象。</p>
+</blockquote>
+<ol>
+<li>该类没有用户自定义的特殊成员函数，即拷贝构造函数、移动构造函数、拷贝赋值运算符或移动赋值运算符。</li>
+<li>该类有自动生成的析构函数。</li>
+<li>该类的所有非静态数据成员都是可平凡复制类型。</li>
+<li>该类的拷贝构造函数、移动构造函数、拷贝赋值运算符和移动赋值运算符至少有一个是未被删除的。</li>
+<li>若该类有父类，则父类也必须满足上述条件。</li>
+</ol>
+<p>可平凡复制类型的对象<strong>在内存中是连续的</strong>，可以通过简单的内存复制（如<code>memcpy</code>）来进行复制，而不需要调用任何构造函数或赋值运算符。</p>
+<p>简单地说，对于可平凡复制类型，我们无需担心对象的复制和资源管理问题，因为它们的复制行为是简单且高效的。这些类型可以以二进制方式进行复制，也可以通过网络传输。</p>
+<p>在<code>&lt;type_traits&gt;</code>头文件中，静态成员<code>std::is_trivially_copyable&lt;T&gt;::value</code>可以用来检查一个类型是否是可平凡复制类型。</p>
+<blockquote>
+<p>此外，模板<code>is_trivially_constructible</code>、<code>is_trivially_copy_assignable</code>和<code>is_trivially_move_assignable</code>可以用来检查一个类型是否具有平凡的构造函数、拷贝赋值运算符和移动赋值运算符。</p>
+</blockquote>
+<h3 id="_22">标准布局类型<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<p>所有标量类型（如整数、浮点数、指针等）都是标准布局类型。一个类类型是标准布局类型，如果它满足以下条件：
+1. 该类没有虚函数。
+2. 该类若有父类，则这个类和它的所有父类中，只有一个类具有非静态数据成员，（即，只有其他类都只能有静态成员或者函数）且这个类必须是标准布局类型。
+3. 该类的所有非静态数据成员都具有相同的访问控制（即全部为<code>public</code>、<code>protected</code>或<code>private</code>）。
+4. 该类的所有非静态数据成员都是标准布局类型。</p>
+<p>则满足上述条件的类被称为标准布局类。</p>
+<p>对于标准布局类型，成员按照出现顺序，在内存中按照地址从低到高进行排列，并且没有任何填充字节。</p>
+<p>可以使用<code>type_traits</code>头文件中的<code>std::is_standard_layout&lt;T&gt;::value</code>来检查一个类型是否是标准布局类型。</p>
+<p><strong>如果一个类既是平凡可复制类型，又是标准布局类型，那么它就与C语言中的结构体具有相同的内存布局，可以与C语言进行互操作</strong>。</p>
+<h2 id="_23">宏定义<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
+<p>宏定义是C++中的一个预处理器指令，用于定义常量、函数或代码片段。宏定义使用<code>#define</code>指令来创建一个宏，宏可以接受参数，也可以不接受参数。
+井号#在宏定义中有特殊的作用：
+- 当宏定义中使用<code>#</code>运算符时，它会将宏参数转换为字符串。例如：
+<div class="highlight"><pre><span></span><code><span class="cp">#define TO_STRING(x) #x</span>
+</code></pre></div>
+在这个例子中，<code>TO_STRING(Hello)</code>会被预处理器替换为<code>"Hello"</code>。
+- 当宏定义中使用<code>##</code>运算符时，它会将两个宏参数连接在一起。例如：
+<div class="highlight"><pre><span></span><code><span class="cp">#define CONCAT(a, b) a##b</span>
+</code></pre></div>
+在这个例子中，<code>CONCAT(Hello, World)</code>会被预处理器替换为<code>HelloWorld</code>。
+宏定义在编译时进行文本替换，因此它们没有类型检查和作用域限制，使用时需要小心，避免引起意外的行为。建议在可能的情况下使用<code>const</code>变量、函数或模板来替代宏定义，以获得更好的类型安全和可维护性。</p>
+<p>要定义多行宏，可以使用反斜杠<code>\</code>来连接多行代码。</p>
+<p>C++中有若干预定义宏，例如：
+- <code>__FILE__</code>：表示当前源文件的名称。
+- <code>__LINE__</code>：表示当前行号。
+- <code>__DATE__</code>：表示当前编译的日期。
+- <code>__TIME__</code>：表示当前编译的时间。
+- <code>__cplusplus</code>：表示当前编译器支持的C++标准版本，例如199711、201703等。</p>
+<p>可变参数宏是指宏定义中使用了省略号<code>...</code>来表示可接受任意数量的参数。例如：
+<div class="highlight"><pre><span></span><code><span class="cp">#define LOG(format, ...) printf(format, __VA_ARGS__)</span>
+</code></pre></div>
+在这个例子中，<code>LOG</code>宏可以接受一个格式字符串和任意数量的参数，并将它们传递给<code>printf</code>函数进行输出。使用可变参数宏时，需要使用<code>__VA_ARGS__</code>来表示传递给宏的可变参数列表。</p>
+<h2 id="_24">智能指针<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
+<p>智能指针是C++11引入的一种资源管理工具，用于自动管理动态分配的内存，避免内存泄漏和悬空指针等问题。智能指针通过重载运算符来提供类似于普通指针的使用方式，同时在对象生命周期结束时自动释放资源。
+C++标准库提供了三种主要的智能指针类型：<code>std::unique_ptr</code>、<code>std::shared_ptr</code>和<code>std::weak_ptr</code>。</p>
+<h3 id="stdunique_ptr">std::unique_ptr<a class="headerlink" href="#stdunique_ptr" title="Permanent link">&para;</a></h3>
+<p><code>std::unique_ptr</code>是一种独占所有权的智能指针，表示一个对象只能有一个<code>unique_ptr</code>拥有。当<code>unique_ptr</code>被销毁时，它所管理的对象也会被自动释放。<code>unique_ptr</code>不支持复制，但支持移动语义。</p>
+<blockquote>
+<p>移动语义是指资源的所有权可以从一个对象转移到另一个对象，而不是复制资源。通过使用<code>std::move</code>函数，我们可以将一个<code>unique_ptr</code>的所有权转移给另一个<code>unique_ptr</code>，从而避免了不必要的资源复制和内存泄漏。
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ptr1</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span><span class="w"> </span><span class="c1">// 创建一个unique_ptr</span>
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ptr2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ptr1</span><span class="p">);</span><span class="w"> </span><span class="c1">// 转移ptr1的所有权给ptr2，此时ptr1不再拥有该对象</span>
+</code></pre></div></p>
+</blockquote>
+<p>它包含下列常用成员函数：
+- <code>get()</code>：返回<code>unique_ptr</code>所管理的原始指针。
+- <code>release()</code>：释放<code>unique_ptr</code>所管理的对象，并返回原始指针。调用<code>release()</code>后，<code>unique_ptr</code>不再拥有该对象，调用者需要负责释放该对象的内存。
+- <code>reset()</code>：释放<code>unique_ptr</code>当前管理的对象，并可选择性地将其替换为一个新的对象。例如，<code>reset(new T())</code>会释放当前对象并管理一个新的对象。
+- <code>swap()</code>：交换两个<code>unique_ptr</code>的所有权。例如，<code>ptr1.swap(ptr2)</code>会交换<code>ptr1</code>和<code>ptr2</code>所管理的对象。</p>
+<p>我们可以用<code>std::make_unique</code>函数来创建一个<code>unique_ptr</code>，它提供了更安全和简洁的方式来创建智能指针。例如：
+<div class="highlight"><pre><span></span><code><span class="k">auto</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span><span class="w"> </span><span class="c1">// 创建一个unique_ptr，管理一个值为5的整数对象</span>
+</code></pre></div></p>
+<h3 id="stdshared_ptr">std::shared_ptr<a class="headerlink" href="#stdshared_ptr" title="Permanent link">&para;</a></h3>
+<p><code>std::shared_ptr</code>是一种共享所有权的智能指针，表示一个对象可以有多个<code>shared_ptr</code>拥有。当最后一个拥有该对象的<code>shared_ptr</code>被销毁时，该对象才会被自动释放。<code>shared_ptr</code>支持复制和移动语义。
+它包含下列常用成员函数：
+- <code>get()</code>：返回<code>shared_ptr</code>所管理的原始指针。
+- <code>use_count()</code>：返回当前有多少个<code>shared_ptr</code>实例共享所有权。
+- <code>unique()</code>：返回一个布尔值，表示当前<code>shared_ptr</code>是否是唯一拥有该对象的实例。
+- <code>reset()</code>：释放<code>shared_ptr</code>当前管理的对象，并可选择性地将其替换为一个新的对象。
+- <code>swap()</code>：交换两个<code>shared_ptr</code>的所有权。</p>
+<p>我们可以用<code>std::make_shared</code>函数来创建一个<code>shared_ptr</code>。</p>
+<h3 id="stdweak_ptr">std::weak_ptr<a class="headerlink" href="#stdweak_ptr" title="Permanent link">&para;</a></h3>
+<p><code>std::weak_ptr</code>是一种弱引用的智能指针，表示一个对象可以被多个<code>shared_ptr</code>拥有，但<code>weak_ptr</code>本身不拥有该对象。当最后一个拥有该对象的<code>shared_ptr</code>被销毁时，该对象会被自动释放，而所有指向该对象的<code>weak_ptr</code>会变为无效。<code>weak_ptr</code>主要用于解决循环引用的问题。
+它包含下列常用成员函数：
+- <code>lock()</code>：返回一个<code>shared_ptr</code>，如果原始对象仍然存在，则该<code>shared_ptr</code>拥有该对象；如果原始对象已经被销毁，则返回一个空的<code>shared_ptr</code>。<strong>一般我们需要获取weak_ptr所管理的对象时，首先调用<code>lock()</code>函数来获取一个<code>shared_ptr</code>，然后检查该<code>shared_ptr</code>是否为空</strong>，以确定原始对象是否仍然存在。此外，<code>lock()</code>为原子操作，可以在多线程环境中安全地使用。
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">weak_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">weakPtr</span><span class="p">;</span><span class="w"> </span><span class="c1">// 创建一个weak_ptr</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">sharedPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span><span class="w"> </span><span class="c1">// 创建一个shared_ptr，管理一个值为5的整数对象</span>
+<span class="w">    </span><span class="n">weakPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sharedPtr</span><span class="p">;</span><span class="w"> </span><span class="c1">// weak_ptr现在指向shared_ptr管理的对象</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// sharedPtr超出作用域被销毁，此时weakPtr变为无效</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">lockedPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weakPtr</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span><span class="w"> </span><span class="c1">// 尝试获取shared_ptr</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lockedPtr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// lockedPtr不为空，原始对象仍然存在</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="o">*</span><span class="n">lockedPtr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// 输出5</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// lockedPtr为空，原始对象已经被销毁</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Object has been destroyed.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+- <code>expired()</code>：返回一个布尔值，表示原始对象是否已经被销毁。
+- <code>reset()</code>：释放<code>weak_ptr</code>当前管理的对象，并可选择性地将其替换为一个新的对象。
+- <code>swap()</code>：交换两个<code>weak_ptr</code>的所有权。</p>
+<blockquote>
+<p><strong><code>weak_ptr</code>是如何解决循环引用的问题的？</strong>
+循环引用是指两个或多个对象相互持有对方的<code>shared_ptr</code>，导致它们的引用计数永远不会降为零，从而无法自动释放内存。通过使用<code>weak_ptr</code>，我们可以打破这种循环引用。例如，如果对象A持有一个<code>shared_ptr</code>指向对象B，而对象B持有一个<code>weak_ptr</code>指向对象A，那么当对象A被销毁时，对象B的<code>weak_ptr</code>会变为无效，而不会阻止对象A的销毁，从而避免了内存泄漏的问题。</p>
+</blockquote>
+<h2 id="lambda">Lambda表达式<a class="headerlink" href="#lambda" title="Permanent link">&para;</a></h2>
+<p>Lambda表达式是C++11引入的一种匿名函数，可以直接在需要函数对象的地方定义和使用。Lambda表达式的语法如下：
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="n">捕获变量</span><span class="p">](</span><span class="n">参数列表</span><span class="p">)</span><span class="w"> </span><span class="n">可选限定符</span><span class="o">-&gt;</span><span class="w"> </span><span class="n">返回类型</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 函数体</span>
+<span class="p">}</span>
+</code></pre></div>
+例如：
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">addA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">a</span><span class="p">](</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">addA</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// 输出8</span>
+</code></pre></div>
+捕获变量包括值捕获和引用捕获两种方式。值捕获会将变量的值复制到Lambda表达式中，而引用捕获会将变量的引用传递给Lambda表达式，使得Lambda表达式可以修改外部变量的值。
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">addA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">a</span><span class="p">](</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="c1">// 修改外部变量a的值</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">addA</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// 输出8</span>
+<span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// 输出8，说明外部变量a的值被修改了</span>
+</code></pre></div>
+类变量/结构体变量在被值捕获时会调用拷贝构造函数。若拷贝构造函数被删除或不可访问，则会导致编译错误。</p>
+<p>在一个类中，如果我们想在成员函数中使用Lambda表达式，并且需要捕获类的成员变量，我们可以使用<code>this</code>指针来捕获整个对象。例如：
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">printValue</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">lambda</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="k">this</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Value: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// 捕获整个对象，访问成员变量</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">        </span><span class="n">lambda</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></p>
+<p>使用按值捕获时，默认无法修改捕获的变量，但可以使用<code>mutable</code>关键字来允许修改捕获的变量。例如：
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">addA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">a</span><span class="p">]()</span><span class="w"> </span><span class="k">mutable</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"> </span><span class="c1">// 修改捕获的变量a的值</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">addA</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// 输出8</span>
+<span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="c1">// 输出3，说明外部变量a的值没有被修改</span>
+</code></pre></div></p>
+<h2 id="_25">左值与右值<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
+<p>左值（lvalue）是指一个表达式所表示的对象具有一个持久的地址，可以被赋值或取地址。右值（rvalue）是指一个表达式所表示的对象没有持久的地址，通常是一个临时对象或字面值，不能被赋值或取地址。
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"> </span><span class="c1">// x是一个左值，5是一个右值</span>
+<span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="c1">// 可以取地址，ptr指向x</span>
+</code></pre></div>
+带有<code>const</code>修饰的左值被称为常量左值（const lvalue），它们不能被修改，但仍然具有持久的地址。</p>
+<p>由于函数可以取地址，因此函数名也是一个左值。</p>
+<p>在C++11后，左右值在宏观上被分为<code>glvalue</code>（generalized lvalue）和<code>rvalue</code>两大类。<code>glvalue</code>包括左值和将亡值（xvalue），而右值则包括纯右值（prvalue）和将亡值（xvalue）。</p>
+<p>将亡值（xvalue）是指一个表达式所表示的对象即将被销毁，可以被移动语义所利用。<code>std::move</code>函数会将一个左值转换为一个将亡值，以便触发移动构造函数或移动赋值运算符。
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">movedStr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">str</span><span class="p">);</span><span class="w"> </span><span class="c1">// str被转换为一个将亡值，触发移动构造函数</span>
+</code></pre></div>
+纯右值（prvalue）是指一个表达式所表示的对象没有持久的地址，通常是一个临时对象或字面值。例如，字面值<code>5</code>、函数返回的临时对象等都是纯右值。
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">getValue</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"> </span><span class="c1">// 返回一个纯右值</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>此外，表达式也是纯右值。例如<code>m+n</code>，它的计算结果是一个临时对象，没有持久的地址，因此是一个纯右值；显式转换表达式也是纯右值。例如<code>(int)x</code>；未命名类的对象也是纯右值，<strong>返回这种对象的函数也是纯右值</strong>。例如：
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">Point</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">Point</span><span class="w"> </span><span class="nf">getPoint</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">};</span><span class="w"> </span><span class="c1">// 返回一个未命名类的对象，是一个纯右值</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>普通的引用（类似于<code>int&amp;</code>）只能绑定到左值，而右值引用（类似于<code>int&amp;&amp;</code>）只能绑定到右值。这是C++11引入的一种新的引用类型，用于支持移动语义和完美转发。</p>
+<p>右值引用作为函数参数时，可以用于区分传递的是左值还是右值，从而实现不同的行为。例如：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Processing lvalue: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="kt">int</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Processing rvalue: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这五个概念的关系图为：</p>
+<p><img alt="" src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/20260321095325857.png" /></p>
+<p><strong>在底层，左值存放在内存中，而右值通常存放在寄存器中。</strong></p>
+<h3 id="_26">移动语义<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<p>对于自定义类，如果我们不定义拷贝构造函数，编译器默认生成的拷贝是浅拷贝。假设类中有一个指针成员变量，浅拷贝会导致多个对象共享同一个指针，可能会引发内存泄漏或悬空指针等问题。</p>
+<p>通过定义移动构造函数和移动赋值运算符，我们可以实现移动语义，允许资源的所有权从一个对象转移到另一个对象，而不是复制资源，从而避免了不必要的资源复制和内存泄漏。
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="p">(</span><span class="n">MyClass</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 移动构造函数实现</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">MyClass</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 移动赋值运算符实现</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+移动构造函数接受一个右值引用参数，表示要移动的对象；移动赋值运算符也接受一个右值引用参数，并返回一个指向当前对象的引用。</p>
+<p><code>std::move</code>函数是一个标准库函数，用于<strong>将一个左值转换为一个右值引用</strong>，以便触发移动构造函数或移动赋值运算符。例如：
+<div class="highlight"><pre><span></span><code><span class="n">MyClass</span><span class="w"> </span><span class="n">obj1</span><span class="p">;</span>
+<span class="n">MyClass</span><span class="w"> </span><span class="n">obj2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">obj1</span><span class="p">);</span><span class="w"> </span><span class="c1">// obj1被转换为一个右值，触发移动构造函数</span>
+</code></pre></div></p>
+<p><strong>拷贝省略</strong>（copy elision）是指编译器在某些情况下可以优化掉不必要的临时对象创建，直接构造对象到目标位置。</p>
+<p>在构造一个对象时，直接将一个类的构造函数的返回值作为另一个对象的初始化值时，编译器可以省略掉临时对象的创建，直接构造目标对象。例如：</p>
+<div class="highlight"><pre><span></span><code><span class="n">MyClass</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyClass</span><span class="p">();</span><span class="w"> </span><span class="c1">// 直接构造obj，而不是先创建一个临时对象再拷贝到obj</span>
+</code></pre></div>
+<p>当函数返回一个对象时，编译器也可以省略掉临时对象的创建，直接构造返回值到调用者的目标位置。例如：</p>
+<div class="highlight"><pre><span></span><code><span class="n">MyClass</span><span class="w"> </span><span class="nf">createObject</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MyClass</span><span class="p">();</span><span class="w"> </span><span class="c1">// 直接构造返回值，而不是先创建一个临时对象再拷贝到调用者</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这种技术被称为<strong>返回值优化</strong>（Return Value Optimization，RVO）或<strong>命名返回值优化</strong>（Named Return Value Optimization，NRVO）。二者区别在于RVO适用于返回一个匿名对象，而NRVO适用于返回一个命名对象。</p>
+<p>前面提到，对于同一块内存区域，同时只能有一个<code>unique_ptr</code>指向它。因此，当需要将一个<code>unique_ptr</code>的所有权转移给另一个<code>unique_ptr</code>时，必须使用<code>std::move</code>来显式地表示所有权的转移。</p>
+<p><strong>右值引用本身是一个左值</strong>，因为它有一个持久的地址，可以被赋值或取地址。例如：
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rvalueRef</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"> </span><span class="c1">// rvalueRef是一个右值引用，但它本身是一个左值</span>
+</code></pre></div>
+因此，假设有一个函数接收一个右值引用参数A（类型为T，重写了移动赋值运算符），并在函数体内声明一个新的T变量B，把A赋值给B，此时不会调用移动赋值运算符，而是调用拷贝赋值运算符，因为A是一个左值。如果非要调用移动赋值运算符，可以在函数体内使用<code>std::move</code>将A转换为一个右值引用。例如：
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">A</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">B</span><span class="p">;</span>
+<span class="w">    </span><span class="n">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">A</span><span class="p">);</span><span class="w"> </span><span class="c1">// 使用std::move将A转换为一个右值引用，调用移动赋值运算符</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="_27">完美转发<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h3>
+<p>上面提到的右值引用本身为左值导致的问题可以通过完美转发来解决。</p>
+<p>完美转发是指使用<code>std::forward</code>函数来将函数参数完美地转发给另一个函数，保持参数的值类别（左值或右值）不变。在非模板函数中，它等效于<code>static_cast</code>，而在模板函数中，它会根据参数的值类别进行适当的转发。例如：
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">wrapper</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">process</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">arg</span><span class="p">));</span><span class="w"> </span><span class="c1">// 完美转发参数arg</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>模板函数参数中的<code>T&amp;&amp;</code>被称为<strong>转发引用</strong>（Forwarding Reference）或<strong>万能引用</strong>（Universal Reference），它可以绑定到左值或右值。当我们调用<code>wrapper</code>函数时，编译器会根据传入参数的值类别来推断<code>T</code>的类型。</p>
+<p>在参数为万能引用的模板函数中，当模板实例化时，<code>T&amp;&amp;</code>中的T会被替换为实际的类型。例如，对于类型A的引用，实例化时会被替换为<code>A&amp; &amp;&amp;</code>。这实际上是不合法的。例如：</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">wrapper</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="n">wrapper</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&amp;&gt;</span><span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">);</span>
+
+<span class="c1">// 实例化：</span>
+<span class="k">template</span><span class="o">&lt;&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">wrapper</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&amp;&gt;</span><span class="p">(</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// &lt;- 这里的string&amp; &amp;&amp;是不合法的</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>为了解决这一问题，C++使用<strong>引用折叠规则</strong>来处理这种情况。根据引用折叠规则：</p>
+<ul>
+<li><code>T&amp; &amp;</code>会被折叠为<code>T&amp;</code></li>
+<li><code>T&amp; &amp;&amp;</code>会被折叠为<code>T&amp;</code></li>
+<li><code>T&amp;&amp; &amp;</code>会被折叠为<code>T&amp;</code></li>
+<li><code>T&amp;&amp; &amp;&amp;</code>会被折叠为<code>T&amp;&amp;</code></li>
+</ul>
+<blockquote>
+<p>总结：仅有传参为右值引用时，才会折叠为右值引用；其他情况都会折叠为左值引用。</p>
+</blockquote>
+<h2 id="constexpr">常量表达式与constexpr<a class="headerlink" href="#constexpr" title="Permanent link">&para;</a></h2>
+<p>常量表达式是由编译器在编译时求值的表达式，它由字面量、常量、函数和运算符组成。</p>
+<p>C++11引入了<code>constexpr</code>关键字，用于声明一个函数或变量是一个常量表达式。<code>constexpr</code>函数必须满足以下条件：
+- 函数体必须包含一个单一的<code>return</code>语句。
+- 函数参数和返回类型必须是字面类型（literal type）。</p>
+<blockquote>
+<p>字面类型是指可以直接用字面量表示的类型，例如整数、浮点数、指针、引用等。用户定义的类型如果满足某些条件（例如，所有成员都是字面类型，并且有一个<code>constexpr</code>构造函数，如有其他函数，也都声明为<code>constexpr</code>），也可以被视为字面类型。</p>
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">Point</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="n">Point</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">xVal</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">yVal</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="p">(</span><span class="n">xVal</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="n">yVal</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>如果一个函数被声明为<code>constexpr</code>，它<strong>可以在编译时被求值，也可以在运行时被调用</strong>。例如，假设一个<code>constexpr</code>函数被调用的参数是常量表达式，那么编译器会在编译时求值该函数的结果；如果参数不是常量表达式，那么该函数会在运行时被调用。</p>
+</blockquote>
+<ul>
+<li>函数体内不能包含任何会导致运行时行为的语句，例如循环、条件语句等。此外，还不能有局部变量，（但C++14后允许，static变量、未初始化的变量除外）不能由调用非<code>constexpr</code>函数，不能抛出异常。</li>
+</ul>
+<blockquote>
+<p>在常用库中，只有<code>&lt;cmath&gt;</code>中的函数被声明为<code>constexpr</code>。</p>
+<p>虽然不能有循环，但可以用递归来代替；不能有条件语句，但可以用三元运算符来代替。</p>
+<p>递归有深度上限。具体是多少由编译器实现决定。</p>
+</blockquote>
+<p>对于变量，<code>constexpr</code>变量必须在声明时进行初始化，并且初始化表达式必须是一个常量表达式。例如：
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+<span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">{</span><span class="n">maxValue</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="p">};</span>
+</code></pre></div></p>
+<blockquote>
+<p>constexpr表达式中不能包含由<code>const</code>修饰的变量。</p>
+</blockquote>
+<p>常量表达式可以提高程序的性能，因为它们在编译时就被求值了，避免了运行时的计算开销。此外，常量表达式还可以用于定义数组大小、枚举值等需要编译时常量的场景。</p>
+<p><img alt="" src="https://yoi-note.oss-cn-chengdu.aliyuncs.com/20260321150632347.png" /></p>
+<h2 id="decltype">decltype<a class="headerlink" href="#decltype" title="Permanent link">&para;</a></h2>
+<p><code>decltype</code>是C++11引入的一个关键字，用于查询表达式的类型。它可以用于获取变量、函数返回值、成员函数等的类型信息。除了类信息以外，它还可以保存引用类型、<code>const</code>以及<code>volatile</code>修饰符等类型属性。</p>
+<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="k">decltype</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"> </span><span class="c1">// b的类型与a相同，即const int</span>
+</code></pre></div>
+<p><code>auto</code>与<code>decltype</code>的区别在于，<code>auto</code>会根据初始化表达式的类型进行类型推断（不含引用以及限定符），而<code>decltype</code>会直接返回表达式的类型，不进行类型推断。</p>
+<p><code>decltype</code>对变量和表达式的类型获取有较大差异。对于变量，<code>decltype</code>会返回变量的类型，包括引用和限定符。对于表达式，则是：</p>
+<ol>
+<li>先获取表达式的值去除引用后的基本类型。</li>
+<li>如果表达式是一个左值，则返回类型为<code>T&amp;</code>。</li>
+<li>如果表达式是一个将亡值，则返回类型为<code>T&amp;&amp;</code>。</li>
+<li>否则，返回类型为<code>T</code>。 </li>
+</ol>
+<p>例如：
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="k">decltype</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="c1">// x的类型为int</span>
+<span class="k">decltype</span><span class="p">((</span><span class="n">a</span><span class="p">))</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="c1">// y的类型为int&amp;，因为(a)是一个左值表达式</span>
+<span class="k">decltype</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">z</span><span class="p">;</span><span class="w"> </span><span class="c1">// z的类型为int，因为a + 1是一个纯右值表达式</span>
+</code></pre></div></p>
+<p><code>decltype</code>通常用于定义函数模板时，函数返回值类型的自动推导。例如：
+<div class="highlight"><pre><span></span><code><span class="c1">// C++11</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T2</span><span class="o">&gt;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">add</span><span class="p">(</span><span class="n">T1</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">T2</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1">// C++14</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T1</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">T2</span><span class="o">&gt;</span>
+<span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span><span class="w"> </span><span class="n">add</span><span class="p">(</span><span class="n">T1</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">T2</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<blockquote>
+<p>为什么不直接用auto来定义函数返回值类型，而要使用decltype(auto)呢？</p>
+<p>因为<code>auto</code>会进行类型推断，去除引用和限定符，而<code>decltype(auto)</code>会保留表达式的类型属性，包括引用和限定符。在某些情况下（例如转发中间层，只转手数据，不改变类型），我们希望函数返回值的类型能够完全匹配表达式的类型，而不是被自动推断为一个新的类型。</p>
+</blockquote>
+    </div>
+
+    <!-- Post footer -->
+    <div class="post-footer">
+      <div class="post-share">
+        <span class="post-share-label">Share:</span>
+        <a href="https://twitter.com/intent/tweet?text=C%2B%2B%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93&url=https://yoigu.github.io//2026/03/25/c/" target="_blank" rel="noopener" class="post-share-btn">Twitter</a>
+      </div>
+    </div>
+  </article>
+
+  <!-- Floating TOC sidebar -->
+  
+  <aside class="toc-sidebar" id="toc-sidebar">
+    <div class="toc-sidebar-inner">
+      <div class="toc-sidebar-title">Contents</div>
+      <div class="toc-sidebar-content">
+        <div class="toc">
+<ul>
+<li><a href="#c">C++相关知识总结</a><ul>
+<li><a href="#_1">内存区域</a><ul>
+<li><a href="#_2">栈</a></li>
+<li><a href="#_3">堆</a></li>
+<li><a href="#_4">数据段</a></li>
+<li><a href="#_5">代码段</a></li>
+</ul>
+</li>
+<li><a href="#_6">常见关键字</a><ul>
+<li><a href="#extern">extern</a></li>
+<li><a href="#static">static</a></li>
+<li><a href="#const">const</a></li>
+</ul>
+</li>
+<li><a href="#_7">指针</a></li>
+<li><a href="#_8">模板</a></li>
+<li><a href="#_9">类型转换</a></li>
+<li><a href="#_10">类与成员</a><ul>
+<li><a href="#_11">类与结构体</a></li>
+<li><a href="#_12">多态</a><ul>
+<li><a href="#_13">虚函数表</a></li>
+</ul>
+</li>
+<li><a href="#overridefinal">override和final</a></li>
+<li><a href="#_14">静态成员</a></li>
+<li><a href="#const_1">const成员函数</a></li>
+<li><a href="#_15">子类访问父类函数</a></li>
+<li><a href="#_16">友元</a></li>
+<li><a href="#_17">运算符重载</a></li>
+<li><a href="#_18">特殊成员函数</a><ul>
+<li><a href="#delete">delete</a></li>
+<li><a href="#default">default</a></li>
+<li><a href="#_19">拷贝构造函数和拷贝赋值运算符</a></li>
+<li><a href="#_20">移动构造函数和移动赋值运算符</a></li>
+<li><a href="#_21">可平凡复制类型</a></li>
+</ul>
+</li>
+<li><a href="#_22">标准布局类型</a></li>
+</ul>
+</li>
+<li><a href="#_23">宏定义</a></li>
+<li><a href="#_24">智能指针</a><ul>
+<li><a href="#stdunique_ptr">std::unique_ptr</a></li>
+<li><a href="#stdshared_ptr">std::shared_ptr</a></li>
+<li><a href="#stdweak_ptr">std::weak_ptr</a></li>
+</ul>
+</li>
+<li><a href="#lambda">Lambda表达式</a></li>
+<li><a href="#_25">左值与右值</a><ul>
+<li><a href="#_26">移动语义</a></li>
+<li><a href="#_27">完美转发</a></li>
+</ul>
+</li>
+<li><a href="#constexpr">常量表达式与constexpr</a></li>
+<li><a href="#decltype">decltype</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+      </div>
+    </div>
+  </aside>
+  
+</div>
+
+<nav class="post-nav">
+  
+  <div></div>
+  
+
+  
+  <a href="/2026/03/25/vulkan/" class="post-nav-item post-nav-next">
+    <div class="post-nav-label">
+      Next
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <div class="post-nav-title">Vulkan 学习笔记 | 简单版</div>
+  </a>
+  
+</nav>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>&copy; 攸一 &middot; Powered by <a href="https://github.com/YoiGu/yoiblog">YoiBlog</a></p>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <script src="/static/js/main.js"></script>
+  
+<script>
+(function() {
+  // Reading time estimation
+  const content = document.getElementById('post-content');
+  if (content) {
+    const text = content.textContent || '';
+    const cjk = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
+    const words = text.replace(/[\u4e00-\u9fff\u3400-\u4dbf]/g, '').split(/\s+/).filter(Boolean).length;
+    const minutes = Math.max(1, Math.round((cjk / 300) + (words / 200)));
+    const lang = 'en';
+    document.getElementById('reading-time-text').textContent =
+      lang === 'zh' ? minutes + ' 分钟阅读' : minutes + ' min read';
+  }
+
+  // TOC active tracking
+  const tocSidebar = document.getElementById('toc-sidebar');
+  if (tocSidebar) {
+    const tocLinks = tocSidebar.querySelectorAll('a');
+    const headings = [];
+    tocLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const el = document.getElementById(decodeURIComponent(href.slice(1)));
+        if (el) headings.push({ el: el, link: link });
+      }
+    });
+
+    let ticking = false;
+    function updateTocActive() {
+      const scrollY = window.scrollY + 100;
+      let active = null;
+      for (let i = headings.length - 1; i >= 0; i--) {
+        if (headings[i].el.offsetTop <= scrollY) {
+          active = headings[i];
+          break;
+        }
+      }
+      tocLinks.forEach(l => l.classList.remove('toc-active'));
+      if (active) active.link.classList.add('toc-active');
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(updateTocActive);
+        ticking = true;
+      }
+    });
+    updateTocActive();
+  }
+})();
+</script>
+
+</body>
+</html>
